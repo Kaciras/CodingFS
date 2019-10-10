@@ -33,8 +33,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DokanNet, Version=1.1.2.1, Culture=neutral, PublicKeyToken=cef3dedf553bda55, processorArchitecture=MSIL">
-      <HintPath>..\packages\DokanNet.1.1.2.1\lib\net46\DokanNet.dll</HintPath>
+    <Reference Include="DokanNet, Version=1.3.0.0, Culture=neutral, PublicKeyToken=cef3dedf553bda55, processorArchitecture=MSIL">
+      <HintPath>..\packages\DokanNet.1.3.0\lib\net46\DokanNet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

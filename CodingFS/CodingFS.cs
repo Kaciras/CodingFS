@@ -12,9 +12,9 @@ namespace CodingFS
 {
 	class CodingFS : IDokanOperations
 	{
-		public void Cleanup(string fileName, DokanFileInfo info){}
+		public void Cleanup(string fileName, IDokanFileInfo info){}
 
-		public void CloseFile(string fileName, DokanFileInfo info){}
+		public void CloseFile(string fileName, IDokanFileInfo info){}
 
 		public NtStatus CreateFile(
 			string fileName,
@@ -22,22 +22,22 @@ namespace CodingFS
 			FileShare share, FileMode mode,
 			FileOptions options, 
 			FileAttributes attributes, 
-			DokanFileInfo info)
+			IDokanFileInfo info)
 		{
 			return DokanResult.Success;
 		}
 
-		public NtStatus DeleteDirectory(string fileName, DokanFileInfo info)
+		public NtStatus DeleteDirectory(string fileName, IDokanFileInfo info)
 		{
 			return DokanResult.Success;
 		}
 
-		public NtStatus DeleteFile(string fileName, DokanFileInfo info)
+		public NtStatus DeleteFile(string fileName, IDokanFileInfo info)
 		{
 			return DokanResult.Success;
 		}
 
-		public NtStatus FindFiles(string fileName, out IList<FileInformation> files, DokanFileInfo info)
+		public NtStatus FindFiles(string fileName, out IList<FileInformation> files, IDokanFileInfo info)
 		{
 			files = new List<FileInformation>();
 			var helloTxt = new FileInformation
@@ -57,17 +57,17 @@ namespace CodingFS
 			string fileName, 
 			string searchPattern, 
 			out IList<FileInformation> files,
-			DokanFileInfo info)
+			IDokanFileInfo info)
 		{
 			return FindFiles(fileName, out files, info);
 		}
 
-		public NtStatus FindStreams(string fileName, out IList<FileInformation> streams, DokanFileInfo info)
+		public NtStatus FindStreams(string fileName, out IList<FileInformation> streams, IDokanFileInfo info)
 		{
 			return FindFiles(fileName, out streams, info);
 		}
 
-		public NtStatus FlushFileBuffers(string fileName, DokanFileInfo info)
+		public NtStatus FlushFileBuffers(string fileName, IDokanFileInfo info)
 		{
 			return NtStatus.Success;
 		}
@@ -76,7 +76,7 @@ namespace CodingFS
 			out long freeBytesAvailable, 
 			out long totalNumberOfBytes, 
 			out long totalNumberOfFreeBytes,
-			DokanFileInfo info)
+			IDokanFileInfo info)
 		{
 			freeBytesAvailable = 10 * 1048576;
 			totalNumberOfBytes = 20 * 1048576;
@@ -84,7 +84,7 @@ namespace CodingFS
 			return NtStatus.Success;
 		}
 
-		public NtStatus GetFileInformation(string fileName, out FileInformation fileInfo, DokanFileInfo info)
+		public NtStatus GetFileInformation(string fileName, out FileInformation fileInfo, IDokanFileInfo info)
 		{
 			fileInfo = new FileInformation { FileName = fileName };
 
@@ -111,7 +111,7 @@ namespace CodingFS
 			string fileName,
 			out FileSystemSecurity security,
 			AccessControlSections sections,
-			DokanFileInfo info)
+			IDokanFileInfo info)
 		{
 			security = null;
 			return NtStatus.NotImplemented;
@@ -122,7 +122,7 @@ namespace CodingFS
 			out FileSystemFeatures features, 
 			out string fileSystemName,
 			out uint maximumComponentLength,
-			DokanFileInfo info)
+			IDokanFileInfo info)
 		{
 			volumeLabel = "CodingFS";
 			features = FileSystemFeatures.None;
@@ -131,22 +131,22 @@ namespace CodingFS
 			return DokanResult.Success;
 		}
 
-		public NtStatus LockFile(string fileName, long offset, long length, DokanFileInfo info)
+		public NtStatus LockFile(string fileName, long offset, long length, IDokanFileInfo info)
 		{
 			return DokanResult.Success;
 		}
 
-		public NtStatus Mounted(DokanFileInfo info)
+		public NtStatus Mounted(IDokanFileInfo info)
 		{
 			return DokanResult.Success;
 		}
 
-		public NtStatus MoveFile(string oldName, string newName, bool replace, DokanFileInfo info)
+		public NtStatus MoveFile(string oldName, string newName, bool replace, IDokanFileInfo info)
 		{
 			return DokanResult.Success;
 		}
 		
-		public NtStatus ReadFile(string fileName, byte[] buffer, out int bytesRead, long offset, DokanFileInfo info)
+		public NtStatus ReadFile(string fileName, byte[] buffer, out int bytesRead, long offset, IDokanFileInfo info)
 		{
 			var readCount = Math.Min(11, buffer.Length - (int)offset);
 			Encoding.UTF8.GetBytes("hello world", (int)offset, readCount, buffer, 0);
@@ -154,42 +154,42 @@ namespace CodingFS
 			return DokanResult.Success;
 		}
 
-		public NtStatus SetAllocationSize(string fileName, long length, DokanFileInfo info)
+		public NtStatus SetAllocationSize(string fileName, long length, IDokanFileInfo info)
 		{
 			return DokanResult.Success;
 		}
 
-		public NtStatus SetEndOfFile(string fileName, long length, DokanFileInfo info)
+		public NtStatus SetEndOfFile(string fileName, long length, IDokanFileInfo info)
 		{
 			return DokanResult.Success;
 		}
 
-		public NtStatus SetFileAttributes(string fileName, FileAttributes attributes, DokanFileInfo info)
+		public NtStatus SetFileAttributes(string fileName, FileAttributes attributes, IDokanFileInfo info)
 		{
 			return DokanResult.Success;
 		}
 
-		public NtStatus SetFileSecurity(string fileName, FileSystemSecurity security, AccessControlSections sections, DokanFileInfo info)
+		public NtStatus SetFileSecurity(string fileName, FileSystemSecurity security, AccessControlSections sections, IDokanFileInfo info)
 		{
 			return DokanResult.Success;
 		}
 
-		public NtStatus SetFileTime(string fileName, DateTime? creationTime, DateTime? lastAccessTime, DateTime? lastWriteTime, DokanFileInfo info)
+		public NtStatus SetFileTime(string fileName, DateTime? creationTime, DateTime? lastAccessTime, DateTime? lastWriteTime, IDokanFileInfo info)
 		{
 			return DokanResult.Success;
 		}
 
-		public NtStatus UnlockFile(string fileName, long offset, long length, DokanFileInfo info)
+		public NtStatus UnlockFile(string fileName, long offset, long length, IDokanFileInfo info)
 		{
 			return DokanResult.Success;
 		}
 
-		public NtStatus Unmounted(DokanFileInfo info)
+		public NtStatus Unmounted(IDokanFileInfo info)
 		{
 			return DokanResult.Success;
 		}
 
-		public NtStatus WriteFile(string fileName, byte[] buffer, out int bytesWritten, long offset, DokanFileInfo info)
+		public NtStatus WriteFile(string fileName, byte[] buffer, out int bytesWritten, long offset, IDokanFileInfo info)
 		{
 			bytesWritten = 0;
 			return DokanResult.Success;
