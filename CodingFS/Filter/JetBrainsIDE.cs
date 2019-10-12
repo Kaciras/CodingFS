@@ -24,7 +24,8 @@ namespace CodingFS.Filter
 	class JetBrainsClassifier : Classifier
 	{
 		readonly string root;
-		readonly PathTrie ignored = new PathTrie(RecognizeType.Ignored);
+
+		readonly PathTrie<RecognizeType> ignored = new PathTrie<RecognizeType>(RecognizeType.Uncertain);
 
 		public JetBrainsClassifier(string root)
 		{
@@ -35,16 +36,21 @@ namespace CodingFS.Filter
 		{
 			var doc = new XmlDocument();
 			doc.Load(Path.Join(root, ".idea/workspace.xml"));
-			var tsIgores = doc.SelectNodes("component[@name='TypeScriptGeneratedFilesManager']/option[@name='exactExcludedFiles']/list//option");
 
-			foreach (XmlNode item in tsIgores)
+			var tsIgnores = doc.SelectNodes(
+				"component[@name='TypeScriptGeneratedFilesManager']" +
+				"/option[@name='exactExcludedFiles']/list//option");
+
+			// 这个XML解析库竟然还是非泛型的
+			for (int i = 0; i < tsIgnores.Count; i++)
 			{
-				var value = item.Attributes["value"].Value;
+				var value = tsIgnores[i].Attributes["value"].Value;
+
 				if (value.StartsWith("$PROJECT_DIR$/", StringComparison.Ordinal))
 				{
 					value = value[14..];
 				}
-				if(Path.IsPathRooted(value))
+				if (Path.IsPathRooted(value))
 				{
 					value = Path.GetRelativePath(root, value);
 				}
@@ -54,9 +60,9 @@ namespace CodingFS.Filter
 				{
 					continue;
 				}
-				if(!value.StartsWith("..", StringComparison.Ordinal))
+				if (!value.StartsWith("..", StringComparison.Ordinal))
 				{
-					ignored.Add(value);
+					ignored.Add(value, RecognizeType.Ignored);
 				}
 			}
 		}
@@ -73,9 +79,9 @@ namespace CodingFS.Filter
 			doc.Load(Path.Join(root, xmlFile));
 
 			var modules = doc.SelectNodes("component[@name='ProjectModuleManager']/modules//module");
-			foreach (XmlNode item in modules)
+			for (int i = 0; i < modules.Count; i++)
 			{
-				var imlFile = item.Attributes["filepath"].Value[14..];
+				var imlFile = modules[i].Attributes["filepath"].Value[14..];
 
 			}
 		}

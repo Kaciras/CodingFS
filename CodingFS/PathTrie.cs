@@ -1,28 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using CodingFS.Filter;
 
 namespace CodingFS
 {
-	sealed class PathTrieNode
+	sealed class PathTrieNode<T>
 	{
-		public bool Exists { get; set; }
-		public IDictionary<string, PathTrieNode>? Children { get; set; }
+		public T Value { get; set; }
+		public IDictionary<string, PathTrieNode<T>>? Children { get; set; }
+
+		public PathTrieNode(T value) => Value = value;
 	}
 
-	public sealed class PathTrie
+	public sealed class PathTrie<T>
 	{
-		readonly PathTrieNode root = new PathTrieNode();
-		readonly RecognizeType type;
+		readonly PathTrieNode<T> root;
+		readonly T defaultValue;
 
-		public PathTrie(RecognizeType type)
+		public PathTrie(T defaultValue)
 		{
-			this.type = type;
+			root = new PathTrieNode<T>(defaultValue);
+			this.defaultValue = defaultValue;
 		}
 
-		public void Add(string path)
+		public void Add(string path, T value)
 		{
 			var node = root;
 			var parts = path.Split(Path.DirectorySeparatorChar);
@@ -31,7 +31,7 @@ namespace CodingFS
 			{
 				if (node.Children == null)
 				{
-					node.Children = new Dictionary<string, PathTrieNode>();
+					node.Children = new Dictionary<string, PathTrieNode<T>>();
 				}
 
 				if (node.Children.TryGetValue(part, out var child))
@@ -40,37 +40,39 @@ namespace CodingFS
 				}
 				else
 				{
-					var newNode = new PathTrieNode();
+					var newNode = new PathTrieNode<T>(defaultValue);
 					node.Children.Add(part, newNode);
 					node = newNode;
 				}
 			}
 
-			node.Exists = true;
+			node.Value = value;
 		}
 
-		public RecognizeType Recognize(string path)
+		public T Get(string path, T alternative)
 		{
 			var node = root;
 			var parts = path.Split(Path.DirectorySeparatorChar);
 
 			foreach (var part in parts)
 			{
-				if (node.Children == null)
+				var children = node.Children;
+
+				if (children == null)
 				{
-					return RecognizeType.NotCare;
+					return alternative;
 				}
-				if (node.Children.TryGetValue(part, out var child))
+				if (children.TryGetValue(part, out var child))
 				{
 					node = child;
 				}
 				else
 				{
-					return RecognizeType.NotCare;
+					return alternative;
 				}
 			}
 
-			return node.Exists ? type : RecognizeType.Uncertain;
+			return node.Value;
 		}
 	}
 }

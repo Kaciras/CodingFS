@@ -16,7 +16,6 @@ namespace CodingFS
 		{
 			this.roots = roots;
 		}
-
 		
 		private string MapPath(string value)
 		{
@@ -61,7 +60,10 @@ namespace CodingFS
 			return DokanResult.Success;
 		}
 
-		public NtStatus GetFileInformation(string fileName, out FileInformation fileInfo, IDokanFileInfo info)
+		public NtStatus GetFileInformation(
+			string fileName, 
+			out FileInformation fileInfo, 
+			IDokanFileInfo info)
 		{
 			if (fileName == @"\")
 			{
@@ -129,7 +131,7 @@ namespace CodingFS
 			return DokanResult.Success;
 		}
 
-		#region ======================================= 下面的不重要 =======================================
+		#region ===================== 下面的不重要 =====================
 
 		public NtStatus FindFiles(string fileName, out IList<FileInformation>? files, IDokanFileInfo info)
 		{

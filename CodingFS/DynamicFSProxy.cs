@@ -9,23 +9,32 @@ namespace CodingFS
 {
 	public class DynamicFSProxy : DispatchProxy
 	{
-		public IDokanOperations Wrapped { get; set; }
+		// 正常使用Create创建的话是不会为null的
+		public IDokanOperations? Wrapped { get; set; }
 
-		protected override object? Invoke(MethodInfo targetMethod, object[] args)
+		protected override object? Invoke(MethodInfo method, object[] args)
 		{
 			try
 			{
-				return targetMethod.Invoke(Wrapped, args);
+				return method.Invoke(Wrapped, args);
 			}
-			catch (TargetInvocationException e) when (targetMethod.ReturnType == typeof(NtStatus))
+			catch (TargetInvocationException e)
+			when (method.ReturnType == typeof(NtStatus))
 			{
-				return e.InnerException switch
-				{
-					FileNotFoundException _ => DokanResult.FileNotFound,
-					DirectoryNotFoundException _ => DokanResult.FileNotFound,
-					_ => throw e,
-				};
+				return StaticFSProxy.HandleException(e.InnerException!);
 			}
+		}
+
+		public static T Create<T>(T fs) where T : IDokanOperations
+		{
+			if (fs == null)
+			{
+				throw new ArgumentNullException();
+			}
+			var instance = Create<IDokanOperations, DynamicFSProxy>();
+			((DynamicFSProxy)instance).Wrapped = fs;
+
+			return (T)instance;
 		}
 	}
 }
