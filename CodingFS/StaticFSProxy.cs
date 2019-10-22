@@ -7,6 +7,9 @@ using DokanNet;
 
 namespace CodingFS
 {
+	/// <summary>
+	/// 这个类的作用跟DynamicFSProxy一样，区别是静态实现了全部方法的异常处理。
+	/// </summary>
 	public sealed class StaticFSProxy : IDokanOperations
 	{
 		public IDokanOperations Native { get; }

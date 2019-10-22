@@ -25,14 +25,11 @@ namespace CodingFS
 		{
 			var fs = DynamicFSProxy.Create(new CodingFS(@"D:\Coding", @"D:\Project"));
 
-			if (args.Contains("-prod"))
-			{
-				fs.Mount("x:\\");
-			}
-			else
-			{
-				fs.Mount("x:\\", DokanOptions.DebugMode | DokanOptions.StderrOutput);
-			}
+#if !DEBUG
+			fs.Mount("x:\\");
+#else
+			fs.Mount("x:\\", DokanOptions.DebugMode | DokanOptions.StderrOutput);
+#endif
 		}
 	}
 }

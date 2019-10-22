@@ -46,7 +46,7 @@ namespace CodingFS
 		public NtStatus FindFilesWithPattern(
 			string fileName,
 			string searchPattern,
-			out IList<FileInformation>? files,
+			out IList<FileInformation> files,
 			IDokanFileInfo info)
 		{
 			if (fileName == @"\")
