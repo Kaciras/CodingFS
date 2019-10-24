@@ -38,19 +38,13 @@ namespace CodingFS
 		/// <summary>
 		/// 创建该动态代理的示例，包装指定的文件系统。
 		/// </summary>
-		/// <typeparam name="T">被包装的类型</typeparam>
 		/// <param name="fs">文件系统</param>
 		/// <returns>包装后的代理对象</returns>
-		public static T Create<T>(T fs) where T : IDokanOperations
+		public static IDokanOperations Create(IDokanOperations fs)
 		{
-			if (fs == null)
-			{
-				throw new ArgumentNullException();
-			}
 			var instance = Create<IDokanOperations, DynamicFSProxy>();
 			((DynamicFSProxy)instance).Native = fs;
-
-			return (T)instance;
+			return instance; // 创建的代理实例同时属于 Create 的两个泛型参数类型
 		}
 	}
 }

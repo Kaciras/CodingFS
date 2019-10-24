@@ -23,7 +23,7 @@ namespace CodingFS
 	{
 		static void Main(string[] args)
 		{
-			var fs = DynamicFSProxy.Create(new CodingFS(@"D:\Coding", @"D:\Project"));
+			var fs = new StaticFSProxy(new CodingFS(@"D:\Coding", @"D:\Project"));
 
 #if !DEBUG
 			fs.Mount("x:\\");
