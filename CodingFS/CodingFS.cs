@@ -8,7 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace CodingFS
 {
-	public class CodingFS : AbstractFileSystem
+	public sealed class CodingFS : AbstractFileSystem
 	{
 		readonly string[] roots;
 

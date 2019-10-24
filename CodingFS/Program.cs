@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.IO;
-using System.Threading.Tasks;
-using DokanNet;
-using System.Reflection;
+﻿using System.Runtime.CompilerServices;
 using CommandLine;
+using DokanNet;
 
+[assembly: InternalsVisibleTo("CodingFS.Test")]
 namespace CodingFS
 {
 	[Verb("mount", HelpText = "挂载为虚拟磁盘，仅包含指定类型的文件")]

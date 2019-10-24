@@ -7,6 +7,10 @@ using DokanNet;
 
 namespace CodingFS
 {
+	/// <summary>
+	/// IDokanOperations 的方法太多，而一般情况下并不需要用到全部，故该类提供它们的默认实现。
+	/// 该类默认实现的文件系统只有一个空磁盘，里面没有任何文件，所有修改操作将成功返回但不产生任何效果。
+	/// </summary>
 	public abstract class AbstractFileSystem : IDokanOperations
 	{
 		public virtual NtStatus GetVolumeInformation(
@@ -16,13 +20,12 @@ namespace CodingFS
 			out uint maximumComponentLength,
 			IDokanFileInfo info)
 		{
-			volumeLabel = "CodingFS";
+			volumeLabel = "Dokan Virtual Drive";
 			features = FileSystemFeatures.None;
-			fileSystemName = "CodingFS";
+			fileSystemName = "Dokan Virtual FS";
 			maximumComponentLength = 256;
 			return DokanResult.Success;
 		}
-
 
 		public virtual NtStatus ReadFile(
 			string fileName,
@@ -85,29 +88,14 @@ namespace CodingFS
 			return NtStatus.Success;
 		}
 
-		public virtual NtStatus DeleteDirectory(string fileName, IDokanFileInfo info)
-		{
-			return NtStatus.Success;
-		}
-
-		public virtual NtStatus DeleteFile(string fileName, IDokanFileInfo info)
-		{
-			return NtStatus.Success;
-		}
-
-		public virtual NtStatus FlushFileBuffers(string fileName, IDokanFileInfo info)
-		{
-			return NtStatus.Success;
-		}
-
 		public virtual NtStatus GetDiskFreeSpace(
 			out long freeBytesAvailable,
 			out long totalNumberOfBytes,
 			out long totalNumberOfFreeBytes,
 			IDokanFileInfo info)
 		{
-			freeBytesAvailable = 1048576;
-			totalNumberOfBytes = 1048576;
+			freeBytesAvailable = 1024 * 1024 * 1024 * 1024L;
+			totalNumberOfBytes = 1024 * 1024 * 1024 * 1024L;
 			totalNumberOfFreeBytes = 0;
 			return NtStatus.Success;
 		}
@@ -181,10 +169,30 @@ namespace CodingFS
 			return NtStatus.Success;
 		}
 
-		public virtual NtStatus WriteFile(string fileName, byte[] buffer, out int bytesWritten, long offset, IDokanFileInfo info)
+		public virtual NtStatus WriteFile(
+			string fileName, 
+			byte[] buffer, 
+			out int bytesWritten,
+			long offset, 
+			IDokanFileInfo info)
 		{
 			bytesWritten = 0;
 			return DokanResult.Success;
+		}
+
+		public virtual NtStatus DeleteDirectory(string fileName, IDokanFileInfo info)
+		{
+			return NtStatus.Success;
+		}
+
+		public virtual NtStatus DeleteFile(string fileName, IDokanFileInfo info)
+		{
+			return NtStatus.Success;
+		}
+
+		public virtual NtStatus FlushFileBuffers(string fileName, IDokanFileInfo info)
+		{
+			return NtStatus.Success;
 		}
 	}
 }
