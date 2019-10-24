@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.29403.142
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodingFS", "CodingFS\CodingFS.csproj", "{207E8E66-808C-4026-91D8-62F479792563}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodingFS.Benchmark", "CodingFS.Benchmark\CodingFS.Benchmark.csproj", "{EB96C8FC-FF7A-4D8D-ADB0-96ACA9640A98}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodingFS.Benchmark", "CodingFS.Benchmark\CodingFS.Benchmark.csproj", "{EB96C8FC-FF7A-4D8D-ADB0-96ACA9640A98}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodingFS.Test", "CodingFS.Test\CodingFS.Test.csproj", "{2B01CF31-C759-49AD-B765-B38274D8A95E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{EB96C8FC-FF7A-4D8D-ADB0-96ACA9640A98}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB96C8FC-FF7A-4D8D-ADB0-96ACA9640A98}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB96C8FC-FF7A-4D8D-ADB0-96ACA9640A98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B01CF31-C759-49AD-B765-B38274D8A95E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B01CF31-C759-49AD-B765-B38274D8A95E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B01CF31-C759-49AD-B765-B38274D8A95E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B01CF31-C759-49AD-B765-B38274D8A95E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
