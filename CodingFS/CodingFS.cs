@@ -8,7 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace CodingFS
 {
-	public class CodingFS : IDokanOperations
+	public class CodingFS : AbstractFileSystem
 	{
 		readonly string[] roots;
 
@@ -43,7 +43,7 @@ namespace CodingFS
 			Length = (src as FileInfo)?.Length ?? 0
 		};
 
-		public NtStatus FindFilesWithPattern(
+		public override NtStatus FindFilesWithPattern(
 			string fileName,
 			string searchPattern,
 			out IList<FileInformation> files,
@@ -60,7 +60,7 @@ namespace CodingFS
 			return DokanResult.Success;
 		}
 
-		public NtStatus GetFileInformation(
+		public override NtStatus GetFileInformation(
 			string fileName, 
 			out FileInformation fileInfo, 
 			IDokanFileInfo info)
@@ -88,7 +88,7 @@ namespace CodingFS
 			return DokanResult.Success;
 		}
 
-		public NtStatus ReadFile(
+		public override NtStatus ReadFile(
 			string fileName,
 			byte[] buffer,
 			out int bytesRead,
@@ -117,7 +117,7 @@ namespace CodingFS
 			return DokanResult.Success;
 		}
 
-		public NtStatus GetVolumeInformation(
+		public override NtStatus GetVolumeInformation(
 			out string volumeLabel,
 			out FileSystemFeatures features,
 			out string fileSystemName,
@@ -130,134 +130,5 @@ namespace CodingFS
 			maximumComponentLength = 256;
 			return DokanResult.Success;
 		}
-
-		#region ===================== 下面的不重要 =====================
-
-		public NtStatus FindFiles(string fileName, out IList<FileInformation>? files, IDokanFileInfo info)
-		{
-			return FindFilesWithPattern(fileName, "*", out files, info);
-		}
-
-		public NtStatus FindStreams(string fileName, out IList<FileInformation>? streams, IDokanFileInfo info)
-		{
-			return FindFilesWithPattern(fileName, "*", out streams, info);
-		}
-
-		public void Cleanup(string fileName, IDokanFileInfo info)
-		{
-		}
-
-		public void CloseFile(string fileName, IDokanFileInfo info)
-		{
-		}
-
-		public NtStatus CreateFile(string fileName, DokanNet.FileAccess access, FileShare share, FileMode mode, FileOptions options, FileAttributes attributes, IDokanFileInfo info)
-		{
-			return NtStatus.Success;
-		}
-
-		public NtStatus DeleteDirectory(string fileName, IDokanFileInfo info)
-		{
-			return NtStatus.Success;
-		}
-
-		public NtStatus DeleteFile(string fileName, IDokanFileInfo info)
-		{
-			return NtStatus.Success;
-		}
-
-		public NtStatus FlushFileBuffers(string fileName, IDokanFileInfo info)
-		{
-			return NtStatus.Success;
-		}
-
-		public NtStatus GetDiskFreeSpace(
-			out long freeBytesAvailable,
-			out long totalNumberOfBytes,
-			out long totalNumberOfFreeBytes,
-			IDokanFileInfo info)
-		{
-			freeBytesAvailable = 1048576;
-			totalNumberOfBytes = 1048576;
-			totalNumberOfFreeBytes = 0;
-			return NtStatus.Success;
-		}
-
-		public NtStatus GetFileSecurity(
-			string fileName,
-			out FileSystemSecurity? security,
-			AccessControlSections sections,
-			IDokanFileInfo info)
-		{
-			security = null;
-			return NtStatus.NotImplemented;
-		}
-
-		public NtStatus LockFile(string fileName, long offset, long length, IDokanFileInfo info)
-		{
-			return NtStatus.Success;
-		}
-
-		public NtStatus Mounted(IDokanFileInfo info)
-		{
-			return NtStatus.Success;
-		}
-
-		public NtStatus MoveFile(string oldName, string newName, bool replace, IDokanFileInfo info)
-		{
-			return NtStatus.Success;
-		}
-
-		public NtStatus SetAllocationSize(string fileName, long length, IDokanFileInfo info)
-		{
-			return NtStatus.Success;
-		}
-
-		public NtStatus SetEndOfFile(string fileName, long length, IDokanFileInfo info)
-		{
-			return NtStatus.Success;
-		}
-
-		public NtStatus SetFileAttributes(string fileName, FileAttributes attributes, IDokanFileInfo info)
-		{
-			return NtStatus.Success;
-		}
-
-		public NtStatus SetFileSecurity(
-			string fileName,
-			FileSystemSecurity security,
-			AccessControlSections sections,
-			IDokanFileInfo info)
-		{
-			return NtStatus.Success;
-		}
-
-		public NtStatus SetFileTime(
-			string fileName,
-			DateTime? creationTime,
-			DateTime? lastAccessTime,
-			DateTime? lastWriteTime,
-			IDokanFileInfo info)
-		{
-			return NtStatus.Success;
-		}
-
-		public NtStatus UnlockFile(string fileName, long offset, long length, IDokanFileInfo info)
-		{
-			return NtStatus.Success;
-		}
-
-		public NtStatus Unmounted(IDokanFileInfo info)
-		{
-			return NtStatus.Success;
-		}
-
-		public NtStatus WriteFile(string fileName, byte[] buffer, out int bytesWritten, long offset, IDokanFileInfo info)
-		{
-			bytesWritten = 0;
-			return DokanResult.Success;
-		}
-
-		#endregion
 	}
 }
