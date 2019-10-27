@@ -33,7 +33,14 @@ namespace CodingFS
 
 		#region ===================== 下面全是代理 =====================
 
-		public NtStatus CreateFile(string fileName, DokanNet.FileAccess access, FileShare share, FileMode mode, FileOptions options, FileAttributes attributes, IDokanFileInfo info)
+		public NtStatus CreateFile(
+			string fileName,
+			DokanNet.FileAccess access,
+			FileShare share, 
+			FileMode mode, 
+			FileOptions options, 
+			FileAttributes attributes,
+			IDokanFileInfo info)
 		{
 			try
 			{
@@ -55,7 +62,12 @@ namespace CodingFS
 			Native.CloseFile(fileName, info);
 		}
 
-		public NtStatus ReadFile(string fileName, byte[] buffer, out int bytesRead, long offset, IDokanFileInfo info)
+		public NtStatus ReadFile(
+			string fileName,
+			byte[] buffer, 
+			out int bytesRead, 
+			long offset, 
+			IDokanFileInfo info)
 		{
 			try
 			{
@@ -68,7 +80,12 @@ namespace CodingFS
 			}
 		}
 
-		public NtStatus WriteFile(string fileName, byte[] buffer, out int bytesWritten, long offset, IDokanFileInfo info)
+		public NtStatus WriteFile(
+			string fileName, 
+			byte[] buffer, 
+			out int bytesWritten, 
+			long offset, 
+			IDokanFileInfo info)
 		{
 			try
 			{
@@ -119,7 +136,11 @@ namespace CodingFS
 			}
 		}
 
-		public NtStatus FindFilesWithPattern(string fileName, string searchPattern, out IList<FileInformation>? files, IDokanFileInfo info)
+		public NtStatus FindFilesWithPattern(
+			string fileName, 
+			string searchPattern, 
+			out IList<FileInformation>? files,
+			IDokanFileInfo info)
 		{
 			try
 			{
@@ -144,11 +165,17 @@ namespace CodingFS
 			}
 		}
 
-		public NtStatus SetFileTime(string fileName, DateTime? creationTime, DateTime? lastAccessTime, DateTime? lastWriteTime, IDokanFileInfo info)
+		public NtStatus SetFileTime(
+			string fileName, 
+			DateTime? creationTime,
+			DateTime? lastAccessTime,
+			DateTime? lastWriteTime,
+			IDokanFileInfo info)
 		{
 			try
 			{
-				return Native.SetFileTime(fileName, creationTime, lastAccessTime, lastWriteTime, info);
+				return Native.SetFileTime(fileName, creationTime,
+					lastAccessTime, lastWriteTime, info);
 			}
 			catch (IOException e)
 			{
@@ -240,11 +267,16 @@ namespace CodingFS
 			}
 		}
 
-		public NtStatus GetDiskFreeSpace(out long freeBytesAvailable, out long totalNumberOfBytes, out long totalNumberOfFreeBytes, IDokanFileInfo info)
+		public NtStatus GetDiskFreeSpace(
+			out long freeBytesAvailable, 
+			out long totalNumberOfBytes, 
+			out long totalNumberOfFreeBytes,
+			IDokanFileInfo info)
 		{
 			try
 			{
-				return Native.GetDiskFreeSpace(out freeBytesAvailable, out totalNumberOfBytes, out totalNumberOfFreeBytes, info);
+				return Native.GetDiskFreeSpace(out freeBytesAvailable, 
+					out totalNumberOfBytes, out totalNumberOfFreeBytes, info);
 			}
 			catch (IOException e)
 			{
@@ -255,11 +287,17 @@ namespace CodingFS
 			}
 		}
 
-		public NtStatus GetVolumeInformation(out string? volumeLabel, out FileSystemFeatures features, out string? fileSystemName, out uint maximumComponentLength, IDokanFileInfo info)
+		public NtStatus GetVolumeInformation(
+			out string? volumeLabel, 
+			out FileSystemFeatures features, 
+			out string? fileSystemName, 
+			out uint maximumComponentLength, 
+			IDokanFileInfo info)
 		{
 			try
 			{
-				return Native.GetVolumeInformation(out volumeLabel, out features, out fileSystemName, out maximumComponentLength, info);
+				return Native.GetVolumeInformation(out volumeLabel, 
+					out features, out fileSystemName, out maximumComponentLength, info);
 			}
 			catch (IOException e)
 			{
@@ -271,7 +309,11 @@ namespace CodingFS
 			}
 		}
 
-		public NtStatus GetFileSecurity(string fileName, out FileSystemSecurity? security, AccessControlSections sections, IDokanFileInfo info)
+		public NtStatus GetFileSecurity(
+			string fileName, 
+			out FileSystemSecurity? security,
+			AccessControlSections sections,
+			IDokanFileInfo info)
 		{
 			try
 			{
@@ -284,7 +326,11 @@ namespace CodingFS
 			}
 		}
 
-		public NtStatus SetFileSecurity(string fileName, FileSystemSecurity security, AccessControlSections sections, IDokanFileInfo info)
+		public NtStatus SetFileSecurity(
+			string fileName, 
+			FileSystemSecurity security,
+			AccessControlSections sections,
+			IDokanFileInfo info)
 		{
 			try
 			{
@@ -320,7 +366,10 @@ namespace CodingFS
 			}
 		}
 
-		public NtStatus FindStreams(string fileName, out IList<FileInformation>? streams, IDokanFileInfo info)
+		public NtStatus FindStreams(
+			string fileName, 
+			out IList<FileInformation>? streams,
+			IDokanFileInfo info)
 		{
 			try
 			{

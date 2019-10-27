@@ -1,20 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.IO;
 using CodingFS.Filter;
 
 namespace CodingFS
 {
-	public class CodingFileScanner
+	public sealed class CodingFileScanner
 	{
-		readonly PathTrie<IList<Classifier>> trie = new PathTrie<IList<Classifier>>(null);
-
-
-
-		public IEnumerable<FileSystemInfo> Scan(string directory)
+		private sealed class Node
 		{
-			throw new NotImplementedException();
+			public IList<Classifier> classifiers;
+			public IDictionary<int, Node> children;
+		}
+
+		private static ClassifierFactory[] factories =
+		{
+			new JetBrainsIDE(),
+			new NodeJSFilter(),
+			new GitVCS(),
+			new VisualStudioIDE(),
+		};
+
+		private readonly Node root = new Node();
+
+		public CodingFileScanner(IList<string> directories)
+		{
+			root.classifiers = new Classifier[] { new RootClassifier() };
+
+			foreach (var item in directories)
+			{
+				ScanClassifiers(item);
+			}
+		}
+
+		public void ScanClassifiers(string root)
+		{
+			Directory.EnumerateDirectories(root);
 		}
 	}
 }

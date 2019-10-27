@@ -13,7 +13,7 @@ namespace CodingFS.Filter
 	{
 		public Classifier? TryMatch(string path)
 		{
-			if (Directory.Exists(Path.Combine(path, ".git")))
+			if (Directory.Exists(Path.Combine(path, ".idea")))
 			{
 				return new JetBrainsClassifier(path);
 			}
@@ -30,6 +30,8 @@ namespace CodingFS.Filter
 		public JetBrainsClassifier(string root)
 		{
 			this.root = root;
+			ResloveWorkspace();
+			ResloveModules();
 		}
 
 		void ResloveWorkspace()

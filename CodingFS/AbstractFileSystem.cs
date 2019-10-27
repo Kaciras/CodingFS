@@ -9,7 +9,7 @@ namespace CodingFS
 {
 	/// <summary>
 	/// IDokanOperations 的方法太多，而一般情况下并不需要用到全部，故该类提供它们的默认实现。
-	/// 该类默认实现的文件系统只有一个空磁盘，里面没有任何文件，所有修改操作将成功返回但不产生任何效果。
+	/// 该类实现的是一个空磁盘，里面没有任何文件，所有修改操作都将成功但不产生任何效果。
 	/// </summary>
 	public abstract class AbstractFileSystem : IDokanOperations
 	{
@@ -38,7 +38,10 @@ namespace CodingFS
 			return DokanResult.Success;
 		}
 
-		public virtual NtStatus GetFileInformation(string fileName, out FileInformation fileInfo, IDokanFileInfo info)
+		public virtual NtStatus GetFileInformation(
+			string fileName, 
+			out FileInformation fileInfo,
+			IDokanFileInfo info)
 		{
 			fileInfo = new FileInformation
 			{
@@ -62,12 +65,18 @@ namespace CodingFS
 			return DokanResult.Success;
 		}
 
-		public virtual NtStatus FindFiles(string fileName, out IList<FileInformation>? files, IDokanFileInfo info)
+		public virtual NtStatus FindFiles(
+			string fileName, 
+			out IList<FileInformation> files,
+			IDokanFileInfo info)
 		{
 			return FindFilesWithPattern(fileName, "*", out files, info);
 		}
 
-		public virtual NtStatus FindStreams(string fileName, out IList<FileInformation>? streams, IDokanFileInfo info)
+		public virtual NtStatus FindStreams(
+			string fileName, 
+			out IList<FileInformation> streams,
+			IDokanFileInfo info)
 		{
 			return FindFilesWithPattern(fileName, "*", out streams, info);
 		}
@@ -110,7 +119,11 @@ namespace CodingFS
 			return NtStatus.NotImplemented;
 		}
 
-		public virtual NtStatus LockFile(string fileName, long offset, long length, IDokanFileInfo info)
+		public virtual NtStatus LockFile(
+			string fileName, 
+			long offset, 
+			long length,
+			IDokanFileInfo info)
 		{
 			return NtStatus.Success;
 		}
@@ -120,22 +133,35 @@ namespace CodingFS
 			return NtStatus.Success;
 		}
 
-		public virtual NtStatus MoveFile(string oldName, string newName, bool replace, IDokanFileInfo info)
+		public virtual NtStatus MoveFile(
+			string oldName, 
+			string newName, 
+			bool replace, 
+			IDokanFileInfo info)
 		{
 			return NtStatus.Success;
 		}
 
-		public virtual NtStatus SetAllocationSize(string fileName, long length, IDokanFileInfo info)
+		public virtual NtStatus SetAllocationSize(
+			string fileName,
+			long length, 
+			IDokanFileInfo info)
 		{
 			return NtStatus.Success;
 		}
 
-		public virtual NtStatus SetEndOfFile(string fileName, long length, IDokanFileInfo info)
+		public virtual NtStatus SetEndOfFile(
+			string fileName, 
+			long length, 
+			IDokanFileInfo info)
 		{
 			return NtStatus.Success;
 		}
 
-		public virtual NtStatus SetFileAttributes(string fileName, FileAttributes attributes, IDokanFileInfo info)
+		public virtual NtStatus SetFileAttributes(
+			string fileName,
+			FileAttributes attributes,
+			IDokanFileInfo info)
 		{
 			return NtStatus.Success;
 		}
@@ -159,7 +185,11 @@ namespace CodingFS
 			return NtStatus.Success;
 		}
 
-		public virtual NtStatus UnlockFile(string fileName, long offset, long length, IDokanFileInfo info)
+		public virtual NtStatus UnlockFile(
+			string fileName,
+			long offset,
+			long length, 
+			IDokanFileInfo info)
 		{
 			return NtStatus.Success;
 		}

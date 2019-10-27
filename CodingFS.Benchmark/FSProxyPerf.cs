@@ -31,13 +31,13 @@ namespace CodingFS.Benchmark
 		[Benchmark]
 		public NtStatus Static_ReadFile_Success()
 		{
-			return staticProxy.FindFiles("test", out var _, null);
+			return staticProxy.FindFiles("test", out _, null);
 		}
 
 		[Benchmark]
 		public NtStatus Dynamic_ReadFile_Success()
 		{
-			return dynamicProxy.FindFiles("test", out var _, null);
+			return dynamicProxy.FindFiles("test", out _, null);
 		}
 	}
 }
