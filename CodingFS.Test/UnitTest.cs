@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using CodingFS.Filter;
 using Xunit;
 
@@ -7,7 +7,7 @@ namespace CodingFS.Test
 	public class UnitTest
 	{
 		[Theory]
-		[InlineData("²âÊÔ", 903146)]
+		[InlineData("ğŸ˜—ğŸğŸğŸš—", -734144743)]
 		[InlineData("the quick brown fox jumps over a lazy dog", 2013091971)]
 		[InlineData("", 0)]
 		public void JavaStringHashcode(string value, int hash)

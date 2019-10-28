@@ -11,10 +11,12 @@ namespace CodingFS
 	public sealed class CodingFS : AbstractFileSystem
 	{
 		readonly string[] roots;
+		readonly CodingFileScanner scanner;
 
 		public CodingFS(params string[] roots)
 		{
 			this.roots = roots;
+			scanner = new CodingFileScanner(roots);
 		}
 		
 		private string MapPath(string value)
@@ -55,7 +57,10 @@ namespace CodingFS
 			}
 			else
 			{
-				files = new DirectoryInfo(MapPath(fileName)).EnumerateFileSystemInfos().Select(MapInfo).ToList();
+				files = new DirectoryInfo(MapPath(fileName))
+					.EnumerateFileSystemInfos()
+					.Where(file => scanner.GetFileType(file) == FileType.Source)
+					.Select(MapInfo).ToList();
 			}
 			return DokanResult.Success;
 		}

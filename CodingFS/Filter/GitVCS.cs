@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -19,7 +19,7 @@ namespace CodingFS.Filter
 
 	public class GitClassifier : Classifier
 	{
-		public RecognizeType RecognizeDirectory(string path)
+		public RecognizeType Recognize(string path)
 		{
 			return Path.GetDirectoryName(path) == ".git"
 				? RecognizeType.NotCare

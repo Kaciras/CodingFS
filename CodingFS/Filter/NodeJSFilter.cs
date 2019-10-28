@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
@@ -27,7 +27,7 @@ namespace CodingFS.Filter
 			this.root = root;
 		}
 
-		public RecognizeType RecognizeDirectory(string path)
+		public RecognizeType Recognize(string path)
 		{
 			if (Path.GetFileName(path) == "node_modules")
 			{

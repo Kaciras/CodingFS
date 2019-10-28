@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -7,7 +7,7 @@ namespace CodingFS.Filter
 {
 	public class RootClassifier : Classifier
 	{
-		public RecognizeType RecognizeDirectory(string directory)
+		public RecognizeType Recognize(string directory)
 		{
 			var name = Path.GetDirectoryName(directory);
 			if (name == "__pycache__")

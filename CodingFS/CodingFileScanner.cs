@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using CodingFS.Filter;
+using EnumsNET;
 
 namespace CodingFS
 {
@@ -10,8 +11,9 @@ namespace CodingFS
 	{
 		private sealed class Node
 		{
-			public IList<Classifier> classifiers;
-			public IDictionary<int, Node> children;
+			public IList<Classifier> classifiers = Array.Empty<Classifier>();
+
+			public IDictionary<string, Node> children = new Dictionary<string, Node>();
 		}
 
 		private static ClassifierFactory[] factories =
@@ -34,9 +36,48 @@ namespace CodingFS
 			}
 		}
 
-		public void ScanClassifiers(string root)
+		public void ScanClassifiers(string dir)
 		{
-			Directory.EnumerateDirectories(root);
+			var node = new Node();
+			root.children[dir] = node;
+
+			foreach (var project in Directory.EnumerateDirectories(dir))
+			{
+				var pNode = new Node();
+				pNode.classifiers = factories.Select(f => f.TryMatch(dir)).Where(x => x != null).ToList()!;
+				node.children[project] = pNode;
+			}
+		}
+
+		public FileType GetFileType(string file)
+		{
+			var parts = file.Split(Path.DirectorySeparatorChar);
+			var node = root;
+			var recogined = RecognizeType.NotCare;
+
+			foreach (var part in parts)
+			{
+				foreach (var cfd in node.classifiers)
+				{
+					recogined |= cfd.Recognize(file);
+				}
+				var @continue = node.children.ContainsKey(part);
+				if (!@continue)
+				{
+					break;
+				}
+				node = node.children[part];
+			}
+
+			if (recogined.HasFlag(RecognizeType.Dependency))
+			{
+				return FileType.Dependency;
+			}
+			if (recogined.HasFlag(RecognizeType.Ignored))
+			{
+				return FileType.Build;
+			}
+			return FileType.Source;
 		}
 	}
 }

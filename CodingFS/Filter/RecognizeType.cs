@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace CodingFS.Filter
 {
+	[Flags]
 	public enum RecognizeType
 	{
-		NotCare,
-		Uncertain,
-		Ignored,
-		Dependency,
+		NotCare = 0,
+		Uncertain = 1,
+		Ignored = 2,
+		Dependency = 4,
 	}
 }
