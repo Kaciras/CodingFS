@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="0a5b9100-98c1-479a-8536-1c416b5eb4d7" name="Default Changelist" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="tsconfig.json" />
+        <option value="JavaScript File" />
+        <option value="package.json" />
+        <option value="TypeScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="image-compression" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="MIXED" />
+  </component>
+  <component name="JsFlowSettings">
+    <service-enabled>true</service-enabled>
+    <exe-path />
+    <other-services-enabled>true</other-services-enabled>
+    <auto-save>true</auto-save>
+  </component>
+  <component name="ProjectId" id="1ORRPhcpQAULBNa6PJDcnD4SIKG" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="editor.config.ad.shown" value="true" />
+    <property name="javascript.nodejs.core.library.configured.version" value="12.10.0" />
+    <property name="js.linters.configure.manually.selectedtslint" value="true" />
+    <property name="ts.external.directory.path" value="D:\Project\Blog\WebServer\node_modules\typescript\lib" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Project\Blog\WebServer\packages\image\__tests__\resources" />
+      <recent name="D:\Project\Blog\WebServer\packages\server\__tests__\resources" />
+      <recent name="D:\Project\Blog\WebServer\packages\kxc-server\__tests__\resources" />
+      <recent name="D:\Project\Blog\WebServer" />
+      <recent name="D:\Project\Blog\WebServer\lib\template" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Project\Blog\WebServer\packages\image\__tests__\resources" />
+      <recent name="D:\Project\Blog\WebServer\packages\image\__tests__" />
+      <recent name="D:\Project\Blog\WebServer\packages\image\lib" />
+      <recent name="D:\Project\Blog\WebServer\packages\image\lib\filter" />
+      <recent name="D:\Project\Blog\WebServer\packages\server" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Jest.image-middleware-tests.ts">
+    <configuration default="true" type="JavaScriptTestRunnerJest">
+      <config-file value="$PROJECT_DIR$/jest.config.js" />
+      <node-interpreter value="project" />
+      <node-options value="" />
+      <working-dir value="" />
+      <envs />
+      <scope-kind value="ALL" />
+      <method v="2" />
+    </configuration>
+    <configuration name="downloadImage.should resolve Accept-* headers" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <config-file value="$PROJECT_DIR$/jest.config.js" />
+      <node-interpreter value="project" />
+      <node-options value="" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/packages/server" />
+      <envs />
+      <scope-kind value="TEST" />
+      <test-file value="$PROJECT_DIR$/packages/server/__tests__/image-middleware-tests.ts" />
+      <test-names>
+        <test-name value="downloadImage" />
+        <test-name value="should resolve Accept-* headers" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="build-image-cache" type="NodeJSConfigurationType" application-parameters="build-image-cache --profile=dev" path-to-js-file="$PROJECT_DIR$/packages/server/bin/blog-server.js" working-dir="$PROJECT_DIR$/../WebContent">
+      <method v="2" />
+    </configuration>
+    <configuration name="build-prod" type="NodeJSConfigurationType" application-parameters="build --profile=prod" path-to-js-file="$PROJECT_DIR$/packages/devtool/bin/blog-devtool.js" working-dir="$PROJECT_DIR$/../WebContent">
+      <envs>
+        <env name="LINK_INSTALL" value="true" />
+      </envs>
+      <method v="2" />
+    </configuration>
+    <configuration name="dev" type="NodeJSConfigurationType" application-parameters="serve --profile=dev" path-to-js-file="$PROJECT_DIR$/packages/devtool/bin/blog-devtool.js" working-dir="$PROJECT_DIR$/../WebContent">
+      <envs>
+        <env name="LINK_INSTALL" value="true" />
+      </envs>
+      <method v="2" />
+    </configuration>
+    <configuration name="run" type="NodeJSConfigurationType" application-parameters="run --profile=dev" path-to-js-file="$PROJECT_DIR$/packages/server/bin/blog-server.js" working-dir="$PROJECT_DIR$/../WebContent">
+      <envs>
+        <env name="NODE_ENV" value="production" />
+        <env name="LINK_INSTALL" value="true" />
+      </envs>
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Jest.route.should set params" />
+      <item itemvalue="Jest.image-middleware-tests.ts" />
+      <item itemvalue="Jest.downloadImage.should resolve Accept-* headers" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Jest.image-middleware-tests.ts" />
+        <item itemvalue="Jest.downloadImage.should resolve Accept-* headers" />
+        <item itemvalue="Jest.route.should set params" />
+        <item itemvalue="Jest.route.should fail with invalid filename" />
+        <item itemvalue="Jest.uploadImage" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" BundledDictionaries="0" RuntimeDictionaries="0" Folders="1" Folder0="E:\配置文件\JetBrains" CustomDictionaries="1" CustomDictionary0="E:\配置文件\JetBrains\Kaciras.dic" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="project-level" UseSingleDictionary="true" />
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task id="LOCAL-00236" summary="add more tests to image-middleware-tests">
+      <created>1572515063117</created>
+      <option name="number" value="00236" />
+      <option name="presentableId" value="LOCAL-00236" />
+      <option name="project" value="LOCAL" />
+      <updated>1572515063117</updated>
+    </task>
+    <task id="LOCAL-00237" summary="polish">
+      <created>1572518630493</created>
+      <option name="number" value="00237" />
+      <option name="presentableId" value="LOCAL-00237" />
+      <option name="project" value="LOCAL" />
+      <updated>1572518630493</updated>
+    </task>
+    <option name="localTasksCounter" value="238" />
+    <servers />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+    <option name="exactExcludedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/packages/devtool/lib/webpack/HooksInspectPlugin.js" />
+        <option value="$PROJECT_DIR$/../WebContent/node_modules/@kaciras-blog/server/lib/PromiseSource.js" />
+        <option value="$PROJECT_DIR$/node_modules/@kaciras-blog/server/__tests__/functions-tests.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/webpack/HooksInspectPlugin.js.map" />
+        <option value="$PROJECT_DIR$/packages/image/__tests__/coding-filter-tests.js.map" />
+        <option value="$PROJECT_DIR$/../KxUI/node_modules/@vue/cli-plugin-unit-jest/generator/template/tests/unit/example.spec.js" />
+        <option value="D:/Project/Blog/WebServer/packages/kxc-server/index.js.map" />
+        <option value="D:/Project/Blog/WebServer/node_modules/kxc-server/__tests__/axios-http2.js.map" />
+      </list>
+    </option>
+  </component>
+  <component name="UpdateCopyrightCheckinHandler">
+    <option name="UPDATE_COPYRIGHT" value="true" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ORDER">
+      <list>
+        <option value="0" />
+        <option value="2" />
+        <option value="3" />
+        <option value="1" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="1">
+          <value>
+            <State>
+              <option name="SHOW_ONLY_AFFECTED_CHANGES" value="true" />
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="HEAD" />
+                      </list>
+                    </value>
+                  </entry>
+                  <entry key="structure">
+                    <value>
+                      <list>
+                        <option value="dir:D:/Project/Blog/WebServer/packages/devtool/lib/webpack" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list />
+          </value>
+        </entry>
+        <entry key="User">
+          <value>
+            <list />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
+    <MESSAGE value="maintain lockfile" />
+    <MESSAGE value="Add a new require path ahead of running" />
+    <MESSAGE value="simplify vue-ssr-middleware" />
+    <MESSAGE value="remove release.js" />
+    <MESSAGE value="* move CachedFetcher to axios-helper&#10;&#10;* add category filter support" />
+    <MESSAGE value="fix image-middleware-tests" />
+    <MESSAGE value="add more tests to image-middleware-tests" />
+    <MESSAGE value="polish" />
+    <option name="LAST_COMMIT_MESSAGE" value="polish" />
+    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/node_modules/gif2webp-bin/lib/install.js</url>
+          <line>5</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/node_modules/bin-wrapper/index.js</url>
+          <line>117</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="NodeJSConfigurationType">
+        <watch expression="module.size()" language="TypeScript" />
+        <watch expression="context.url.pathname" language="TypeScript" />
+        <watch expression="client.destroyed" language="TypeScript" />
+        <watch expression="require.resolve(&quot;axios&quot;)" language="TypeScript" />
+        <watch expression="require(&quot;module&quot;).Module" language="TypeScript" />
+      </configuration>
+    </watches-manager>
+  </component>
+</project>
