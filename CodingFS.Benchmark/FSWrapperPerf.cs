@@ -6,15 +6,15 @@ using DokanNet;
 // 不过即使这样，单个操作的时间仍在微秒级，影响并不大。
 namespace CodingFS.Benchmark
 {
-	public class FSProxyPerf
+	public class FSWrapperPerf
 	{
 		private sealed class TestFS : AbstractFileSystem
 		{
 			public override NtStatus Mounted(IDokanFileInfo _) => throw new FileNotFoundException();
 		}
 
-		private readonly IDokanOperations staticProxy = new StaticFSProxy(new TestFS());
-		private readonly IDokanOperations dynamicProxy = DynamicFSProxy.Create(new TestFS());
+		private readonly IDokanOperations staticProxy = new StaticFSWrapper(new TestFS());
+		private readonly IDokanOperations dynamicProxy = DynamicFSWrapper.Create(new TestFS());
 
 		[Benchmark]
 		public NtStatus Static_ReadFile_Throws()

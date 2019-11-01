@@ -7,7 +7,7 @@ namespace CodingFS.Benchmark
 	{
 		static void Main(string[] args)
 		{
-			BenchmarkRunner.Run<FSProxyPerf>();
+			BenchmarkRunner.Run<FSWrapperPerf>();
 		}
 	}
 }

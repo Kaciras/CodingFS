@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Security.AccessControl;
@@ -10,11 +10,11 @@ namespace CodingFS
 	/// <summary>
 	/// 这个类的作用跟DynamicFSProxy一样，区别是静态实现了全部方法的异常处理。
 	/// </summary>
-	public sealed class StaticFSProxy : IDokanOperations
+	public sealed class StaticFSWrapper : IDokanOperations
 	{
 		public IDokanOperations Native { get; }
 
-		public StaticFSProxy(IDokanOperations native)
+		public StaticFSWrapper(IDokanOperations native)
 		{
 			Native = native;
 		}

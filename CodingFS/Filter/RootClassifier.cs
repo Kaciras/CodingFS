@@ -10,9 +10,11 @@ namespace CodingFS.Filter
 		public RecognizeType Recognize(string directory)
 		{
 			var name = Path.GetDirectoryName(directory);
-			if (name == "__pycache__")
+			switch (name)
 			{
-				return RecognizeType.Ignored;
+				case "__pycache__":
+				case ".gradle":
+					return RecognizeType.Ignored;
 			}
 			return RecognizeType.NotCare;
 		}

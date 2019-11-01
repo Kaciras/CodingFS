@@ -8,7 +8,7 @@ namespace CodingFS.Filter
 	{
 		private readonly Regex ProjectRE = new Regex(@"Project\((.+)", RegexOptions.Multiline);
 
-		public Classifier? TryMatch(string path)
+		public Classifier? Match(string path)
 		{
 			var ignored = new PathTrie<RecognizeType>(RecognizeType.NotCare);
 			var sln = Directory.EnumerateFiles(path).First(p => p.EndsWith(".sln"));

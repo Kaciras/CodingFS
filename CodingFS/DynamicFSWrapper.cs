@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -15,7 +15,7 @@ namespace CodingFS
 	/// 
 	/// 因为IDonakOperations的方法太多，所以使用动态代理。
 	/// </summary>
-	public class DynamicFSProxy : DispatchProxy
+	public class DynamicFSWrapper : DispatchProxy
 	{
 		// 正常使用Create创建是不会为null的
 #pragma warning disable CS8618
@@ -31,7 +31,7 @@ namespace CodingFS
 			catch (TargetInvocationException e)
 			when (method.ReturnType == typeof(NtStatus))
 			{
-				return StaticFSProxy.HandleException(e.InnerException!);
+				return StaticFSWrapper.HandleException(e.InnerException!);
 			}
 		}
 
@@ -42,8 +42,8 @@ namespace CodingFS
 		/// <returns>包装后的代理对象</returns>
 		public static IDokanOperations Create(IDokanOperations fs)
 		{
-			var instance = Create<IDokanOperations, DynamicFSProxy>();
-			((DynamicFSProxy)instance).Native = fs;
+			var instance = Create<IDokanOperations, DynamicFSWrapper>();
+			((DynamicFSWrapper)instance).Native = fs;
 			return instance; // 创建的代理实例同时属于 Create 的两个泛型参数类型
 		}
 	}

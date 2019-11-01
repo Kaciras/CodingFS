@@ -9,7 +9,7 @@ namespace CodingFS.Filter
 {
 	public class JetBrainsIDE : ClassifierFactory
 	{
-		public Classifier? TryMatch(string path)
+		public Classifier? Match(string path)
 		{
 			if (Directory.Exists(Path.Combine(path, ".idea")))
 			{

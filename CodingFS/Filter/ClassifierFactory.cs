@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +8,6 @@ namespace CodingFS.Filter
 {
 	public interface ClassifierFactory
 	{
-		Classifier? TryMatch(string path);
+		Classifier? Match(string path);
 	}
 }

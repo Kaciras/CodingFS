@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using CodingFS.Filter;
-using EnumsNET;
 
 namespace CodingFS
 {
@@ -44,7 +43,7 @@ namespace CodingFS
 			foreach (var project in Directory.EnumerateDirectories(dir))
 			{
 				var pNode = new Node();
-				pNode.classifiers = factories.Select(f => f.TryMatch(dir)).Where(x => x != null).ToList()!;
+				pNode.classifiers = factories.Select(f => f.Match(dir)).Where(x => x != null).ToList()!;
 				node.children[project] = pNode;
 			}
 		}

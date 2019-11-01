@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+using System.IO;
+using System.Runtime.CompilerServices;
 using CommandLine;
 using DokanNet;
 
@@ -26,13 +27,19 @@ namespace CodingFS
 	{
 		static void Main(string[] args)
 		{
-			var fs = new StaticFSProxy(new CodingFS(@"D:\Coding", @"D:\Project"));
+			var fs = new StaticFSWrapper(new CodingFS(@"D:\Coding", @"D:\Project"));
 
 #if !DEBUG
 			fs.Mount("x:\\");
 #else
 			fs.Mount("x:\\", DokanOptions.DebugMode | DokanOptions.StderrOutput);
 #endif
+		}
+
+		static void RunInspect()
+		{
+			var dirs = Directory.EnumerateDirectories(@"D:\Coding");
+
 		}
 	}
 }

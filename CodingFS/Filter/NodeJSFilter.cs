@@ -8,7 +8,7 @@ namespace CodingFS.Filter
 {
 	public class NodeJSFilter : ClassifierFactory
 	{
-		public Classifier? TryMatch(string path)
+		public Classifier? Match(string path)
 		{
 			if(File.Exists(Path.Combine(path, "package.json")))
 			{

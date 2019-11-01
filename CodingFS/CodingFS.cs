@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Security.AccessControl;
@@ -59,7 +59,7 @@ namespace CodingFS
 			{
 				files = new DirectoryInfo(MapPath(fileName))
 					.EnumerateFileSystemInfos()
-					.Where(file => scanner.GetFileType(file) == FileType.Source)
+					.Where(file => scanner.GetFileType(file.FullName) == FileType.Source)
 					.Select(MapInfo).ToList();
 			}
 			return DokanResult.Success;
