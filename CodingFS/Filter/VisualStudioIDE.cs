@@ -11,7 +11,12 @@ namespace CodingFS.Filter
 		public Classifier? Match(string path)
 		{
 			var ignored = new PathTrie<RecognizeType>(RecognizeType.NotCare);
-			var sln = Directory.EnumerateFiles(path).First(p => p.EndsWith(".sln"));
+			var sln = Directory.EnumerateFiles(path).FirstOrDefault(p => p.EndsWith(".sln"));
+
+			if (sln == null)
+			{
+				return null;
+			}
 
 			var match = ProjectRE.Match(File.ReadAllText(sln));
 			while (match.Success)
@@ -31,6 +36,7 @@ namespace CodingFS.Filter
 					ignored.Add(Path.Join(folder, "Debug"), RecognizeType.Ignored);
 					ignored.Add(Path.Join(folder, "Release"), RecognizeType.Ignored);
 				}
+				match = match.NextMatch();
 			}
 			return new VisualStudioClassifier(path, ignored);
 		}
@@ -50,9 +56,9 @@ namespace CodingFS.Filter
 		public RecognizeType Recognize(string file)
 		{
 			var rpath = Path.GetRelativePath(folder, file);
-			if(Directory.Exists(file))
+			if (Directory.Exists(file))
 			{
-				if(rpath == "packages" || rpath == ".vs")
+				if (rpath == "packages" || rpath == ".vs")
 				{
 					return RecognizeType.Dependency;
 				}

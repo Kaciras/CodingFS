@@ -89,9 +89,9 @@ namespace CodingFS.Filter
 				return;
 			}
 			var doc = new XmlDocument();
-			doc.Load(Path.Join(root, xmlFile));
+			doc.Load(xmlFile);
 
-			var modules = doc.SelectNodes("component[@name='ProjectModuleManager']/modules//module");
+			var modules = doc.SelectNodes("//component[@name='ProjectModuleManager']/modules//module");
 			for (int i = 0; i < modules.Count; i++)
 			{
 				var imlFile = modules[i].Attributes["filepath"].Value[14..];
@@ -163,8 +163,15 @@ namespace CodingFS.Filter
 		/// <param name="module"></param>
 		private void ParseModuleManager(string iml, string? module)
 		{
+			iml = Path.Join(root, iml);
+
+			if(!File.Exists(iml))
+			{
+				return;
+			}
+
 			var doc = new XmlDocument();
-			doc.Load(Path.Join(root, iml));
+			doc.Load(iml);
 
 			var excludes = doc.SelectNodes("//component[@name='NewModuleRootManager']/content//excludeFolder");
 			for (int i = 0; i < excludes.Count; i++)

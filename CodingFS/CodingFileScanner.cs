@@ -15,7 +15,7 @@ namespace CodingFS
 			public IDictionary<string, Node> children = new Dictionary<string, Node>();
 		}
 
-		private static ClassifierFactory[] factories =
+		private readonly ClassifierFactory[] factories =
 		{
 			new JetBrainsIDE(),
 			new NodeJSFilter(),

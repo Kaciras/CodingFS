@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CodingFS": {
+      "commandName": "Project",
+      "commandLineArgs": "inspect"
+    }
+  }
+}

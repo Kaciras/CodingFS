@@ -1,5 +1,8 @@
+using System;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using CodingFS.Filter;
 using CommandLine;
 using DokanNet;
 
@@ -20,12 +23,67 @@ namespace CodingFS
 	[Verb("inspect", HelpText = "在控制台打印出各种分类的文件")]
 	internal sealed class InspectOptions
 	{
-		
+
 	}
 
 	static class Program
 	{
+		static ClassifierFactory[] factories =
+		{
+			new JetBrainsIDE(),
+			new NodeJSFilter(),
+			new GitVCS(),
+			new VisualStudioIDE(),
+		};
+
 		static void Main(string[] args)
+		{
+			Parser.Default.ParseArguments<MountOptions, InspectOptions>(args)
+				.WithParsed<MountOptions>(MountVFS)
+				.WithParsed<InspectOptions>(Inspect);
+		}
+
+		private static void Inspect(InspectOptions options)
+		{
+			//var dir = @"D:\Coding\Python\OpsTool";
+
+			//var matches = factories
+			//		.Select(f => f.Match(dir))
+			//		.Where(x => x != null)!
+			//		.ToList<Classifier>();
+
+			//var ins = new ProjectInspector(dir, matches);
+			//ins.PrintFiles();
+			Inspect(@"D:\Coding");
+			Inspect(@"D:\Project");
+		}
+
+		private static void Inspect(string root)
+		{
+			var dirs = Directory.EnumerateDirectories(root);
+			foreach (var dir in dirs)
+			{
+				var matches = factories
+					.Select(f => f.Match(dir))
+					.Where(x => x != null)!
+					.ToList<Classifier>();
+
+				if (matches.Count == 0)
+				{
+					Inspect(dir);
+				}
+				else
+				{
+					Console.WriteLine($"项目{Path.GetFileName(dir)}:");
+					matches.Add(new RootClassifier());
+					var ins = new ProjectInspector(dir, matches);
+					ins.PrintFiles();
+					Console.WriteLine();
+				}
+			}
+		}
+
+		private static void MountVFS(MountOptions options)
 		{
 			var fs = new StaticFSWrapper(new CodingFS(@"D:\Coding", @"D:\Project"));
 
@@ -34,12 +92,6 @@ namespace CodingFS
 #else
 			fs.Mount("x:\\", DokanOptions.DebugMode | DokanOptions.StderrOutput);
 #endif
-		}
-
-		static void RunInspect()
-		{
-			var dirs = Directory.EnumerateDirectories(@"D:\Coding");
-
 		}
 	}
 }

@@ -21,9 +21,8 @@ namespace CodingFS.Filter
 	{
 		public RecognizeType Recognize(string path)
 		{
-			return Path.GetDirectoryName(path) == ".git"
-				? RecognizeType.NotCare
-				: RecognizeType.Dependency;
+			return Path.GetFileName(path) == ".git"
+				? RecognizeType.Dependency : RecognizeType.NotCare;
 		}
 	}
 }
