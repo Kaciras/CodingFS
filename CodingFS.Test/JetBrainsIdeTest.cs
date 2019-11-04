@@ -21,7 +21,7 @@ namespace CodingFS.Test
 		}
 
 		[Fact]
-		public void ResolveWorkspace()
+		public void ParseWorkspace()
 		{
 			var doc = new XmlDocument();
 			doc.LoadXml(Resources.workspace);
@@ -33,6 +33,12 @@ namespace CodingFS.Test
 			Assert.Equal("packages/devtool/lib/webpack/HooksInspectPlugin.js.map", ignores[1]);
 			Assert.Equal("packages/image/__tests__/coding-filter-tests.js.map", ignores[2]);
 			Assert.Equal("packages/kxc-server/index.js.map", ignores[3]);
+		}
+
+		[Fact]
+		public void ParseModules()
+		{
+
 		}
 	}
 }

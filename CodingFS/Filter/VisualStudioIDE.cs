@@ -6,13 +6,16 @@ namespace CodingFS.Filter
 {
 	public class VisualStudioIDE : ClassifierFactory
 	{
+		// VisualStudio 的 sln 文件里记录了项目的位置，示例：
+		// Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodingFS", "CodingFS\CodingFS.csproj", "{207E8E66-808C-4026-91D8-62F479792563}"
+		// 可以根据前面的“Project(”来识别这一行。
 		private readonly Regex ProjectRE = new Regex(@"Project\((.+)", RegexOptions.Multiline);
 
 		public Classifier? Match(string path)
 		{
 			var ignored = new PathTrie<RecognizeType>(RecognizeType.NotCare);
-			var sln = Directory.EnumerateFiles(path).FirstOrDefault(p => p.EndsWith(".sln"));
 
+			var sln = Directory.EnumerateFiles(path).FirstOrDefault(p => p.EndsWith(".sln"));
 			if (sln == null)
 			{
 				return null;
@@ -29,8 +32,9 @@ namespace CodingFS.Filter
 					ignored.Add(Path.Join(folder, "obj"), RecognizeType.Ignored);
 					ignored.Add(Path.Join(folder, "bin"), RecognizeType.Ignored);
 				}
-				if (project.EndsWith(".vcxproj"))
+				else if (project.EndsWith(".vcxproj"))
 				{
+					// C艹的项目会直接生成在解决方案目录里，Tire树会忽略重复的添加
 					ignored.Add("Debug", RecognizeType.Ignored);
 					ignored.Add("Release", RecognizeType.Ignored);
 					ignored.Add(Path.Join(folder, "Debug"), RecognizeType.Ignored);
@@ -38,14 +42,15 @@ namespace CodingFS.Filter
 				}
 				match = match.NextMatch();
 			}
+
 			return new VisualStudioClassifier(path, ignored);
 		}
 	}
 
 	public class VisualStudioClassifier : Classifier
 	{
-		private string folder;
-		private PathTrie<RecognizeType> ignored;
+		private readonly string folder;
+		private readonly PathTrie<RecognizeType> ignored;
 
 		public VisualStudioClassifier(string folder, PathTrie<RecognizeType> ignored)
 		{

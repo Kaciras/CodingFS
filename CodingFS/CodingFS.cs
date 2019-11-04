@@ -1,37 +1,39 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Security.AccessControl;
 using System.Linq;
 using DokanNet;
-using System.Diagnostics.CodeAnalysis;
 
 namespace CodingFS
 {
 	public sealed class CodingFS : AbstractFileSystem
 	{
-		readonly string[] roots;
-		readonly CodingFileScanner scanner;
+		private readonly FileType type;
+		private readonly Dictionary<string, CodingFileScanner> scanners;
 
-		public CodingFS(params string[] roots)
+		public CodingFS(FileType type, params string[] roots)
 		{
-			this.roots = roots;
-			scanner = new CodingFileScanner(roots);
-		}
-		
-		private string MapPath(string value)
-		{
-			var fileRoot = value.Split(Path.DirectorySeparatorChar)[1];
+			this.type = type;
+			scanners = new Dictionary<string, CodingFileScanner>();
 
 			foreach (var root in roots)
 			{
-				if (fileRoot == Path.GetFileName(root))
-				{
-					return Path.Join(root, value.Substring(fileRoot.Length + 1));
-				}
+				scanners[Path.GetFileName(root)] = new CodingFileScanner(root);
 			}
+		}
 
-			// 【问题】抛出异常后 out 参数是怎样的？
+		private string MapPath(string value)
+		{
+			var split = value.Split(Path.DirectorySeparatorChar, 3);
+
+			if (scanners.TryGetValue(split[1], out var scanner))
+			{
+				if (split.Length < 3)
+				{
+					return scanner.FullName;
+				}
+				return Path.Join(scanner.FullName, split[2]);
+			}
 			throw new FileNotFoundException("文件不在映射区", value);
 		}
 
@@ -53,10 +55,15 @@ namespace CodingFS
 		{
 			if (fileName == @"\")
 			{
-				files = roots.Select(path => MapInfo(new DirectoryInfo(path))).ToList();
+				files = scanners.Values
+					.Select(sc => MapInfo(new DirectoryInfo(sc.FullName)))
+					.ToList();
 			}
 			else
 			{
+				var root = fileName.Split(Path.DirectorySeparatorChar, 3)[1];
+				var scanner = scanners[root];
+
 				files = new DirectoryInfo(MapPath(fileName))
 					.EnumerateFileSystemInfos()
 					.Where(file => scanner.GetFileType(file.FullName) == FileType.Source)
@@ -66,8 +73,8 @@ namespace CodingFS
 		}
 
 		public override NtStatus GetFileInformation(
-			string fileName, 
-			out FileInformation fileInfo, 
+			string fileName,
+			out FileInformation fileInfo,
 			IDokanFileInfo info)
 		{
 			if (fileName == @"\")

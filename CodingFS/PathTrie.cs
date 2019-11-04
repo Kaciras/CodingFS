@@ -1,14 +1,39 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace CodingFS
 {
-	sealed class PathTrieNode<T>
+	// TODO: 改成更省内存的数据结构
+	public sealed class PathTrieNode<T>
 	{
 		public T Value { get; set; }
-		public IDictionary<string, PathTrieNode<T>>? Children { get; set; }
 
-		public PathTrieNode(T value) => Value = value;
+		private IDictionary<string, PathTrieNode<T>>? children;
+
+		public PathTrieNode(T value)
+		{
+			Value = value;
+		}
+
+		public bool TryGetChild(string part, [MaybeNullWhen(false)] out PathTrieNode<T>? child)
+		{
+			if (children == null)
+			{
+				child = null;
+				return false;
+			}
+			return children.TryGetValue(part, out child);
+		}
+
+		public void PutChild(string part, PathTrieNode<T> child)
+		{
+			if (children == null)
+			{
+				children = new Dictionary<string, PathTrieNode<T>>();
+			}
+			children[part] = child;
+		}
 	}
 
 	public sealed class PathTrie<T>
@@ -29,19 +54,14 @@ namespace CodingFS
 
 			foreach (var part in parts)
 			{
-				if (node.Children == null)
+				if (node.TryGetChild(part, out var child))
 				{
-					node.Children = new Dictionary<string, PathTrieNode<T>>();
-				}
-
-				if (node.Children.TryGetValue(part, out var child))
-				{
-					node = child;
+					node = child!;
 				}
 				else
 				{
 					var newNode = new PathTrieNode<T>(defaultValue);
-					node.Children.Add(part, newNode);
+					node.PutChild(part, newNode);
 					node = newNode;
 				}
 			}
@@ -56,15 +76,9 @@ namespace CodingFS
 
 			foreach (var part in parts)
 			{
-				var children = node.Children;
-
-				if (children == null)
+				if (node.TryGetChild(part, out var child))
 				{
-					return alternative;
-				}
-				if (children.TryGetValue(part, out var child))
-				{
-					node = child;
+					node = child!;
 				}
 				else
 				{

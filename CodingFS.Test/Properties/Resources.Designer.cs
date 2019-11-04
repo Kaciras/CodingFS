@@ -63,6 +63,23 @@ namespace CodingFS.Test.Properties {
         /// <summary>
         ///   查找类似 &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
         ///&lt;project version=&quot;4&quot;&gt;
+        ///  &lt;component name=&quot;ProjectModuleManager&quot;&gt;
+        ///    &lt;modules&gt;
+        ///      &lt;module fileurl=&quot;file://$PROJECT_DIR$/MyAudioPlayer.iml&quot; filepath=&quot;$PROJECT_DIR$/MyAudioPlayer.iml&quot; /&gt;
+        ///      &lt;module fileurl=&quot;file://$PROJECT_DIR$/app/app.iml&quot; filepath=&quot;$PROJECT_DIR$/app/app.iml&quot; /&gt;
+        ///    &lt;/modules&gt;
+        ///  &lt;/component&gt;
+        ///&lt;/project&gt; 的本地化字符串。
+        /// </summary>
+        internal static string modules {
+            get {
+                return ResourceManager.GetString("modules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+        ///&lt;project version=&quot;4&quot;&gt;
         ///  &lt;component name=&quot;ChangeListManager&quot;&gt;
         ///    &lt;list default=&quot;true&quot; id=&quot;0a5b9100-98c1-479a-8536-1c416b5eb4d7&quot; name=&quot;Default Changelist&quot; comment=&quot;&quot; /&gt;
         ///    &lt;option name=&quot;EXCLUDED_CONVERTED_TO_IGNORED&quot; value=&quot;true&quot; /&gt;

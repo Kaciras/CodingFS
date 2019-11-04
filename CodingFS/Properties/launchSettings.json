@@ -3,6 +3,10 @@
     "CodingFS": {
       "commandName": "Project",
       "commandLineArgs": "inspect"
+    },
+    "Mount": {
+      "commandName": "Project",
+      "commandLineArgs": "mount"
     }
   }
 }

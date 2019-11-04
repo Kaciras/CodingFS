@@ -8,14 +8,7 @@ namespace CodingFS
 {
 	public sealed class CodingFileScanner
 	{
-		private sealed class Node
-		{
-			public IList<Classifier> classifiers = Array.Empty<Classifier>();
-
-			public IDictionary<string, Node> children = new Dictionary<string, Node>();
-		}
-
-		private readonly ClassifierFactory[] factories =
+		private static readonly ClassifierFactory[] factories =
 		{
 			new JetBrainsIDE(),
 			new NodeJSFilter(),
@@ -23,60 +16,76 @@ namespace CodingFS
 			new VisualStudioIDE(),
 		};
 
-		private readonly Node root = new Node();
+		// Directory 和 Path 都跟IO库里的镜头类重名了
+		public string FullName { get; }
 
-		public CodingFileScanner(IList<string> directories)
+		private readonly PathTrieNode<Classifier[]> root;
+
+		public CodingFileScanner(string directory)
 		{
-			root.classifiers = new Classifier[] { new RootClassifier() };
-
-			foreach (var item in directories)
-			{
-				ScanClassifiers(item);
-			}
+			FullName = directory;
+			root = new PathTrieNode<Classifier[]>(Array.Empty<Classifier>());
 		}
 
-		public void ScanClassifiers(string dir)
+		public Classifier[] GetClassifiers(string file)
 		{
-			var node = new Node();
-			root.children[dir] = node;
+			// 未检查是否属于directory下
+			var relative = Path.GetRelativePath(FullName, file);
+			var parts = relative.Split(Path.DirectorySeparatorChar);
 
-			foreach (var project in Directory.EnumerateDirectories(dir))
-			{
-				var pNode = new Node();
-				pNode.classifiers = factories.Select(f => f.Match(dir)).Where(x => x != null).ToList()!;
-				node.children[project] = pNode;
-			}
-		}
-
-		public FileType GetFileType(string file)
-		{
-			var parts = file.Split(Path.DirectorySeparatorChar);
 			var node = root;
-			var recogined = RecognizeType.NotCare;
 
-			foreach (var part in parts)
+			for (int i = 0; i < parts.Length; i++)
 			{
-				foreach (var cfd in node.classifiers)
+				var part = parts[i];
+
+				if (!node.TryGetChild(part, out var child))
 				{
-					recogined |= cfd.Recognize(file);
+					var tempDir = FullName + Path.DirectorySeparatorChar + 
+						string.Join(Path.DirectorySeparatorChar, parts.Take(i));
+
+					var matches = factories
+						.Select(f => f.Match(tempDir))
+						.Where(x => x != null)!
+						.ToArray<Classifier>();
+
+					child = new PathTrieNode<Classifier[]>(matches);
+					node.PutChild(part, child);
 				}
-				var @continue = node.children.ContainsKey(part);
-				if (!@continue)
+
+				if (child!.Value.Length > 0)
 				{
-					break;
+					return child.Value;
 				}
-				node = node.children[part];
+
+				node = child;
 			}
+
+			return Array.Empty<Classifier>();
+		}
+
+		public FileType GetFileType(string path)
+		{
+			return GetFileType(GetClassifiers(path), path);
+		}
+
+		public static FileType GetFileType(Classifier[] classifiers, string path)
+		{
+			var recogined = classifiers.Aggregate(RecognizeType.NotCare,
+					(value, classifier) => value | classifier.Recognize(path));
 
 			if (recogined.HasFlag(RecognizeType.Dependency))
 			{
 				return FileType.Dependency;
 			}
-			if (recogined.HasFlag(RecognizeType.Ignored))
+			else if (recogined.HasFlag(RecognizeType.Ignored))
 			{
 				return FileType.Build;
 			}
-			return FileType.Source;
+			else
+			{
+				return FileType.Source;
+			}
 		}
 	}
 }

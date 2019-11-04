@@ -26,9 +26,9 @@ namespace CodingFS
 
 	}
 
-	static class Program
+	internal static class Program
 	{
-		static ClassifierFactory[] factories =
+		private static readonly ClassifierFactory[] factories =
 		{
 			new JetBrainsIDE(),
 			new NodeJSFilter(),
@@ -85,7 +85,8 @@ namespace CodingFS
 
 		private static void MountVFS(MountOptions options)
 		{
-			var fs = new StaticFSWrapper(new CodingFS(@"D:\Coding", @"D:\Project"));
+			var fs = new CodingFS(options.Type, @"D:\Coding", @"D:\Project");
+			var wrapper = new StaticFSWrapper(fs);
 
 #if !DEBUG
 			fs.Mount("x:\\");
