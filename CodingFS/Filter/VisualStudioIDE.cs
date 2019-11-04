@@ -68,7 +68,7 @@ namespace CodingFS.Filter
 					return RecognizeType.Dependency;
 				}
 			}
-			return ignored.Get(rpath, RecognizeType.Uncertain);
+			return ignored.Get(rpath, RecognizeType.NotCare);
 		}
 	}
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -50,7 +51,7 @@ namespace CodingFS
 		public void Add(string path, T value)
 		{
 			var node = root;
-			var parts = path.Split(Path.DirectorySeparatorChar);
+			var parts = path.Split('\\', '/');
 
 			foreach (var part in parts)
 			{
