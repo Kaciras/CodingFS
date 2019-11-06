@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Security.AccessControl;
@@ -103,9 +103,11 @@ namespace CodingFS
 			out long totalNumberOfFreeBytes,
 			IDokanFileInfo info)
 		{
-			freeBytesAvailable = 1024 * 1024 * 1024 * 1024L;
-			totalNumberOfBytes = 1024 * 1024 * 1024 * 1024L;
-			totalNumberOfFreeBytes = 0;
+			const long FREE = 10 * 1024 * 1024 * 1024L;
+
+			freeBytesAvailable = FREE;
+			totalNumberOfBytes = FREE;
+			totalNumberOfFreeBytes = FREE;
 			return NtStatus.Success;
 		}
 

@@ -44,7 +44,7 @@ namespace CodingFS
 		{
 			var instance = Create<IDokanOperations, DynamicFSWrapper>();
 			((DynamicFSWrapper)instance).Native = fs;
-			return instance; // 创建的代理实例同时属于 Create 的两个泛型参数类型
+			return instance; // 创建的代理实例同时属于Create的两个泛型参数的类型
 		}
 	}
 }

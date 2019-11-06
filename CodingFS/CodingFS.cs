@@ -62,13 +62,18 @@ namespace CodingFS
 			else
 			{
 				var root = fileName.Split(Path.DirectorySeparatorChar, 3)[1];
-				var scanner = scanners[root];
+
+				if (!scanners.TryGetValue(root, out var scanner))
+				{
+					throw new FileNotFoundException("文件不在映射区", root);
+				}
 
 				files = new DirectoryInfo(MapPath(fileName))
-					.EnumerateFileSystemInfos()
-					.Where(file => scanner.GetFileType(file.FullName) == FileType.Source)
-					.Select(MapInfo).ToList();
+						.EnumerateFileSystemInfos()
+						.Where(file => scanner.GetFileType(file.FullName) == type)
+						.Select(MapInfo).ToList();
 			}
+
 			return DokanResult.Success;
 		}
 
@@ -109,10 +114,11 @@ namespace CodingFS
 		{
 			if (info.Context == null)
 			{
-				var rawPath = MapPath(fileName);
-
-				using var stream = new FileStream(rawPath, FileMode.Open);
-				stream.Position = offset;
+				// FileAccess 默认是 ReadWrite，会造成额外的锁定
+				using var stream = new FileStream(MapPath(fileName), FileMode.Open, System.IO.FileAccess.Read)
+				{
+					Position = offset,
+				};
 				bytesRead = stream.Read(buffer, 0, buffer.Length);
 			}
 			else
@@ -136,7 +142,7 @@ namespace CodingFS
 			out uint maximumComponentLength,
 			IDokanFileInfo info)
 		{
-			volumeLabel = "CodingFS";
+			volumeLabel = $"CodingFS[{type}]";
 			features = FileSystemFeatures.None;
 			fileSystemName = "CodingFS";
 			maximumComponentLength = 256;
