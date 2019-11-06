@@ -31,10 +31,13 @@ namespace CodingFS.Filter
 				{
 					ignored.Add(Path.Join(folder, "obj"), RecognizeType.Ignored);
 					ignored.Add(Path.Join(folder, "bin"), RecognizeType.Ignored);
+
+					// 应该不会有正常文件叫TestResults吧
+					ignored.Add("TestResults", RecognizeType.Ignored);
 				}
 				else if (project.EndsWith(".vcxproj"))
 				{
-					// C艹的项目会直接生成在解决方案目录里，Tire树会忽略重复的添加
+					// C艹的项目会直接生成在解决方案目录里，Trie树会忽略重复的添加
 					ignored.Add("Debug", RecognizeType.Ignored);
 					ignored.Add("Release", RecognizeType.Ignored);
 					ignored.Add(Path.Join(folder, "Debug"), RecognizeType.Ignored);
