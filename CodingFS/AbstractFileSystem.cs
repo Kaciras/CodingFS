@@ -9,7 +9,7 @@ namespace CodingFS
 {
 	/// <summary>
 	/// IDokanOperations 的方法太多，而一般情况下并不需要用到全部，故该类提供它们的默认实现。
-	/// 该类实现的是一个空磁盘，里面没有任何文件，所有修改操作都将成功但不产生任何效果。
+	/// 该类实现的是一个只读的磁盘，里面没有任何文件，所有修改操作都将成功但不产生任何效果。
 	/// </summary>
 	public abstract class AbstractFileSystem : IDokanOperations
 	{
@@ -97,6 +97,7 @@ namespace CodingFS
 			return NtStatus.Success;
 		}
 
+		// 空闲的空间要大一点，不然系统会提示清理磁盘。
 		public virtual NtStatus GetDiskFreeSpace(
 			out long freeBytesAvailable,
 			out long totalNumberOfBytes,

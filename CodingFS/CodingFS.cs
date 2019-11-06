@@ -82,6 +82,7 @@ namespace CodingFS
 			out FileInformation fileInfo,
 			IDokanFileInfo info)
 		{
+			// 【坑】这个根文件夹必须要有，否则会出现许多奇怪的错误
 			if (fileName == @"\")
 			{
 				fileInfo = new FileInformation
@@ -142,7 +143,7 @@ namespace CodingFS
 			out uint maximumComponentLength,
 			IDokanFileInfo info)
 		{
-			volumeLabel = $"CodingFS[{type}]";
+			volumeLabel = $"CodingFS({type})";
 			features = FileSystemFeatures.None;
 			fileSystemName = "CodingFS";
 			maximumComponentLength = 256;

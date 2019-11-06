@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using CodingFS.Filter;
 using CommandLine;
 using DokanNet;
+using DokanNet.Logging;
 
 [assembly: InternalsVisibleTo("CodingFS.Test")]
 [assembly: InternalsVisibleTo("CodingFS.Benchmark")]
@@ -88,7 +89,7 @@ namespace CodingFS
 			var wrapper = new StaticFSWrapper(fs);
 
 #if !DEBUG
-			fs.Mount("x:\\");
+			fs.Mount("x:\\", DokanOptions.OptimizeSingleNameSearch, new NullLogger());
 #else
 			fs.Mount("x:\\", DokanOptions.DebugMode | DokanOptions.StderrOutput);
 #endif
