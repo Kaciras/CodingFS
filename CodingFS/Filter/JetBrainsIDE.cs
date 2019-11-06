@@ -23,11 +23,12 @@ namespace CodingFS.Filter
 	{
 		readonly string root;
 
-		readonly PathTrie<RecognizeType> ignored = new PathTrie<RecognizeType>(RecognizeType.Uncertain);
+		readonly RecognizedFileMap ignored;
 
 		public JetBrainsClassifier(string root)
 		{
 			this.root = root;
+			ignored = new RecognizedFileMap(root);
 			ResloveWorkspace();
 			ResloveModules();
 			ResloveExternalBuildSystem();
@@ -226,7 +227,7 @@ namespace CodingFS.Filter
 			{
 				return RecognizeType.Dependency;
 			}
-			return ignored.Get(relative, RecognizeType.NotCare);
+			return ignored.Recognize(relative);
 		}
 
 		internal static int JavaStringHashcode(string str)

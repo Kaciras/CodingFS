@@ -13,7 +13,7 @@ namespace CodingFS.Filter
 
 		public Classifier? Match(string path)
 		{
-			var ignored = new PathTrie<RecognizeType>(RecognizeType.NotCare);
+			var ignored = new RecognizedFileMap(path);
 
 			var sln = Directory.EnumerateFiles(path).FirstOrDefault(p => p.EndsWith(".sln"));
 			if (sln == null)
@@ -50,9 +50,9 @@ namespace CodingFS.Filter
 	public class VisualStudioClassifier : Classifier
 	{
 		private readonly string folder;
-		private readonly PathTrie<RecognizeType> ignored;
+		private readonly RecognizedFileMap ignored;
 
-		public VisualStudioClassifier(string folder, PathTrie<RecognizeType> ignored)
+		public VisualStudioClassifier(string folder, RecognizedFileMap ignored)
 		{
 			this.folder = folder;
 			this.ignored = ignored;
@@ -68,7 +68,7 @@ namespace CodingFS.Filter
 					return RecognizeType.Dependency;
 				}
 			}
-			return ignored.Get(rpath, RecognizeType.NotCare);
+			return ignored.Recognize(rpath);
 		}
 	}
 }

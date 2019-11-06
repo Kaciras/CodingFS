@@ -12,9 +12,10 @@ namespace CodingFS
 		{
 			new JetBrainsIDE(),
 			new NodeJSFilter(),
-			new GitVCS(),
 			new VisualStudioIDE(),
 		};
+
+		private static readonly RootClassifier rootClassifier = new RootClassifier();
 
 		// Directory 和 Path 都跟IO库里的镜头类重名了
 		public string FullName { get; }
@@ -71,7 +72,7 @@ namespace CodingFS
 
 		public static FileType GetFileType(Classifier[] classifiers, string path)
 		{
-			var recogined = classifiers.Aggregate(RecognizeType.NotCare,
+			var recogined = classifiers.Aggregate(rootClassifier.Recognize(path),
 					(value, classifier) => value | classifier.Recognize(path));
 
 			if (recogined.HasFlag(RecognizeType.Dependency))

@@ -32,7 +32,6 @@ namespace CodingFS
 		{
 			new JetBrainsIDE(),
 			new NodeJSFilter(),
-			new GitVCS(),
 			new VisualStudioIDE(),
 		};
 
