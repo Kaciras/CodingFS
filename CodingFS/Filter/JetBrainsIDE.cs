@@ -109,8 +109,9 @@ namespace CodingFS.Filter
 			for (int i = 0; i < modules.Count; i++)
 			{
 				var imlFile = modules[i].Attributes["filepath"].Value[14..];
-				var parent = Path.GetDirectoryName(imlFile);
+				imlFile = Path.Join(root, imlFile);
 
+				var parent = Path.GetDirectoryName(imlFile);
 				if (parent == ".idea" || imlFile.Contains('/'))
 				{
 					ParseModuleManager(imlFile, null);
@@ -139,7 +140,7 @@ namespace CodingFS.Filter
 			foreach (var name in Directory.EnumerateDirectories(home))
 			{
 				var match = IDEA_DIR_RE.Match(name);
-				if (match != null)
+				if (match.Success)
 				{
 					// 假定版本号只有1位数才能直接比较
 					var nv = match.Groups[1].Value;
@@ -159,7 +160,7 @@ namespace CodingFS.Filter
 			// 计算项目在 external_build_system 里对应的文件夹，计算方法见：
 			// https://github.com/JetBrains/intellij-community/blob/734efbef5b75dfda517731ca39fb404404fbe182/platform/platform-api/src/com/intellij/openapi/project/ProjectUtil.kt#L146
 
-			var cache = JavaStringHashcode(root).ToString();
+			var cache = JavaStringHashcode(root).ToString("x2");
 			cache = Path.GetFileName(root) + "." + cache;
 			configPath = Path.Join(configPath, "system/external_build_system", cache, "modules");
 
@@ -183,19 +184,17 @@ namespace CodingFS.Filter
 		/// <summary>
 		/// 从模块配置文件（.iml）里读取被忽略的文件列表。
 		/// </summary>
-		/// <param name="iml"></param>
+		/// <param name="imlFile"></param>
 		/// <param name="module"></param>
-		private void ParseModuleManager(string iml, string? module)
+		private void ParseModuleManager(string imlFile, string? module)
 		{
-			iml = Path.Join(root, iml);
-
-			if (!File.Exists(iml))
+			if (!File.Exists(imlFile))
 			{
 				return;
 			}
 
 			var doc = new XmlDocument();
-			doc.Load(iml);
+			doc.Load(imlFile);
 
 			var excludes = doc.SelectNodes("//component[@name='NewModuleRootManager']/content//excludeFolder");
 			for (int i = 0; i < excludes.Count; i++)
