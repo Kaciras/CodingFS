@@ -44,7 +44,7 @@ namespace CodingFS
 					node = child;
 				}
 
-				var tempDir = FullName + '/' + string.Join('/', parts.Take(i));
+				var tempDir = Path.Join(FullName, string.Join('\\', parts.Take(i)));
 
 				var matches = factories
 					.Select(f => f.Match(tempDir))

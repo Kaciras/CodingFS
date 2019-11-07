@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using DokanNet;
 using Microsoft.Win32.SafeHandles;
+using AccessType = System.IO.FileAccess;
 
 namespace CodingFS
 {
@@ -27,7 +28,7 @@ namespace CodingFS
 		{
 			if (info.Context == null)
 			{
-				using var stream = new FileStream(MapPath(fileName), FileMode.Open, System.IO.FileAccess.Read);
+				using var stream = new FileStream(MapPath(fileName), FileMode.Open, AccessType.Read);
 				DoRead(stream, buffer, bufferLength, out bytesRead, offset);
 			}
 			else
@@ -62,7 +63,7 @@ namespace CodingFS
 		{
 			if (info.Context == null)
 			{
-				using var stream = new FileStream(MapPath(fileName), FileMode.Open, System.IO.FileAccess.Write);
+				using var stream = new FileStream(MapPath(fileName), FileMode.Open, AccessType.Write);
 				DoWrite(stream, buffer, bufferLength, out bytesWritten, offset);
 			}
 			else

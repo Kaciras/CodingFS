@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using CodingFS.Filter;
 using DokanNet;
+using AccessType = System.IO.FileAccess;
 
 namespace CodingFS
 {
@@ -118,7 +119,7 @@ namespace CodingFS
 			if (info.Context == null)
 			{
 				// FileAccess 默认是 ReadWrite，会造成额外的锁定
-				using var stream = new FileStream(MapPath(fileName), FileMode.Open, System.IO.FileAccess.Read)
+				using var stream = new FileStream(MapPath(fileName), FileMode.Open, AccessType.Read)
 				{
 					Position = offset,
 				};
