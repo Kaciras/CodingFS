@@ -231,7 +231,7 @@ namespace CodingFS.Filter
 
 		internal static int JavaStringHashcode(string str)
 		{
-			return str.ToCharArray().Aggregate(0, (h, c) => 31 * h + c);
+			return str.Aggregate(0, (h, c) => 31 * h + c);
 		}
 	}
 }
