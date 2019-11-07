@@ -15,54 +15,51 @@ namespace CodingFS
 			new VisualStudioIDE(),
 		};
 
-		private static readonly RootClassifier rootClassifier = new RootClassifier();
-
 		// Directory 和 Path 都跟IO库里的镜头类重名了
 		public string FullName { get; }
 
 		private readonly PathTrieNode<Classifier[]> root;
 
-		public CodingFileScanner(string directory)
+		public CodingFileScanner(string directory, Classifier[] globals)
 		{
 			FullName = directory;
-			root = new PathTrieNode<Classifier[]>(Array.Empty<Classifier>());
+			root = new PathTrieNode<Classifier[]>(globals);
 		}
 
-		public Classifier[] GetClassifiers(string file)
+		public IEnumerable<Classifier> GetClassifiers(string file)
 		{
 			// 未检查是否属于directory下
 			var relative = Path.GetRelativePath(FullName, file);
 			var parts = relative.Split(Path.DirectorySeparatorChar);
 
+			var result = root.Value;
 			var node = root;
 
 			for (int i = 0; i < parts.Length; i++)
 			{
 				var part = parts[i];
 
-				if (!node.TryGetChild(part, out var child))
+				if (node.TryGetChild(part, out var child))
 				{
-					var tempDir = FullName + Path.DirectorySeparatorChar + 
-						string.Join(Path.DirectorySeparatorChar, parts.Take(i));
-
-					var matches = factories
-						.Select(f => f.Match(tempDir))
-						.Where(x => x != null)!
-						.ToArray<Classifier>();
-
-					child = new PathTrieNode<Classifier[]>(matches);
-					node.PutChild(part, child);
+					node = child;
 				}
 
-				if (child!.Value.Length > 0)
-				{
-					return child.Value;
-				}
+				var tempDir = FullName + '/' + string.Join('/', parts.Take(i));
 
-				node = child;
+				var matches = factories
+					.Select(f => f.Match(tempDir))
+					.Where(x => x != null)!
+					.ToArray<Classifier>();
+
+				node = node.PutChild(part, matches);
+
+				if (node.Value.Length > 0)
+				{
+					return result.Concat(node.Value);
+				}
 			}
 
-			return Array.Empty<Classifier>();
+			return result;
 		}
 
 		public FileType GetFileType(string path)
@@ -70,10 +67,10 @@ namespace CodingFS
 			return GetFileType(GetClassifiers(path), path);
 		}
 
-		public static FileType GetFileType(Classifier[] classifiers, string path)
+		public static FileType GetFileType(IEnumerable<Classifier> classifiers, string path)
 		{
-			var recogined = classifiers.Aggregate(rootClassifier.Recognize(path),
-					(value, classifier) => value | classifier.Recognize(path));
+			var recogined = classifiers
+				.Aggregate(RecognizeType.NotCare, (v, c) => v | c.Recognize(path));
 
 			if (recogined.HasFlag(RecognizeType.Dependency))
 			{

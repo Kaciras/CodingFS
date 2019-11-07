@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using CodingFS.Filter;
 using DokanNet;
 
 namespace CodingFS
 {
-	public sealed class CodingFS : AbstractFileSystem
+	public class CodingFS : AbstractFileSystem
 	{
 		private readonly FileType type;
 		private readonly Dictionary<string, CodingFileScanner> scanners;
@@ -16,13 +17,14 @@ namespace CodingFS
 			this.type = type;
 			scanners = new Dictionary<string, CodingFileScanner>();
 
+			var globals = new Classifier[] { new RootClassifier(), new LocalClassifier() };
 			foreach (var root in roots)
 			{
-				scanners[Path.GetFileName(root)] = new CodingFileScanner(root);
+				scanners[Path.GetFileName(root)] = new CodingFileScanner(root, globals);
 			}
 		}
 
-		private string MapPath(string value)
+		protected string MapPath(string value)
 		{
 			var split = value.Split(Path.DirectorySeparatorChar, 3);
 
