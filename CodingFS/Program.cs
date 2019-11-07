@@ -85,7 +85,7 @@ namespace CodingFS
 
 		private static void MountVFS(MountOptions options)
 		{
-			var fs = new CodingFS(options.Type, @"D:\Coding", @"D:\Project");
+			var fs = new UnsafeCodingFS(options.Type, @"D:\Coding", @"D:\Project");
 			var wrapper = new StaticFSWrapper(fs);
 
 #if !DEBUG
