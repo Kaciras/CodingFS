@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using CodingFS.Filter;
+using CodingFS.Workspaces;
 using DokanNet;
 using AccessType = System.IO.FileAccess;
 
@@ -11,17 +11,17 @@ namespace CodingFS
 	public class CodingFS : AbstractFileSystem
 	{
 		private readonly FileType type;
-		private readonly Dictionary<string, CodingFileScanner> scanners;
+		private readonly Dictionary<string, FileClassifier> scanners;
 
 		public CodingFS(FileType type, params string[] roots)
 		{
 			this.type = type;
-			scanners = new Dictionary<string, CodingFileScanner>();
+			scanners = new Dictionary<string, FileClassifier>();
 
-			var globals = new Classifier[] { new RootClassifier(), new LocalClassifier() };
+			var globals = new IWorkspace[] { new CommonWorkspace(), new CustomWorkspace() };
 			foreach (var root in roots)
 			{
-				scanners[Path.GetFileName(root)] = new CodingFileScanner(root, globals);
+				scanners[Path.GetFileName(root)] = new FileClassifier(root, globals);
 			}
 		}
 

@@ -5,27 +5,27 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 
-namespace CodingFS.Filter
+namespace CodingFS.Workspaces
 {
-	public class JetBrainsIDE : ClassifierFactory
+	public class JetBrainsIDE : IWorkspaceFactory
 	{
-		public Classifier? Match(string path)
+		public IWorkspace? Match(string path)
 		{
 			if (Directory.Exists(Path.Combine(path, ".idea")))
 			{
-				return new JetBrainsClassifier(path);
+				return new JetBrainsWorkspace(path);
 			}
 			return null;
 		}
 	}
 
-	internal class JetBrainsClassifier : Classifier
+	internal class JetBrainsWorkspace : IWorkspace
 	{
 		readonly string root;
 
 		readonly RecognizedFileMap ignored;
 
-		public JetBrainsClassifier(string root)
+		public JetBrainsWorkspace(string root)
 		{
 			this.root = root;
 			ignored = new RecognizedFileMap(root);

@@ -2,36 +2,37 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
-using CodingFS.Filter;
+using CodingFS.Workspaces;
 
 namespace CodingFS
 {
-	public sealed class CodingFileScanner
+	public sealed class FileClassifier
 	{
-		private static readonly ClassifierFactory[] factories =
+		private static readonly IWorkspaceFactory[] factories =
 		{
 			new JetBrainsIDE(),
-			new NodeJSFilter(),
+			new NodeJSWorkspaceFactory(),
 			new VisualStudioIDE(),
 		};
 
 		// Directory 和 Path 都跟IO库里的镜头类重名了
 		public string FullName { get; }
 
-		private readonly PathTrieNode<Classifier[]> root;
+		private readonly PathTrieNode<IWorkspace[]> root;
 
-		public CodingFileScanner(string directory, Classifier[] globals)
+		public FileClassifier(string directory, IWorkspace[] globals)
 		{
 			FullName = directory;
-			root = new PathTrieNode<Classifier[]>(globals);
+			root = new PathTrieNode<IWorkspace[]>(globals);
 		}
 
-		public IEnumerable<Classifier> GetClassifiers(string file)
+		public IEnumerable<IWorkspace> GetClassifiers(string file)
 		{
 			// 未检查是否属于directory下
 			var relative = Path.GetRelativePath(FullName, file);
 			var parts = relative.Split(Path.DirectorySeparatorChar);
 
+			// 先把全局工作区加进去
 			var result = root.Value;
 			var node = root;
 
@@ -49,7 +50,7 @@ namespace CodingFS
 				var matches = factories
 					.Select(f => f.Match(tempDir))
 					.Where(x => x != null)!
-					.ToArray<Classifier>();
+					.ToArray<IWorkspace>();
 
 				node = node.PutChild(part, matches);
 
@@ -62,21 +63,20 @@ namespace CodingFS
 			return result;
 		}
 
+		// 【分类依据】
+		// 根据 IDE 和 VCS 找出被忽略的文件，未被忽略的都是和源文件，再由项目结构的约定
+		// 从被忽略的文件里区分出依赖，最后剩下的都是生成的文件。
+		//
 		public FileType GetFileType(string path)
 		{
-			return GetFileType(GetClassifiers(path), path);
-		}
-
-		public static FileType GetFileType(IEnumerable<Classifier> classifiers, string path)
-		{
-			var recogined = classifiers
+			var aggregated = GetClassifiers(path)
 				.Aggregate(RecognizeType.NotCare, (v, c) => v | c.Recognize(path));
 
-			if (recogined.HasFlag(RecognizeType.Dependency))
+			if (aggregated.HasFlag(RecognizeType.Dependency))
 			{
 				return FileType.Dependency;
 			}
-			else if (recogined.HasFlag(RecognizeType.Ignored))
+			else if (aggregated.HasFlag(RecognizeType.Ignored))
 			{
 				return FileType.Build;
 			}

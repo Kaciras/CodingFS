@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
-using CodingFS.Filter;
+using CodingFS.Workspaces;
 using CodingFS.Test.Properties;
 using Xunit;
 
@@ -16,7 +16,7 @@ namespace CodingFS.Test
 		[InlineData("", 0)]
 		public void JavaStringHashcode(string value, int hash)
 		{
-			var actual = JetBrainsClassifier.JavaStringHashcode(value);
+			var actual = JetBrainsWorkspace.JavaStringHashcode(value);
 			Assert.Equal(hash, actual);
 		}
 
@@ -26,7 +26,7 @@ namespace CodingFS.Test
 			var doc = new XmlDocument();
 			doc.LoadXml(Resources.workspace);
 
-			var ignores = JetBrainsClassifier.ParseWorkspace(@"D:\Project\Blog\WebServer", doc).ToList();
+			var ignores = JetBrainsWorkspace.ParseWorkspace(@"D:\Project\Blog\WebServer", doc).ToList();
 
 			Assert.Equal(4, ignores.Count);
 			Assert.Equal("packages/devtool/lib/webpack/HooksInspectPlugin.js", ignores[0]);

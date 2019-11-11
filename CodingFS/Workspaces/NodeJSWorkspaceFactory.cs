@@ -4,25 +4,25 @@ using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace CodingFS.Filter
+namespace CodingFS.Workspaces
 {
-	public class NodeJSFilter : ClassifierFactory
+	public class NodeJSWorkspaceFactory : IWorkspaceFactory
 	{
-		public Classifier? Match(string path)
+		public IWorkspace? Match(string path)
 		{
 			if(File.Exists(Path.Combine(path, "package.json")))
 			{
-				return new NodeJSClassifier(path);
+				return new NodeJSWorkspace(path);
 			}
 			return null;
 		}
 	}
 
-	public class NodeJSClassifier : Classifier
+	public class NodeJSWorkspace : IWorkspace
 	{
 		readonly string root;
 
-		public NodeJSClassifier(string root)
+		public NodeJSWorkspace(string root)
 		{
 			this.root = root;
 		}

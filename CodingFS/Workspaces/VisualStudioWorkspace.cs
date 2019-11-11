@@ -2,16 +2,16 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace CodingFS.Filter
+namespace CodingFS.Workspaces
 {
-	public class VisualStudioIDE : ClassifierFactory
+	public class VisualStudioIDE : IWorkspaceFactory
 	{
 		// VisualStudio 的 sln 文件里记录了项目的位置，示例：
 		// Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodingFS", "CodingFS\CodingFS.csproj", "{207E8E66-808C-4026-91D8-62F479792563}"
 		// 可以根据前面的“Project(”来识别这一行。
 		private readonly Regex ProjectRE = new Regex(@"Project\((.+)", RegexOptions.Multiline);
 
-		public Classifier? Match(string path)
+		public IWorkspace? Match(string path)
 		{
 			var ignored = new RecognizedFileMap(path);
 
@@ -46,16 +46,16 @@ namespace CodingFS.Filter
 				match = match.NextMatch();
 			}
 
-			return new VisualStudioClassifier(path, ignored);
+			return new VisualStudioWorkspace(path, ignored);
 		}
 	}
 
-	public class VisualStudioClassifier : Classifier
+	public class VisualStudioWorkspace : IWorkspace
 	{
 		private readonly string folder;
 		private readonly RecognizedFileMap ignored;
 
-		public VisualStudioClassifier(string folder, RecognizedFileMap ignored)
+		public VisualStudioWorkspace(string folder, RecognizedFileMap ignored)
 		{
 			this.folder = folder;
 			this.ignored = ignored;

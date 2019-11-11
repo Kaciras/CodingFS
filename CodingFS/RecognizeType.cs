@@ -1,6 +1,6 @@
 using System;
 
-namespace CodingFS.Filter
+namespace CodingFS
 {
 	[Flags]
 	public enum RecognizeType

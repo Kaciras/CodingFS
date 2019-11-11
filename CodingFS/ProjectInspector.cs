@@ -2,26 +2,24 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using CodingFS.Filter;
+using CodingFS.Workspaces;
 
 namespace CodingFS
 {
 	public class ProjectInspector
 	{
 		private readonly string directory;
-		private readonly IList<Classifier> classifiers;
+		private readonly FileClassifier classifier;
 
-		public ProjectInspector(string directory, IList<Classifier> classifiers)
+		public ProjectInspector(string directory, FileClassifier classifier)
 		{
 			this.directory = directory;
-			this.classifiers = classifiers;
+			this.classifier = classifier;
 		}
 
 		public IEnumerable<(string, FileType)> Iterate() => Iterate(directory);
 
-		// 文件分类依据：
-		// 根据 IDE 和 VCS 找出被忽略的文件，未被忽略的都是和源文件。
-		// 再由项目结构的约定从被忽略的文件里区分出依赖，最后剩下的都是生成的文件。
+		
 
 		private IEnumerable<(string, FileType)> Iterate(string dir)
 		{

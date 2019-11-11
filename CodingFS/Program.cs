@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using CodingFS.Filter;
+using CodingFS.Workspaces;
 using CommandLine;
 using DokanNet;
 using DokanNet.Logging;
@@ -29,10 +29,10 @@ namespace CodingFS
 
 	internal static class Program
 	{
-		private static readonly ClassifierFactory[] factories =
+		private static readonly IWorkspaceFactory[] factories =
 		{
 			new JetBrainsIDE(),
-			new NodeJSFilter(),
+			new NodeJSWorkspaceFactory(),
 			new VisualStudioIDE(),
 		};
 
@@ -66,7 +66,7 @@ namespace CodingFS
 				var matches = factories
 					.Select(f => f.Match(dir))
 					.Where(x => x != null)!
-					.ToList<Classifier>();
+					.ToList<IWorkspace>();
 
 				if (matches.Count == 0)
 				{
@@ -75,7 +75,7 @@ namespace CodingFS
 				else
 				{
 					Console.WriteLine($"项目{Path.GetFileName(dir)}:");
-					matches.Add(new RootClassifier());
+					matches.Add(new CommonWorkspace());
 					var ins = new ProjectInspector(dir, matches);
 					ins.PrintFiles();
 					Console.WriteLine();

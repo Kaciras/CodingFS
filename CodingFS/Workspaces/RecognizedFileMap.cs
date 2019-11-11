@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
-namespace CodingFS.Filter
+namespace CodingFS.Workspaces
 {
-	public class RecognizedFileMap : Classifier
+	public class RecognizedFileMap : IWorkspace
 	{
 		private readonly string directory;
 		private readonly PathTrieNode<RecognizeType> root;
