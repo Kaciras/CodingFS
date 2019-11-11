@@ -6,7 +6,7 @@ using CodingFS.Workspaces;
 using DokanNet;
 using AccessType = System.IO.FileAccess;
 
-namespace CodingFS
+namespace CodingFS.VirtualFileSystem
 {
 	public class CodingFS : AbstractFileSystem
 	{

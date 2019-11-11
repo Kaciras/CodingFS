@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
-using System.Text;
 using DokanNet;
 
-namespace CodingFS
+namespace CodingFS.VirtualFileSystem
 {
 	/// <summary>
 	/// 包装一个IDonakOperations对象，将一些常见的异常转换为NtStatus返回。
@@ -15,7 +11,7 @@ namespace CodingFS
 	/// 
 	/// 因为IDonakOperations的方法太多，所以使用动态代理。
 	/// </summary>
-	public class DynamicFSWrapper : DispatchProxy
+	public class AopFSWrapper : DispatchProxy
 	{
 		// 正常使用Create创建是不会为null的
 #pragma warning disable CS8618
@@ -42,8 +38,8 @@ namespace CodingFS
 		/// <returns>包装后的代理对象</returns>
 		public static IDokanOperations Create(IDokanOperations fs)
 		{
-			var instance = Create<IDokanOperations, DynamicFSWrapper>();
-			((DynamicFSWrapper)instance).Native = fs;
+			var instance = Create<IDokanOperations, AopFSWrapper>();
+			((AopFSWrapper)instance).Native = fs;
 			return instance; // 创建的代理实例同时属于Create的两个泛型参数的类型
 		}
 	}

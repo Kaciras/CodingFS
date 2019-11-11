@@ -6,7 +6,7 @@ using DokanNet;
 using Microsoft.Win32.SafeHandles;
 using AccessType = System.IO.FileAccess;
 
-namespace CodingFS
+namespace CodingFS.VirtualFileSystem
 {
 	/// <summary>
 	/// 相比于非Unsafe的实现，该实现使用IntPtr指针操作底层缓冲，避免额外的复制消耗。

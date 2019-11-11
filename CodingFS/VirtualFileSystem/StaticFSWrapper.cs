@@ -5,7 +5,7 @@ using System.Security.AccessControl;
 using System.Text;
 using DokanNet;
 
-namespace CodingFS
+namespace CodingFS.VirtualFileSystem
 {
 	/// <summary>
 	/// 这个类的作用跟DynamicFSProxy一样，区别是静态实现了全部方法的异常处理。

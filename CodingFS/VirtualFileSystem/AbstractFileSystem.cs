@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Security.AccessControl;
-using System.Text;
 using DokanNet;
 
-namespace CodingFS
+namespace CodingFS.VirtualFileSystem
 {
 	/// <summary>
 	/// IDokanOperations 的方法太多，而一般情况下并不需要用到全部，故该类提供它们的默认实现。
@@ -13,6 +12,17 @@ namespace CodingFS
 	/// </summary>
 	public abstract class AbstractFileSystem : IDokanOperations
 	{
+		public virtual NtStatus ReadFile(
+			string fileName,
+			byte[] buffer, 
+			out int bytesRead,
+			long offset,
+			IDokanFileInfo info)
+		{
+			bytesRead = 0;
+			return DokanResult.Success;
+		}
+
 		public virtual NtStatus GetVolumeInformation(
 			out string volumeLabel,
 			out FileSystemFeatures features,
@@ -27,30 +37,20 @@ namespace CodingFS
 			return DokanResult.Success;
 		}
 
-		public virtual NtStatus ReadFile(
-			string fileName,
-			byte[] buffer, 
-			out int bytesRead,
-			long offset,
-			IDokanFileInfo info)
-		{
-			bytesRead = 0;
-			return DokanResult.Success;
-		}
-
 		public virtual NtStatus GetFileInformation(
 			string fileName, 
 			out FileInformation fileInfo,
 			IDokanFileInfo info)
 		{
+			var time = DateTime.Now;
 			fileInfo = new FileInformation
 			{
 				FileName = fileName,
 				Length = 0,
 				Attributes = FileAttributes.Directory,
-				CreationTime = DateTime.Now,
-				LastAccessTime = DateTime.Now,
-				LastWriteTime = DateTime.Now,
+				CreationTime = time,
+				LastAccessTime = time,
+				LastWriteTime = time,
 			};
 			return DokanResult.Success;
 		}
@@ -111,13 +111,14 @@ namespace CodingFS
 			totalNumberOfFreeBytes = FREE;
 			return NtStatus.Success;
 		}
-
+		
 		public virtual NtStatus GetFileSecurity(
 			string fileName,
 			out FileSystemSecurity? security,
 			AccessControlSections sections,
 			IDokanFileInfo info)
 		{
+			// 这个要返回 NotImplemented，Dokan 会自动允许所有权限。
 			security = null;
 			return NtStatus.NotImplemented;
 		}

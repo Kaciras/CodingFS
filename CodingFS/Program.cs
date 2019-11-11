@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using CodingFS.VirtualFileSystem;
 using CodingFS.Workspaces;
 using CommandLine;
 using DokanNet;
@@ -76,7 +77,7 @@ namespace CodingFS
 				{
 					Console.WriteLine($"项目{Path.GetFileName(dir)}:");
 					matches.Add(new CommonWorkspace());
-					var ins = new ProjectInspector(dir, matches);
+					var ins = new ProjectInspector(dir, null);
 					ins.PrintFiles();
 					Console.WriteLine();
 				}

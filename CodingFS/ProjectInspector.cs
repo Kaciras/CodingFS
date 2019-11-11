@@ -19,37 +19,37 @@ namespace CodingFS
 
 		public IEnumerable<(string, FileType)> Iterate() => Iterate(directory);
 
-		
-
 		private IEnumerable<(string, FileType)> Iterate(string dir)
 		{
 			// EnumerateFiles 和 EnumerateDirectories 都是在 EnumerateFileSystemEntries 上过滤的
 			var files = Directory.EnumerateFileSystemEntries(dir);
-			foreach (var file in files)
-			{
-				var recogined = classifiers.Aggregate(RecognizeType.NotCare,
-					(value, classifier) => value | classifier.Recognize(file));
 
-				if (recogined.HasFlag(RecognizeType.Dependency))
-				{
-					yield return (file, FileType.Dependency);
-				}
-				else if (recogined.HasFlag(RecognizeType.Ignored))
-				{
-					yield return (file, FileType.Build);
-				}
-				else if (recogined.HasFlag(RecognizeType.Uncertain) && Directory.Exists(file))
-				{
-					foreach (var x in Iterate(file))
-					{
-						yield return x;
-					}
-				}
-				else
-				{
-					yield return (file, FileType.Source);
-				}
-			}
+			throw new Exception();
+			//foreach (var file in files)
+			//{
+			//	var recogined = classifiers.Aggregate(RecognizeType.NotCare,
+			//		(value, classifier) => value | classifier.Recognize(file));
+
+			//	if (recogined.HasFlag(RecognizeType.Dependency))
+			//	{
+			//		yield return (file, FileType.Dependency);
+			//	}
+			//	else if (recogined.HasFlag(RecognizeType.Ignored))
+			//	{
+			//		yield return (file, FileType.Build);
+			//	}
+			//	else if (recogined.HasFlag(RecognizeType.Uncertain) && Directory.Exists(file))
+			//	{
+			//		foreach (var x in Iterate(file))
+			//		{
+			//			yield return x;
+			//		}
+			//	}
+			//	else
+			//	{
+			//		yield return (file, FileType.Source);
+			//	}
+			//}
 		}
 
 		public FileGroup Group()
