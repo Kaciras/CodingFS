@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using BenchmarkDotNet.Running;
 
 namespace CodingFS.Benchmark
@@ -7,7 +7,7 @@ namespace CodingFS.Benchmark
 	{
 		static void Main(string[] args)
 		{
-			BenchmarkRunner.Run<FSWrapperPerf>();
+			BenchmarkRunner.Run<WhereSelectPerf>();
 		}
 	}
 }

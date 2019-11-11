@@ -14,7 +14,7 @@ namespace CodingFS.Benchmark
 		}
 
 		private readonly IDokanOperations staticProxy = new StaticFSWrapper(new TestFS());
-		private readonly IDokanOperations dynamicProxy = DynamicFSWrapper.Create(new TestFS());
+		private readonly IDokanOperations dynamicProxy = AopFSWrapper.Create(new TestFS());
 
 		[Benchmark]
 		public NtStatus Static_ReadFile_Throws()
