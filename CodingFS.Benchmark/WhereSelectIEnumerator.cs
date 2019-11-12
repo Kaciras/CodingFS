@@ -5,7 +5,7 @@ namespace CodingFS.Benchmark
 {
 	public delegate bool TryFunc<Source, TOut>(Source source, out TOut value);
 
-	internal struct WhereSelectIEnumerator<T, R> : IEnumerator<R>
+	internal class WhereSelectIEnumerator<T, R> : IEnumerator<R>
 	{
 		private readonly IEnumerator<T> source;
 		private readonly TryFunc<T, R> whereSelect;
@@ -14,13 +14,11 @@ namespace CodingFS.Benchmark
 		{
 			this.source = source;
 			this.whereSelect = whereSelect;
-			Current = default!;
 		}
 
-		// 不知道怎么给泛型注解上 nullable
 		public R Current { get; private set; }
 
-		object? IEnumerator.Current => Current;
+		object IEnumerator.Current => Current;
 
 		public bool MoveNext()
 		{

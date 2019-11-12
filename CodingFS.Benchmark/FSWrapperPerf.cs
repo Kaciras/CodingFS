@@ -1,5 +1,6 @@
-﻿using System.IO;
+using System.IO;
 using BenchmarkDotNet.Attributes;
+using CodingFS.VirtualFileSystem;
 using DokanNet;
 
 // 测试结果表明，动态代理在不出现异常的情况下比静态慢100被，出现异常的情况下慢10倍。

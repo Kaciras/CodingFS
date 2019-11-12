@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BenchmarkDotNet.Attributes;
 
-// 分两步的稍微慢点，WhereSelect 两种实现几乎没有差距
+// 分两步的稍微慢点，WhereSelect 的两种实现几乎没有差距（生成器的慢一点点）。
+// 如果把 WhereSelectIEnumerator 改为结构体则会降低性能。
 namespace CodingFS.Benchmark
 {
 	public class WhereSelectPerf
@@ -19,6 +21,12 @@ namespace CodingFS.Benchmark
 				{
 					dict[i] = i + i;
 				}
+			}
+
+			int a = MyImpl(), b = WhereAndSelect(), c = Generator();
+			if (a != b || b != c)
+			{
+				throw new Exception("几种实现的结果不相等");
 			}
 		}
 
