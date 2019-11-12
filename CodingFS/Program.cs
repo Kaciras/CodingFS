@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -46,15 +47,6 @@ namespace CodingFS
 
 		private static void Inspect(InspectOptions options)
 		{
-			//var dir = @"D:\Coding\Python\OpsTool";
-
-			//var matches = factories
-			//		.Select(f => f.Match(dir))
-			//		.Where(x => x != null)!
-			//		.ToList<Classifier>();
-
-			//var ins = new ProjectInspector(dir, matches);
-			//ins.PrintFiles();
 			Inspect(@"D:\Coding");
 			Inspect(@"D:\Project");
 		}
@@ -86,13 +78,30 @@ namespace CodingFS
 
 		private static void MountVFS(MountOptions options)
 		{
-			var fs = new UnsafeCodingFS(options.Type, @"D:\Coding", @"D:\Project");
-			var wrapper = new StaticFSWrapper(fs);
+			var globals = new IWorkspace[]
+			{
+				new CommonWorkspace(),
+				new CustomWorkspace(),
+			};
+			var factories = new IWorkspaceFactory[]
+			{
+				new JetBrainsIDE(),
+				new NodeJSWorkspaceFactory(),
+				new VisualStudioIDE(),
+			};
 
-#if !DEBUG
-			fs.Mount("x:\\", DokanOptions.OptimizeSingleNameSearch, new NullLogger());
-#else
+			var map = new Dictionary<string, FileClassifier>
+			{
+				["Coding"] = new FileClassifier(@"D:\Coding", globals, factories),
+				["Project"] = new FileClassifier(@"D:\Project", globals, factories),
+			};
+
+			var fs = new UnsafeCodingFS(options.Type, map);
+			var wrapper = new StaticFSWrapper(fs);
+#if DEBUG
 			fs.Mount("x:\\", DokanOptions.DebugMode | DokanOptions.StderrOutput);
+#else
+			fs.Mount("x:\\", DokanOptions.OptimizeSingleNameSearch, new NullLogger());
 #endif
 		}
 	}

@@ -11,25 +11,19 @@ namespace CodingFS.VirtualFileSystem
 	public class CodingFS : AbstractFileSystem
 	{
 		private readonly FileType type;
-		private readonly Dictionary<string, FileClassifier> scanners;
+		private readonly Dictionary<string, FileClassifier> map;
 
-		public CodingFS(FileType type, params string[] roots)
+		public CodingFS(FileType type, Dictionary<string, FileClassifier> map)
 		{
 			this.type = type;
-			scanners = new Dictionary<string, FileClassifier>();
-
-			var globals = new IWorkspace[] { new CommonWorkspace(), new CustomWorkspace() };
-			foreach (var root in roots)
-			{
-				scanners[Path.GetFileName(root)] = new FileClassifier(root, globals);
-			}
+			this.map = map;
 		}
 
 		protected string MapPath(string value)
 		{
 			var split = value.Split(Path.DirectorySeparatorChar, 3);
 
-			if (scanners.TryGetValue(split[1], out var scanner))
+			if (map.TryGetValue(split[1], out var scanner))
 			{
 				if (split.Length < 3)
 				{
@@ -58,7 +52,7 @@ namespace CodingFS.VirtualFileSystem
 		{
 			if (fileName == @"\")
 			{
-				files = scanners.Values
+				files = map.Values
 					.Select(sc => MapInfo(new DirectoryInfo(sc.FullName)))
 					.ToList();
 			}
@@ -66,7 +60,7 @@ namespace CodingFS.VirtualFileSystem
 			{
 				var root = fileName.Split(Path.DirectorySeparatorChar, 3)[1];
 
-				if (!scanners.TryGetValue(root, out var scanner))
+				if (!map.TryGetValue(root, out var scanner))
 				{
 					throw new FileNotFoundException("文件不在映射区", root);
 				}

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -16,7 +17,7 @@ namespace CodingFS.VirtualFileSystem
 	/// </summary>
 	internal class UnsafeCodingFS : CodingFS, IDokanOperationsUnsafe
 	{
-		public UnsafeCodingFS(FileType type, params string[] roots) : base(type, roots) { }
+		public UnsafeCodingFS(FileType type, Dictionary<string, FileClassifier> map) : base(type, map) { }
 
 		public NtStatus ReadFile(
 			string fileName,
