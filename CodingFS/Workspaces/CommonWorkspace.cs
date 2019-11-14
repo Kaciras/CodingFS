@@ -10,14 +10,23 @@ namespace CodingFS.Workspaces
 	/// </summary>
 	public class CommonWorkspace : IWorkspace
 	{
+		private readonly bool ignoreGit;
+
+		public CommonWorkspace(bool ignoreGit)
+		{
+			this.ignoreGit = ignoreGit;
+		}
+
 		public RecognizeType Recognize(string directory)
 		{
 			var name = Path.GetFileName(directory);
 			switch (name)
 			{
 				case "__pycache__":
-				case ".git":
 				case ".gradle":
+					return RecognizeType.Ignored;
+				case ".git" 
+				when ignoreGit:
 					return RecognizeType.Ignored;
 			}
 			return RecognizeType.NotCare;
