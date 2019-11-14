@@ -27,9 +27,9 @@ namespace CodingFS.VirtualFileSystem
 			{
 				if (split.Length < 3)
 				{
-					return scanner.FullName;
+					return scanner.Root;
 				}
-				return Path.Join(scanner.FullName, split[2]);
+				return Path.Join(scanner.Root, split[2]);
 			}
 			throw new FileNotFoundException("文件不在映射区", value);
 		}
@@ -53,7 +53,7 @@ namespace CodingFS.VirtualFileSystem
 			if (fileName == @"\")
 			{
 				files = map.Values
-					.Select(sc => MapInfo(new DirectoryInfo(sc.FullName)))
+					.Select(sc => MapInfo(new DirectoryInfo(sc.Root)))
 					.ToList();
 			}
 			else
@@ -65,10 +65,10 @@ namespace CodingFS.VirtualFileSystem
 					throw new FileNotFoundException("文件不在映射区", root);
 				}
 
-				files = new DirectoryInfo(MapPath(fileName))
-						.EnumerateFileSystemInfos()
-						.Where(file => scanner.GetFileType(file.FullName) == type)
-						.Select(MapInfo).ToList();
+				files = scanner.EnumerateFiles(MapPath(fileName))
+					.Where(tuple => tuple.Item2 == type)
+					.Select(tuple => MapInfo(new FileInfo(tuple.Item1)))
+					.ToList();
 			}
 
 			return DokanResult.Success;

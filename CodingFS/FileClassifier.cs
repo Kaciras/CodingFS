@@ -6,29 +6,35 @@ using CodingFS.Workspaces;
 
 namespace CodingFS
 {
+	/// <summary>
+	/// 文件分类器，以给定的目录为上下文，对这之下的文件进行分类。
+	/// 
+	/// 【线程安全】
+	/// 该类不是线程安全的，请勿并发调用。
+	/// </summary>
 	public sealed class FileClassifier
 	{
 		// Directory 和 Path 都跟IO库里的镜头类重名了，只能用这个烂名字
-		public string FullName { get; }
+		public string Root { get; }
 
-		private readonly PathTrieNode<IWorkspace[]> root;
+		private readonly PathTrieNode<IWorkspace[]> rootNode;
 		private readonly IWorkspaceFactory[] factories;
 
-		public FileClassifier(string directory, IWorkspace[] globals, IWorkspaceFactory[] factories)
+		public FileClassifier(string root, IWorkspace[] globals, IWorkspaceFactory[] factories)
 		{
-			FullName = directory;
-			root = new PathTrieNode<IWorkspace[]>(globals);
+			Root = root;
+			rootNode = new PathTrieNode<IWorkspace[]>(globals);
 			this.factories = factories;
 		}
 
 		private IEnumerable<IWorkspace> GetWorkspaces(string file)
 		{
 			// 未检查是否属于该分类器的目录下
-			var relative = Path.GetRelativePath(FullName, file);
+			var relative = Path.GetRelativePath(Root, file);
 			var parts = relative.Split(Path.DirectorySeparatorChar);
 
-			var result = root.Value;
-			var node = root;
+			var result = rootNode.Value;
+			var node = rootNode;
 
 			for (int i = 0; i < parts.Length; i++)
 			{
@@ -39,7 +45,7 @@ namespace CodingFS
 					node = child;
 				}
 
-				var tempDir = Path.Join(FullName, string.Join('\\', parts.Take(i)));
+				var tempDir = Path.Join(Root, string.Join('\\', parts.Take(i + 1)));
 				var matches = factories
 					.Select(f => f.Match(tempDir))
 					.Where(x => x != null)!
@@ -81,11 +87,19 @@ namespace CodingFS
 			var directory = Path.GetDirectoryName(path);
 			if (directory == null)
 			{
-				return GetFileType(root.Value, path);
+				return GetFileType(rootNode.Value, path);
 			}
 			return GetFileType(GetWorkspaces(directory), path);
 		}
 
+		/// <summary>
+		/// 枚举并识别一个目录下的所有文件，该方法比 GetFileType() 稍快一些。
+		/// 
+		/// 【API设计】
+		/// 该方法不支持递归子目录，因为调用方往往会过滤一部分子目录，过滤逻辑也不是该类所管的。
+		/// </summary>
+		/// <param name="directory">待枚举的目录</param>
+		/// <returns>文件名、类型二元组</returns>
 		public IEnumerable<(string, FileType)> EnumerateFiles(string directory)
 		{
 			var workspaces = GetWorkspaces(directory);

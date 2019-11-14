@@ -29,8 +29,24 @@ namespace CodingFS
 
 	}
 
+	[Verb("clean", HelpText = "清理文件")]
+	internal sealed class CleanOptions
+	{
+		[Option('b', "build", Default = true, HelpText = "删除生成的文件")]
+		public bool Build { get; set; }
+
+		[Option('d', "dep", HelpText = "删除依赖文件")]
+		public bool Dependencies { get; set; }
+	}
+
 	internal static class Program
 	{
+		private static readonly IWorkspace[] globals =
+		{
+			new CommonWorkspace(true),
+			new CustomWorkspace(),
+		};
+
 		private static readonly IWorkspaceFactory[] factories =
 		{
 			new JetBrainsIDE(),
@@ -38,10 +54,11 @@ namespace CodingFS
 			new VisualStudioIDE(),
 		};
 
-		static void Main(string[] args)
+		private static void Main(string[] args)
 		{
-			Parser.Default.ParseArguments<MountOptions, InspectOptions>(args)
+			Parser.Default.ParseArguments<MountOptions, InspectOptions, CleanOptions>(args)
 				.WithParsed<MountOptions>(MountVFS)
+				.WithParsed<CleanOptions>(Clean)
 				.WithParsed<InspectOptions>(Inspect);
 		}
 
@@ -53,43 +70,65 @@ namespace CodingFS
 
 		private static void Inspect(string root)
 		{
-			var dirs = Directory.EnumerateDirectories(root);
-			foreach (var dir in dirs)
-			{
-				var matches = factories
-					.Select(f => f.Match(dir))
-					.Where(x => x != null)!
-					.ToList<IWorkspace>();
+			var classifier = new FileClassifier(root, globals, factories);
 
-				if (matches.Count == 0)
+			static void PrintGroup(IEnumerable<string> files, ConsoleColor color, string header)
+			{
+				Console.ForegroundColor = color;
+				Console.WriteLine(header);
+				foreach (var file in files) Console.WriteLine(file);
+				Console.ResetColor();
+			}
+			var groups = classifier.Group();
+			PrintGroup(groups[FileType.Dependency], ConsoleColor.Blue, "Dependencies:");
+			PrintGroup(groups[FileType.Build], ConsoleColor.Red, "Generated files:");
+		}
+
+		private static void Clean(CleanOptions options)
+		{
+			Clean(@"D:\Coding", options);
+			Clean(@"D:\Project", options);
+		}
+
+		private static void Clean(string root, CleanOptions options)
+		{
+			var classifier = new FileClassifier(root, globals, factories);
+			var countDeps = 0;
+			var countBuild = 0;
+
+			static void Delete(string path)
+			{
+				if (File.Exists(path))
 				{
-					Inspect(dir);
+					File.Delete(path);
 				}
 				else
 				{
-					Console.WriteLine($"项目{Path.GetFileName(dir)}:");
-					matches.Add(new CommonWorkspace());
-					var ins = new ProjectInspector(dir, null);
-					ins.PrintFiles();
-					Console.WriteLine();
+					Directory.Delete(path, true);
 				}
 			}
+
+			foreach (var (file, type) in classifier.Iterate())
+			{
+				switch (type)
+				{
+					case FileType.Dependency
+					when options.Dependencies:
+						Delete(file);
+						countDeps++;
+						break;
+					case FileType.Build
+					when options.Build:
+						Delete(file);
+						countBuild++;
+						break;
+				}
+			}
+			Console.WriteLine($"清理完毕，删除了{countBuild}个生成的文件/目录，和{countDeps}个依赖文件/目录");
 		}
 
 		private static void MountVFS(MountOptions options)
 		{
-			var globals = new IWorkspace[]
-			{
-				new CommonWorkspace(),
-				new CustomWorkspace(),
-			};
-			var factories = new IWorkspaceFactory[]
-			{
-				new JetBrainsIDE(),
-				new NodeJSWorkspaceFactory(),
-				new VisualStudioIDE(),
-			};
-
 			var map = new Dictionary<string, FileClassifier>
 			{
 				["Coding"] = new FileClassifier(@"D:\Coding", globals, factories),
