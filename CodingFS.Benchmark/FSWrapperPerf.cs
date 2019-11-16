@@ -9,7 +9,7 @@ namespace CodingFS.Benchmark
 {
 	public class FSWrapperPerf
 	{
-		private sealed class TestFS : AbstractFileSystem
+		private sealed class TestFS : DokanOperationBase
 		{
 			public override NtStatus Mounted(IDokanFileInfo _) => throw new FileNotFoundException();
 		}

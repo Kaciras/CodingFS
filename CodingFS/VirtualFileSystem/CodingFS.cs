@@ -8,7 +8,7 @@ using AccessType = System.IO.FileAccess;
 
 namespace CodingFS.VirtualFileSystem
 {
-	public class CodingFS : AbstractFileSystem
+	public class CodingFS : DokanOperationBase
 	{
 		private readonly FileType type;
 		private readonly Dictionary<string, FileClassifier> map;
@@ -34,16 +34,6 @@ namespace CodingFS.VirtualFileSystem
 			throw new FileNotFoundException("文件不在映射区", value);
 		}
 
-		private FileInformation MapInfo(FileSystemInfo src) => new FileInformation
-		{
-			Attributes = src.Attributes,
-			FileName = src.Name,
-			LastAccessTime = src.LastAccessTime,
-			CreationTime = src.CreationTime,
-			LastWriteTime = src.LastWriteTime,
-			Length = (src as FileInfo)?.Length ?? 0
-		};
-
 		public override NtStatus FindFilesWithPattern(
 			string fileName,
 			string searchPattern,
@@ -53,7 +43,7 @@ namespace CodingFS.VirtualFileSystem
 			if (fileName == @"\")
 			{
 				files = map.Values
-					.Select(sc => MapInfo(new DirectoryInfo(sc.Root)))
+					.Select(sc => Conversion.MapInfo(new DirectoryInfo(sc.Root)))
 					.ToList();
 			}
 			else
@@ -67,7 +57,7 @@ namespace CodingFS.VirtualFileSystem
 
 				files = scanner.EnumerateFiles(MapPath(fileName))
 					.Where(tuple => tuple.Item2 == type)
-					.Select(tuple => MapInfo(new FileInfo(tuple.Item1)))
+					.Select(tuple => Conversion.MapInfo(new FileInfo(tuple.Item1)))
 					.ToList();
 			}
 
@@ -97,7 +87,7 @@ namespace CodingFS.VirtualFileSystem
 				// 哪个傻逼想出来的文件和目录分开的API？
 				var rawPath = MapPath(fileName);
 				FileSystemInfo rawInfo = new FileInfo(rawPath);
-				fileInfo = MapInfo(rawInfo.Exists ? rawInfo : new DirectoryInfo(rawPath));
+				fileInfo = Conversion.MapInfo(rawInfo.Exists ? rawInfo : new DirectoryInfo(rawPath));
 			}
 
 			return DokanResult.Success;
