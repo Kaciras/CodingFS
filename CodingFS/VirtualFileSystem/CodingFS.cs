@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using CodingFS.Workspaces;
 using DokanNet;
 using AccessType = System.IO.FileAccess;
 

@@ -29,17 +29,10 @@ namespace CodingFS.Workspaces
 				}
 				else
 				{
-					return RecognizeType.NotCare;
+					break;
 				}
 			}
-
-			// 只有目录下才会有文件不确定，文件直接返回NotCare即可
-			if (node.Value != RecognizeType.Uncertain)
-			{
-				return node.Value;
-			}
-			return Directory.Exists(Path.Join(directory, path)) 
-				? RecognizeType.Uncertain : RecognizeType.NotCare;
+			return RecognizeType.NotCare;
 		}
 
 		public void Add(string path, RecognizeType type)
@@ -55,7 +48,7 @@ namespace CodingFS.Workspaces
 				}
 				else
 				{
-					node = node.PutChild(part, RecognizeType.Uncertain);
+					node = node.PutChild(part, RecognizeType.NotCare);
 				}
 			}
 

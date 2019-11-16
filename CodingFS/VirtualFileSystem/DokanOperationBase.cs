@@ -78,7 +78,8 @@ namespace CodingFS.VirtualFileSystem
 			out IList<FileInformation> streams,
 			IDokanFileInfo info)
 		{
-			return FindFilesWithPattern(fileName, "*", out streams, info);
+			streams = new FileInformation[0];
+			return DokanResult.NotImplemented;
 		}
 
 		public virtual void Cleanup(string fileName, IDokanFileInfo info) {}
