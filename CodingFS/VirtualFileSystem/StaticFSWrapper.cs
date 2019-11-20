@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Security.AccessControl;
-using System.Text;
 using DokanNet;
 
 namespace CodingFS.VirtualFileSystem
@@ -27,7 +26,8 @@ namespace CodingFS.VirtualFileSystem
 		internal static NtStatus HandleException(Exception e) => e switch
 		{
 			FileNotFoundException _ => DokanResult.FileNotFound,
-			DirectoryNotFoundException _ => DokanResult.FileNotFound,
+			DirectoryNotFoundException _ => DokanResult.PathNotFound,
+			UnauthorizedAccessException _ => DokanResult.AccessDenied,
 			_ => throw e,
 		};
 
@@ -36,9 +36,9 @@ namespace CodingFS.VirtualFileSystem
 		public NtStatus CreateFile(
 			string fileName,
 			DokanNet.FileAccess access,
-			FileShare share, 
-			FileMode mode, 
-			FileOptions options, 
+			FileShare share,
+			FileMode mode,
+			FileOptions options,
 			FileAttributes attributes,
 			IDokanFileInfo info)
 		{
@@ -46,7 +46,7 @@ namespace CodingFS.VirtualFileSystem
 			{
 				return Native.CreateFile(fileName, access, share, mode, options, attributes, info);
 			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				return HandleException(e);
 			}
@@ -64,16 +64,16 @@ namespace CodingFS.VirtualFileSystem
 
 		public NtStatus ReadFile(
 			string fileName,
-			byte[] buffer, 
-			out int bytesRead, 
-			long offset, 
+			byte[] buffer,
+			out int bytesRead,
+			long offset,
 			IDokanFileInfo info)
 		{
 			try
 			{
 				return Native.ReadFile(fileName, buffer, out bytesRead, offset, info);
 			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				bytesRead = default;
 				return HandleException(e);
@@ -81,17 +81,17 @@ namespace CodingFS.VirtualFileSystem
 		}
 
 		public NtStatus WriteFile(
-			string fileName, 
-			byte[] buffer, 
-			out int bytesWritten, 
-			long offset, 
+			string fileName,
+			byte[] buffer,
+			out int bytesWritten,
+			long offset,
 			IDokanFileInfo info)
 		{
 			try
 			{
 				return Native.WriteFile(fileName, buffer, out bytesWritten, offset, info);
 			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				bytesWritten = default;
 				return HandleException(e);
@@ -104,7 +104,7 @@ namespace CodingFS.VirtualFileSystem
 			{
 				return Native.FlushFileBuffers(fileName, info);
 			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				return HandleException(e);
 			}
@@ -116,7 +116,7 @@ namespace CodingFS.VirtualFileSystem
 			{
 				return Native.GetFileInformation(fileName, out fileInfo, info);
 			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				fileInfo = default;
 				return HandleException(e);
@@ -129,7 +129,7 @@ namespace CodingFS.VirtualFileSystem
 			{
 				return Native.FindFiles(fileName, out files, info);
 			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				files = default;
 				return HandleException(e);
@@ -137,8 +137,8 @@ namespace CodingFS.VirtualFileSystem
 		}
 
 		public NtStatus FindFilesWithPattern(
-			string fileName, 
-			string searchPattern, 
+			string fileName,
+			string searchPattern,
 			out IList<FileInformation>? files,
 			IDokanFileInfo info)
 		{
@@ -146,7 +146,7 @@ namespace CodingFS.VirtualFileSystem
 			{
 				return Native.FindFilesWithPattern(fileName, searchPattern, out files, info);
 			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				files = default;
 				return HandleException(e);
@@ -159,14 +159,14 @@ namespace CodingFS.VirtualFileSystem
 			{
 				return Native.SetFileAttributes(fileName, attributes, info);
 			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				return HandleException(e);
 			}
 		}
 
 		public NtStatus SetFileTime(
-			string fileName, 
+			string fileName,
 			DateTime? creationTime,
 			DateTime? lastAccessTime,
 			DateTime? lastWriteTime,
@@ -177,7 +177,7 @@ namespace CodingFS.VirtualFileSystem
 				return Native.SetFileTime(fileName, creationTime,
 					lastAccessTime, lastWriteTime, info);
 			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				return HandleException(e);
 			}
@@ -189,7 +189,7 @@ namespace CodingFS.VirtualFileSystem
 			{
 				return Native.DeleteFile(fileName, info);
 			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				return HandleException(e);
 			}
@@ -201,7 +201,7 @@ namespace CodingFS.VirtualFileSystem
 			{
 				return Native.DeleteDirectory(fileName, info);
 			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				return HandleException(e);
 			}
@@ -213,7 +213,7 @@ namespace CodingFS.VirtualFileSystem
 			{
 				return Native.MoveFile(oldName, newName, replace, info);
 			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				return HandleException(e);
 			}
@@ -225,7 +225,7 @@ namespace CodingFS.VirtualFileSystem
 			{
 				return Native.SetEndOfFile(fileName, length, info);
 			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				return HandleException(e);
 			}
@@ -237,7 +237,7 @@ namespace CodingFS.VirtualFileSystem
 			{
 				return Native.SetAllocationSize(fileName, length, info);
 			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				return HandleException(e);
 			}
@@ -249,7 +249,7 @@ namespace CodingFS.VirtualFileSystem
 			{
 				return Native.LockFile(fileName, offset, length, info);
 			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				return HandleException(e);
 			}
@@ -261,24 +261,27 @@ namespace CodingFS.VirtualFileSystem
 			{
 				return Native.UnlockFile(fileName, offset, length, info);
 			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				return HandleException(e);
 			}
 		}
 
 		public NtStatus GetDiskFreeSpace(
-			out long freeBytesAvailable, 
-			out long totalNumberOfBytes, 
+			out long freeBytesAvailable,
+			out long totalNumberOfBytes,
 			out long totalNumberOfFreeBytes,
 			IDokanFileInfo info)
 		{
 			try
 			{
-				return Native.GetDiskFreeSpace(out freeBytesAvailable, 
-					out totalNumberOfBytes, out totalNumberOfFreeBytes, info);
+				return Native.GetDiskFreeSpace(
+					out freeBytesAvailable,
+					out totalNumberOfBytes, 
+					out totalNumberOfFreeBytes,
+					info);
 			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				freeBytesAvailable = default;
 				totalNumberOfBytes = default;
@@ -288,18 +291,22 @@ namespace CodingFS.VirtualFileSystem
 		}
 
 		public NtStatus GetVolumeInformation(
-			out string? volumeLabel, 
-			out FileSystemFeatures features, 
-			out string? fileSystemName, 
-			out uint maximumComponentLength, 
+			out string? volumeLabel,
+			out FileSystemFeatures features,
+			out string? fileSystemName,
+			out uint maximumComponentLength,
 			IDokanFileInfo info)
 		{
 			try
 			{
-				return Native.GetVolumeInformation(out volumeLabel, 
-					out features, out fileSystemName, out maximumComponentLength, info);
+				return Native.GetVolumeInformation(
+					out volumeLabel,
+					out features,
+					out fileSystemName,
+					out maximumComponentLength,
+					info);
 			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				volumeLabel = default;
 				features = default;
@@ -310,7 +317,7 @@ namespace CodingFS.VirtualFileSystem
 		}
 
 		public NtStatus GetFileSecurity(
-			string fileName, 
+			string fileName,
 			out FileSystemSecurity? security,
 			AccessControlSections sections,
 			IDokanFileInfo info)
@@ -319,7 +326,7 @@ namespace CodingFS.VirtualFileSystem
 			{
 				return Native.GetFileSecurity(fileName, out security, sections, info);
 			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				security = default;
 				return HandleException(e);
@@ -327,7 +334,7 @@ namespace CodingFS.VirtualFileSystem
 		}
 
 		public NtStatus SetFileSecurity(
-			string fileName, 
+			string fileName,
 			FileSystemSecurity security,
 			AccessControlSections sections,
 			IDokanFileInfo info)
@@ -336,7 +343,7 @@ namespace CodingFS.VirtualFileSystem
 			{
 				return Native.SetFileSecurity(fileName, security, sections, info);
 			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				return HandleException(e);
 			}
@@ -348,7 +355,7 @@ namespace CodingFS.VirtualFileSystem
 			{
 				return Native.Mounted(info);
 			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				return HandleException(e);
 			}
@@ -360,14 +367,14 @@ namespace CodingFS.VirtualFileSystem
 			{
 				return Native.Unmounted(info);
 			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				return HandleException(e);
 			}
 		}
 
 		public NtStatus FindStreams(
-			string fileName, 
+			string fileName,
 			out IList<FileInformation>? streams,
 			IDokanFileInfo info)
 		{
@@ -375,7 +382,7 @@ namespace CodingFS.VirtualFileSystem
 			{
 				return Native.FindStreams(fileName, out streams, info);
 			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				streams = default;
 				return HandleException(e);
