@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using DokanNet;
 
@@ -11,6 +12,7 @@ namespace CodingFS.VirtualFileSystem
 	/// 
 	/// 因为IDonakOperations的方法太多，所以使用动态代理。
 	/// </summary>
+	[Obsolete("Use StaticFSWrapper instead")]
 	public class AopFSWrapper : DispatchProxy
 	{
 		// 正常使用Create创建是不会为null的

@@ -1,29 +1,297 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using DokanNet;
+using AccessType = System.IO.FileAccess;
+using FileAccess = DokanNet.FileAccess;
 
 namespace CodingFS.VirtualFileSystem
 {
-	/// <summary>
-	/// IDokanOperations 的方法太多，而一般情况下并不需要用到全部，故该类提供它们的默认实现。
-	/// 该类实现的是一个只读的磁盘，里面没有任何文件，所有修改操作都将成功但不产生任何效果。
-	/// </summary>
-	public abstract class AbstractFileSystem : IDokanOperations
+	public class AbstractFileSystem : IDokanOperations
 	{
-		public virtual NtStatus ReadFile(
+		const FileAccess DATA_ACCESS = FileAccess.AppendData
+									 | FileAccess.WriteData
+									 | FileAccess.ReadData
+									 | FileAccess.Execute
+									 | FileAccess.GenericWrite
+									 | FileAccess.GenericRead
+									 | FileAccess.GenericExecute;
+
+		const FileAccess WRITE_ACCESS = FileAccess.AppendData
+									  | FileAccess.WriteData
+									  | FileAccess.Delete
+									  | FileAccess.GenericWrite;
+
+		private readonly IFileSystem native;
+
+		public AbstractFileSystem(IFileSystem native)
+		{
+			this.native = native;
+		}
+
+		public NtStatus CreateFile(
 			string fileName,
-			byte[] buffer, 
-			out int bytesRead,
-			long offset,
+			FileAccess access,
+			FileShare share,
+			FileMode mode,
+			FileOptions options,
+			FileAttributes attributes,
 			IDokanFileInfo info)
 		{
-			bytesRead = 0;
+			var result = DokanResult.Success;
+
+			if (info.IsDirectory)
+			{
+				switch (mode)
+				{
+					case FileMode.Open:
+						if (!Directory.Exists(fileName))
+						{
+							try
+							{
+								if (!File.GetAttributes(fileName).HasFlag(FileAttributes.Directory))
+									return DokanResult.NotADirectory;
+							}
+							catch (Exception)
+							{
+								return DokanResult.FileNotFound;
+							}
+							return DokanResult.PathNotFound;
+						}
+
+						new DirectoryInfo(fileName).EnumerateFileSystemInfos().Any();
+						// you can't list the directory
+						break;
+
+					case FileMode.CreateNew:
+						if (Directory.Exists(fileName))
+						{
+							return DokanResult.FileExists;
+						}
+						try
+						{
+							File.GetAttributes(fileName).HasFlag(FileAttributes.Directory);
+							return DokanResult.AlreadyExists;
+						}
+						catch (IOException)
+						{
+						}
+						Directory.CreateDirectory(fileName);
+						break;
+				}
+			}
+			else
+			{
+				var pathExists = true;
+				var pathIsDirectory = false;
+
+				var readWriteAttributes = (access & DATA_ACCESS) == 0;
+				var readAccess = (access & WRITE_ACCESS) == 0;
+
+				try
+				{
+					pathExists = (Directory.Exists(fileName) || File.Exists(fileName));
+					pathIsDirectory = pathExists ? File.GetAttributes(fileName).HasFlag(FileAttributes.Directory) : false;
+				}
+				catch (IOException)
+				{
+
+				}
+
+				switch (mode)
+				{
+					case FileMode.Open:
+
+						if (pathExists)
+						{
+							// check if driver only wants to read attributes, security info, or open directory
+							if (readWriteAttributes || pathIsDirectory)
+							{
+								if (pathIsDirectory && (access & FileAccess.Delete) == FileAccess.Delete
+									&& (access & FileAccess.Synchronize) != FileAccess.Synchronize)
+									//It is a DeleteFile request on a directory
+									return DokanResult.AccessDenied;
+
+								info.IsDirectory = pathIsDirectory;
+								info.Context = new object();
+								// must set it to someting if you return DokanResult.Success
+
+								return DokanResult.Success;
+							}
+						}
+						else
+						{
+							return DokanResult.FileNotFound;
+						}
+						break;
+
+					case FileMode.CreateNew:
+						if (pathExists)
+							return DokanResult.FileExists;
+						break;
+
+					case FileMode.Truncate:
+						if (!pathExists)
+							return DokanResult.FileNotFound;
+						break;
+				}
+
+				try
+				{
+					info.Context = new FileStream(fileName, mode,
+						readAccess ? AccessType.Read : AccessType.ReadWrite, share, 4096, options);
+
+					if (pathExists && (mode == FileMode.OpenOrCreate || mode == FileMode.Create))
+					{
+						result = DokanResult.AlreadyExists;
+					}
+
+					// Files are always created as Archive
+					if (mode == FileMode.CreateNew || mode == FileMode.Create)
+					{
+						attributes |= FileAttributes.Archive;
+					}
+
+					File.SetAttributes(fileName, attributes);
+				}
+				catch (UnauthorizedAccessException)
+				{
+					// returning AccessDenied cleanup and close won't be called,
+					// so we have to take care of the stream now
+					if (info.Context is FileStream fileStream)
+					{
+						fileStream.Dispose();
+						info.Context = null;
+					}
+					return DokanResult.AccessDenied;
+				}
+				catch (Exception ex)
+				{
+					var hr = (uint)Marshal.GetHRForException(ex);
+					switch (hr)
+					{
+						case 0x80070020:
+							return DokanResult.SharingViolation;
+						default:
+							throw;
+					}
+				}
+			}
+
+			return result;
+		}
+
+		public void Cleanup(string fileName, IDokanFileInfo info)
+		{
+			CloseFile(fileName, info);
+
+			if (info.DeleteOnClose)
+			{
+				if (info.IsDirectory)
+				{
+					native.Directory.Delete(fileName);
+				}
+				else
+				{
+					native.File.Delete(fileName);
+				}
+			}
+		}
+
+		public void CloseFile(string fileName, IDokanFileInfo info)
+		{
+			(info.Context as Stream)?.Dispose();
+			info.Context = null;
+		}
+
+		public NtStatus DeleteDirectory(string fileName, IDokanFileInfo info)
+		{
+			native.Directory.Delete(fileName);
 			return DokanResult.Success;
 		}
 
-		public virtual NtStatus GetVolumeInformation(
+		public NtStatus DeleteFile(string fileName, IDokanFileInfo info)
+		{
+			native.File.Delete(fileName);
+			return DokanResult.Success;
+		}
+
+		public NtStatus FindFiles(string fileName, out IList<FileInformation> files, IDokanFileInfo info)
+		{
+			return FindFilesWithPattern(fileName, "*", out files, info);
+		}
+
+		public NtStatus FindFilesWithPattern(
+			string fileName,
+			string pattern,
+			out IList<FileInformation> files,
+			IDokanFileInfo info)
+		{
+			files = native.DirectoryInfo.FromDirectoryName(fileName)
+					.EnumerateFileSystemInfos()
+					.Where(finfo => DokanHelper.DokanIsNameInExpression(pattern, finfo.Name, true))
+					.Select(Conversion.MapInfo).ToArray();
+			return DokanResult.Success;
+		}
+
+		public NtStatus FindStreams(string fileName, out IList<FileInformation> streams, IDokanFileInfo info)
+		{
+			streams = new FileInformation[0];
+			return DokanResult.NotImplemented;
+		}
+
+		public NtStatus FlushFileBuffers(string fileName, IDokanFileInfo info)
+		{
+			try
+			{
+				((FileStream)info.Context).Flush();
+				return DokanResult.Success;
+			}
+			catch (IOException)
+			{
+				return DokanResult.DiskFull;
+			}
+		}
+
+		public NtStatus GetDiskFreeSpace(
+			out long freeBytesAvailable,
+			out long totalNumberOfBytes,
+			out long totalNumberOfFreeBytes,
+			IDokanFileInfo info)
+		{
+			const long FREE = 10 * 1024 * 1024 * 1024L;
+			freeBytesAvailable = FREE;
+			totalNumberOfBytes = FREE;
+			totalNumberOfFreeBytes = FREE;
+			return DokanResult.Success;
+		}
+
+		public NtStatus GetFileInformation(string fileName, out FileInformation fileInfo, IDokanFileInfo info)
+		{
+			IFileSystemInfo finfo = native.FileInfo.FromFileName(fileName);
+			if (!finfo.Exists)
+			{
+				finfo = native.DirectoryInfo.FromDirectoryName(fileName);
+			}
+			fileInfo = Conversion.MapInfo(finfo);
+			return DokanResult.Success;
+		}
+
+		public NtStatus GetFileSecurity(
+			string fileName,
+			out FileSystemSecurity? security,
+			AccessControlSections sections,
+			IDokanFileInfo info)
+		{
+			security = default;
+			return DokanResult.NotImplemented;
+		}
+
+		public NtStatus GetVolumeInformation(
 			out string volumeLabel,
 			out FileSystemFeatures features,
 			out string fileSystemName,
@@ -37,196 +305,152 @@ namespace CodingFS.VirtualFileSystem
 			return DokanResult.Success;
 		}
 
-		public virtual NtStatus GetFileInformation(
-			string fileName, 
-			out FileInformation fileInfo,
-			IDokanFileInfo info)
+		public NtStatus LockFile(string fileName, long offset, long length, IDokanFileInfo info)
 		{
-			var time = DateTime.Now;
-			fileInfo = new FileInformation
+			try
 			{
-				FileName = fileName,
-				Length = 0,
-				Attributes = FileAttributes.Directory,
-				CreationTime = time,
-				LastAccessTime = time,
-				LastWriteTime = time,
-			};
+				(info.Context as FileStream)?.Lock(offset, length);
+				return DokanResult.Success;
+			}
+			catch (IOException)
+			{
+				return DokanResult.AccessDenied;
+			}
+		}
+
+		public NtStatus Mounted(IDokanFileInfo info)
+		{
 			return DokanResult.Success;
 		}
 
-		public virtual NtStatus FindFilesWithPattern(
-			string fileName, 
-			string searchPattern, 
-			out IList<FileInformation> files, 
-			IDokanFileInfo info)
+		public NtStatus MoveFile(string oldName, string newName, bool replace, IDokanFileInfo info)
 		{
-			files = Array.Empty<FileInformation>();
 			return DokanResult.Success;
 		}
 
-		public virtual NtStatus FindFiles(
-			string fileName, 
-			out IList<FileInformation> files,
-			IDokanFileInfo info)
+		public NtStatus ReadFile(string fileName, byte[] buffer, out int bytesRead, long offset, IDokanFileInfo info)
 		{
-			return FindFilesWithPattern(fileName, "*", out files, info);
+			if (info.Context == null)
+			{
+				using var stream = native.FileStream.Create(fileName, FileMode.Open, AccessType.Read);
+				stream.Position = offset;
+				bytesRead = stream.Read(buffer, 0, buffer.Length);
+			}
+			else
+			{
+				var stream = (Stream)info.Context;
+				lock (stream)
+				{
+					stream.Position = offset;
+					bytesRead = stream.Read(buffer, 0, buffer.Length);
+				}
+			}
+			return DokanResult.Success;
 		}
 
-		public virtual NtStatus FindStreams(
-			string fileName, 
-			out IList<FileInformation> streams,
-			IDokanFileInfo info)
+		public NtStatus SetAllocationSize(string fileName, long length, IDokanFileInfo info)
 		{
-			return FindFilesWithPattern(fileName, "*", out streams, info);
+			return SetEndOfFile(fileName, length, info);
 		}
 
-		public virtual void Cleanup(string fileName, IDokanFileInfo info) {}
-
-		public virtual void CloseFile(string fileName, IDokanFileInfo info) {}
-
-		public virtual NtStatus CreateFile(
-			string fileName, 
-			DokanNet.FileAccess access, 
-			FileShare share, 
-			FileMode mode,
-			FileOptions options,
-			FileAttributes attributes,
-			IDokanFileInfo info)
+		public NtStatus SetEndOfFile(string fileName, long length, IDokanFileInfo info)
 		{
-			return NtStatus.Success;
+			try
+			{
+				(info.Context as FileStream)?.SetLength(length);
+				return DokanResult.Success;
+			}
+			catch (IOException)
+			{
+				return DokanResult.DiskFull;
+			}
 		}
 
-		// 空闲的空间要大一点，不然系统会提示清理磁盘。
-		public virtual NtStatus GetDiskFreeSpace(
-			out long freeBytesAvailable,
-			out long totalNumberOfBytes,
-			out long totalNumberOfFreeBytes,
-			IDokanFileInfo info)
+		public NtStatus SetFileAttributes(string fileName, FileAttributes attributes, IDokanFileInfo info)
 		{
-			const long FREE = 10 * 1024 * 1024 * 1024L;
-
-			freeBytesAvailable = FREE;
-			totalNumberOfBytes = FREE;
-			totalNumberOfFreeBytes = FREE;
-			return NtStatus.Success;
-		}
-		
-		public virtual NtStatus GetFileSecurity(
-			string fileName,
-			out FileSystemSecurity? security,
-			AccessControlSections sections,
-			IDokanFileInfo info)
-		{
-			// 这个要返回 NotImplemented，Dokan 会自动允许所有权限。
-			security = null;
-			return NtStatus.NotImplemented;
+			if (attributes != 0)
+			{
+				native.File.SetAttributes(fileName, attributes);
+			}
+			return DokanResult.Success;
 		}
 
-		public virtual NtStatus LockFile(
-			string fileName, 
-			long offset, 
-			long length,
-			IDokanFileInfo info)
-		{
-			return NtStatus.Success;
-		}
-
-		public virtual NtStatus Mounted(IDokanFileInfo info)
-		{
-			return NtStatus.Success;
-		}
-
-		public virtual NtStatus MoveFile(
-			string oldName, 
-			string newName, 
-			bool replace, 
-			IDokanFileInfo info)
-		{
-			return NtStatus.Success;
-		}
-
-		public virtual NtStatus SetAllocationSize(
-			string fileName,
-			long length, 
-			IDokanFileInfo info)
-		{
-			return NtStatus.Success;
-		}
-
-		public virtual NtStatus SetEndOfFile(
-			string fileName, 
-			long length, 
-			IDokanFileInfo info)
-		{
-			return NtStatus.Success;
-		}
-
-		public virtual NtStatus SetFileAttributes(
-			string fileName,
-			FileAttributes attributes,
-			IDokanFileInfo info)
-		{
-			return NtStatus.Success;
-		}
-
-		public virtual NtStatus SetFileSecurity(
+		public NtStatus SetFileSecurity(
 			string fileName,
 			FileSystemSecurity security,
 			AccessControlSections sections,
 			IDokanFileInfo info)
 		{
-			return NtStatus.Success;
+			if (info.IsDirectory)
+			{
+				native.Directory.SetAccessControl(fileName, (DirectorySecurity)security);
+			}
+			else
+			{
+				native.File.SetAccessControl(fileName, (FileSecurity)security);
+			}
+			return DokanResult.Success;
 		}
 
-		public virtual NtStatus SetFileTime(
+		public NtStatus SetFileTime(
 			string fileName,
 			DateTime? creationTime,
 			DateTime? lastAccessTime,
 			DateTime? lastWriteTime,
 			IDokanFileInfo info)
 		{
-			return NtStatus.Success;
-		}
-
-		public virtual NtStatus UnlockFile(
-			string fileName,
-			long offset,
-			long length, 
-			IDokanFileInfo info)
-		{
-			return NtStatus.Success;
-		}
-
-		public virtual NtStatus Unmounted(IDokanFileInfo info)
-		{
-			return NtStatus.Success;
-		}
-
-		public virtual NtStatus WriteFile(
-			string fileName, 
-			byte[] buffer, 
-			out int bytesWritten,
-			long offset, 
-			IDokanFileInfo info)
-		{
-			bytesWritten = 0;
+			if (creationTime.HasValue)
+			{
+				File.SetCreationTime(fileName, creationTime.Value);
+			}
+			if (lastAccessTime.HasValue)
+			{
+				File.SetLastAccessTime(fileName, lastAccessTime.Value);
+			}
+			if (lastWriteTime.HasValue)
+			{
+				File.SetLastWriteTime(fileName, lastWriteTime.Value);
+			}
 			return DokanResult.Success;
 		}
 
-		public virtual NtStatus DeleteDirectory(string fileName, IDokanFileInfo info)
+		public NtStatus UnlockFile(string fileName, long offset, long length, IDokanFileInfo info)
 		{
-			return NtStatus.Success;
+			try
+			{
+				(info.Context as FileStream)?.Unlock(offset, length);
+				return DokanResult.Success;
+			}
+			catch (IOException)
+			{
+				return DokanResult.AccessDenied;
+			}
 		}
 
-		public virtual NtStatus DeleteFile(string fileName, IDokanFileInfo info)
+		public NtStatus Unmounted(IDokanFileInfo info)
 		{
-			return NtStatus.Success;
+			return DokanResult.Success;
 		}
 
-		public virtual NtStatus FlushFileBuffers(string fileName, IDokanFileInfo info)
+		public NtStatus WriteFile(string fileName, byte[] buffer, out int bytesWritten, long offset, IDokanFileInfo info)
 		{
-			return NtStatus.Success;
+			if (info.Context == null)
+			{
+				using var stream = native.FileStream.Create(fileName, FileMode.Open, AccessType.Write);
+				stream.Position = offset;
+				stream.Write(buffer, 0, buffer.Length);
+			}
+			else
+			{
+				var stream = (Stream)info.Context;
+				lock (stream)
+				{
+					stream.Position = offset;
+					stream.Write(buffer, 0, buffer.Length);
+				}
+			}
+			bytesWritten = buffer.Length;
+			return DokanResult.Success;
 		}
 	}
 }

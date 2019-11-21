@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using System.IO.Abstractions;
 using System.Runtime.CompilerServices;
 using CodingFS.VirtualFileSystem;
 using CodingFS.Workspaces;
@@ -26,7 +26,8 @@ namespace CodingFS
 	[Verb("inspect", HelpText = "在控制台打印出各种分类的文件")]
 	internal sealed class InspectOptions
 	{
-
+		[Option('s', "source", HelpText = "打印源文件（可能很多）")]
+		public bool Source { get; set; }
 	}
 
 	[Verb("clean", HelpText = "清理文件")]
@@ -70,7 +71,7 @@ namespace CodingFS
 
 		private static void Inspect(string root)
 		{
-			var classifier = new FileClassifier(root, globals, factories);
+			var classifier = new RootFileClassifier(root, globals, factories);
 
 			static void PrintGroup(IEnumerable<string> files, ConsoleColor color, string header)
 			{
@@ -92,7 +93,7 @@ namespace CodingFS
 
 		private static void Clean(string root, CleanOptions options)
 		{
-			var classifier = new FileClassifier(root, globals, factories);
+			var classifier = new RootFileClassifier(root, globals, factories);
 			var countDeps = 0;
 			var countBuild = 0;
 
@@ -129,18 +130,19 @@ namespace CodingFS
 
 		private static void MountVFS(MountOptions options)
 		{
-			var map = new Dictionary<string, FileClassifier>
+			var map = new Dictionary<string, RootFileClassifier>
 			{
-				["Coding"] = new FileClassifier(@"D:\Coding", globals, factories),
-				["Project"] = new FileClassifier(@"D:\Project", globals, factories),
+				["Coding"] = new RootFileClassifier(@"D:\Coding", globals, factories),
+				["Project"] = new RootFileClassifier(@"D:\Project", globals, factories),
 			};
 
 			var fs = new UnsafeCodingFS(options.Type, map);
 			var wrapper = new StaticFSWrapper(fs);
+			//var wrapper = new StaticFSWrapper(new AbstractFileSystem(new FileSystem()));
 #if DEBUG
-			fs.Mount("x:\\", DokanOptions.DebugMode | DokanOptions.StderrOutput);
+			wrapper.Mount("x:\\", DokanOptions.DebugMode | DokanOptions.StderrOutput);
 #else
-			fs.Mount("x:\\", DokanOptions.OptimizeSingleNameSearch, new NullLogger());
+			wrapper.Mount("x:\\", DokanOptions.OptimizeSingleNameSearch, new NullLogger());
 #endif
 		}
 	}

@@ -44,7 +44,8 @@ namespace CodingFS.VirtualFileSystem
 		{
 			try
 			{
-				return Native.CreateFile(fileName, access, share, mode, options, attributes, info);
+				return Native.CreateFile(fileName, access, 
+					share, mode, options, attributes, info);
 			}
 			catch (Exception e)
 			{
@@ -110,7 +111,10 @@ namespace CodingFS.VirtualFileSystem
 			}
 		}
 
-		public NtStatus GetFileInformation(string fileName, out FileInformation fileInfo, IDokanFileInfo info)
+		public NtStatus GetFileInformation(
+			string fileName, 
+			out FileInformation fileInfo, 
+			IDokanFileInfo info)
 		{
 			try
 			{
@@ -123,7 +127,10 @@ namespace CodingFS.VirtualFileSystem
 			}
 		}
 
-		public NtStatus FindFiles(string fileName, out IList<FileInformation>? files, IDokanFileInfo info)
+		public NtStatus FindFiles(
+			string fileName,
+			out IList<FileInformation>? files, 
+			IDokanFileInfo info)
 		{
 			try
 			{
@@ -153,7 +160,10 @@ namespace CodingFS.VirtualFileSystem
 			}
 		}
 
-		public NtStatus SetFileAttributes(string fileName, FileAttributes attributes, IDokanFileInfo info)
+		public NtStatus SetFileAttributes(
+			string fileName,
+			FileAttributes attributes,
+			IDokanFileInfo info)
 		{
 			try
 			{
@@ -207,7 +217,11 @@ namespace CodingFS.VirtualFileSystem
 			}
 		}
 
-		public NtStatus MoveFile(string oldName, string newName, bool replace, IDokanFileInfo info)
+		public NtStatus MoveFile(
+			string oldName, 
+			string newName, 
+			bool replace, 
+			IDokanFileInfo info)
 		{
 			try
 			{

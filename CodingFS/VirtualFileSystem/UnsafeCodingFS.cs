@@ -17,7 +17,7 @@ namespace CodingFS.VirtualFileSystem
 	/// </summary>
 	internal class UnsafeCodingFS : CodingFS, IDokanOperationsUnsafe
 	{
-		public UnsafeCodingFS(FileType type, Dictionary<string, FileClassifier> map) : base(type, map) { }
+		public UnsafeCodingFS(FileType type, Dictionary<string, RootFileClassifier> map) : base(type, map) { }
 
 		public NtStatus ReadFile(
 			string fileName,

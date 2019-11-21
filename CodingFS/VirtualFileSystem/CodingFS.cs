@@ -10,12 +10,26 @@ namespace CodingFS.VirtualFileSystem
 	public class CodingFS : DokanOperationBase
 	{
 		private readonly FileType type;
-		private readonly Dictionary<string, FileClassifier> map;
+		private readonly Dictionary<string, RootFileClassifier> map;
 
-		public CodingFS(FileType type, Dictionary<string, FileClassifier> map)
+		public CodingFS(FileType type, Dictionary<string, RootFileClassifier> map)
 		{
 			this.type = type;
 			this.map = map;
+		}
+
+		public override NtStatus GetVolumeInformation(
+			out string volumeLabel,
+			out FileSystemFeatures features,
+			out string fileSystemName,
+			out uint maximumComponentLength,
+			IDokanFileInfo info)
+		{
+			volumeLabel = $"CodingFS({type})";
+			features = FileSystemFeatures.None;
+			fileSystemName = "CodingFS";
+			maximumComponentLength = 256;
+			return DokanResult.Success;
 		}
 
 		protected string MapPath(string value)
@@ -33,6 +47,9 @@ namespace CodingFS.VirtualFileSystem
 			throw new FileNotFoundException("文件不在映射区", value);
 		}
 
+		// 【知识点】IEnumerable.ToArray 直接操作数组而不是 .ToList().ToArray()，所以比 ToList() 更快
+		// https://github.com/dotnet/corefx/blob/master/src/Common/src/System/Collections/Generic/EnumerableHelpers.cs
+
 		public override NtStatus FindFilesWithPattern(
 			string fileName,
 			string searchPattern,
@@ -43,7 +60,7 @@ namespace CodingFS.VirtualFileSystem
 			{
 				files = map.Values
 					.Select(sc => Conversion.MapInfo(new DirectoryInfo(sc.Root)))
-					.ToList();
+					.ToArray();
 			}
 			else
 			{
@@ -54,10 +71,13 @@ namespace CodingFS.VirtualFileSystem
 					throw new FileNotFoundException("文件不在映射区", root);
 				}
 
-				files = scanner.EnumerateFiles(MapPath(fileName))
-					.Where(tuple => tuple.Item2 == type)
-					.Select(tuple => Conversion.MapInfo(new FileInfo(tuple.Item1)))
-					.ToList();
+				fileName = MapPath(fileName);
+				var @fixed = scanner.FixedOn(Path.GetDirectoryName(fileName));
+
+				files = new DirectoryInfo(fileName)
+					.EnumerateFileSystemInfos()
+					.Where(info => @fixed.GetFileType(info.FullName) == type)
+					.Select(Conversion.MapInfo).ToArray();
 			}
 
 			return DokanResult.Success;
@@ -88,7 +108,6 @@ namespace CodingFS.VirtualFileSystem
 				FileSystemInfo rawInfo = new FileInfo(rawPath);
 				fileInfo = Conversion.MapInfo(rawInfo.Exists ? rawInfo : new DirectoryInfo(rawPath));
 			}
-
 			return DokanResult.Success;
 		}
 
@@ -119,20 +138,6 @@ namespace CodingFS.VirtualFileSystem
 					bytesRead = stream.Read(buffer, 0, buffer.Length);
 				}
 			}
-			return DokanResult.Success;
-		}
-
-		public override NtStatus GetVolumeInformation(
-			out string volumeLabel,
-			out FileSystemFeatures features,
-			out string fileSystemName,
-			out uint maximumComponentLength,
-			IDokanFileInfo info)
-		{
-			volumeLabel = $"CodingFS({type})";
-			features = FileSystemFeatures.None;
-			fileSystemName = "CodingFS";
-			maximumComponentLength = 256;
 			return DokanResult.Success;
 		}
 	}

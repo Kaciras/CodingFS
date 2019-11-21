@@ -6,7 +6,7 @@ namespace CodingFS
 	public enum RecognizeType
 	{
 		/// <summary>
-		/// 不关心（无法识别）的文件
+		/// 不关心（或无法识别）的文件
 		/// </summary>
 		NotCare = 0,
 		/// <summary>

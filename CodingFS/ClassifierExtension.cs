@@ -5,7 +5,7 @@ namespace CodingFS
 {
 	public static class ClassifierExtension
 	{
-		public static IEnumerable<(string, FileType)> Iterate(this FileClassifier classifier, string dir)
+		public static IEnumerable<(string, FileType)> Iterate(this RootFileClassifier classifier, string dir)
 		{
 			// EnumerateFiles 和 EnumerateDirectories 都是在 EnumerateFileSystemEntries 上过滤的
 			foreach (var file in Directory.EnumerateFileSystemEntries(dir))
@@ -34,12 +34,12 @@ namespace CodingFS
 			}
 		}
 
-		public static IEnumerable<(string, FileType)> Iterate(this FileClassifier classifier)
+		public static IEnumerable<(string, FileType)> Iterate(this RootFileClassifier classifier)
 		{
 			return Iterate(classifier, classifier.Root);
 		}
 
-		public static FileGroup Group(this FileClassifier classifier, string dir)
+		public static FileGroup Group(this RootFileClassifier classifier, string dir)
 		{
 			var groups = new FileGroup();
 			foreach (var (file, type) in Iterate(classifier, dir))
@@ -49,6 +49,6 @@ namespace CodingFS
 			return groups;
 		}
 
-		public static FileGroup Group(this FileClassifier classifier) => Group(classifier, classifier.Root);
+		public static FileGroup Group(this RootFileClassifier classifier) => Group(classifier, classifier.Root);
 	}
 }

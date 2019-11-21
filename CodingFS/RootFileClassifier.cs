@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using CodingFS.Workspaces;
+using System.Buffers;
 
 namespace CodingFS
 {
@@ -12,7 +13,7 @@ namespace CodingFS
 	/// 【线程安全】
 	/// 该类不是线程安全的，请勿并发调用。
 	/// </summary>
-	public sealed class FileClassifier
+	public sealed class RootFileClassifier
 	{
 		// Directory 和 Path 都跟IO库里的镜头类重名了，只能用这个烂名字
 		public string Root { get; }
@@ -20,7 +21,7 @@ namespace CodingFS
 		private readonly PathTrieNode<IWorkspace[]> rootNode;
 		private readonly IWorkspaceFactory[] factories;
 
-		public FileClassifier(string root, IWorkspace[] globals, IWorkspaceFactory[] factories)
+		public RootFileClassifier(string root, IWorkspace[] globals, IWorkspaceFactory[] factories)
 		{
 			Root = root;
 			rootNode = new PathTrieNode<IWorkspace[]>(globals);
@@ -44,7 +45,7 @@ namespace CodingFS
 				{
 					node = child;
 				}
-
+				
 				var tempDir = Path.Join(Root, string.Join('\\', parts.Take(i + 1)));
 				var matches = factories
 					.Select(f => f.Match(tempDir))
@@ -62,49 +63,19 @@ namespace CodingFS
 			return result;
 		}
 
-		// 【分类依据】
-		// 根据 IDE 和 VCS 找出被忽略的文件，未被忽略的都是和源文件，再由项目结构的约定
-		// 从被忽略的文件里区分出依赖，最后剩下的都是生成的文件。
-		private static FileType GetFileType(IEnumerable<IWorkspace> workspaces, string path)
+		public WorkspaceFileClassifier FixedOn(string? directory)
 		{
-			var flags = workspaces.Aggregate(RecognizeType.NotCare, (v, c) => v | c.Recognize(path));
-			if (flags.HasFlag(RecognizeType.Dependency))
+			if (directory == null)
 			{
-				return FileType.Dependency;
+				return new WorkspaceFileClassifier(rootNode.Value);
 			}
-			else if (flags.HasFlag(RecognizeType.Ignored))
-			{
-				return FileType.Build;
-			}
-			else
-			{
-				return FileType.Source;
-			}
+			return new WorkspaceFileClassifier(GetWorkspaces(directory));
 		}
 
 		public FileType GetFileType(string path)
 		{
 			var directory = Path.GetDirectoryName(path);
-			if (directory == null)
-			{
-				return GetFileType(rootNode.Value, path);
-			}
-			return GetFileType(GetWorkspaces(directory), path);
-		}
-
-		/// <summary>
-		/// 枚举并识别一个目录下的所有文件，该方法比 GetFileType() 稍快一些。
-		/// 
-		/// 【API设计】
-		/// 该方法不支持递归子目录，因为调用方往往会过滤一部分子目录，过滤逻辑也不是该类所管的。
-		/// </summary>
-		/// <param name="directory">待枚举的目录</param>
-		/// <returns>文件名、类型二元组</returns>
-		public IEnumerable<(string, FileType)> EnumerateFiles(string directory)
-		{
-			var workspaces = GetWorkspaces(directory);
-			return Directory.EnumerateFileSystemEntries(directory)
-				.Select(file => (file, GetFileType(workspaces, file)));
+			return FixedOn(directory).GetFileType(path);
 		}
 	}
 }
