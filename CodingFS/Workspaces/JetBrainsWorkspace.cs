@@ -22,13 +22,12 @@ namespace CodingFS.Workspaces
 	internal class JetBrainsWorkspace : IWorkspace
 	{
 		readonly string root;
-
-		readonly RecognizedFileMap ignored;
+		readonly PathDict ignored;
 
 		public JetBrainsWorkspace(string root)
 		{
 			this.root = root;
-			ignored = new RecognizedFileMap(root);
+			ignored = new PathDict(root);
 			ResloveWorkspace();
 			ResloveModules();
 			ResloveExternalBuildSystem();
@@ -77,7 +76,10 @@ namespace CodingFS.Workspaces
 					value = Path.GetRelativePath(projectRoot, value);
 
 					// Path.GetRelativePath 对于非子路径不报错，而是原样返回
-					if (rooted == value) continue;
+					if (rooted == value)
+					{
+						continue;
+					}
 				}
 
 				// 项目之外的不关心，node_modules已经由Node识别器处理了

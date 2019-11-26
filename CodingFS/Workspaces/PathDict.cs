@@ -1,58 +1,33 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace CodingFS.Workspaces
 {
-	public class RecognizedFileMap : IWorkspace
+	public class PathDict : IWorkspace
 	{
 		private readonly string directory;
-		private readonly PathTrieNode<RecognizeType> root;
+		private readonly IDictionary<FilePath, RecognizeType> map;
 
-		public RecognizedFileMap(string directory)
+		public PathDict(string directory)
 		{
 			this.directory = directory;
-			root = new PathTrieNode<RecognizeType>(default);
+			map = new Dictionary<FilePath, RecognizeType>();
 		}
 
 		public RecognizeType Recognize(string path)
 		{
 			path = EnsureRelativePath(path);
-
-			var node = root;
-			var parts = path.Split('\\', '/');
-
-			foreach (var part in parts)
+			if (map.TryGetValue(path, out var result))
 			{
-				if (node.TryGetChild(part, out var child))
-				{
-					node = child;
-				}
-				else
-				{
-					break;
-				}
+				return result;
 			}
 			return RecognizeType.NotCare;
 		}
 
 		public void Add(string path, RecognizeType type)
 		{
-			var parts = EnsureRelativePath(path).Split('\\', '/');
-			var node = root;
-
-			foreach (var part in parts)
-			{
-				if (node.TryGetChild(part, out var child))
-				{
-					node = child;
-				}
-				else
-				{
-					node = node.PutChild(part, RecognizeType.NotCare);
-				}
-			}
-
-			node.Value = type;
+			map[EnsureRelativePath(path)] = type;
 		}
 
 		/// <summary>

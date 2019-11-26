@@ -13,7 +13,7 @@ namespace CodingFS.Workspaces
 
 		public IWorkspace? Match(string path)
 		{
-			var ignored = new RecognizedFileMap(path);
+			var ignored = new PathDict(path);
 
 			var sln = Directory.EnumerateFiles(path).FirstOrDefault(p => p.EndsWith(".sln"));
 			if (sln == null)
@@ -53,9 +53,9 @@ namespace CodingFS.Workspaces
 	public class VisualStudioWorkspace : IWorkspace
 	{
 		private readonly string folder;
-		private readonly RecognizedFileMap ignored;
+		private readonly PathDict ignored;
 
-		public VisualStudioWorkspace(string folder, RecognizedFileMap ignored)
+		public VisualStudioWorkspace(string folder, PathDict ignored)
 		{
 			this.folder = folder;
 			this.ignored = ignored;
