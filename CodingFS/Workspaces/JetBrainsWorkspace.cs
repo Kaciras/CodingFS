@@ -237,6 +237,7 @@ namespace CodingFS.Workspaces
 			var config = option.Item(0).Attributes["value"].Value;
 			config = config.Replace("$PROJECT_DIR$", root);
 
+			// webpack.config.js 里可能动态计算输出目录，故必须运行此文件。
 			var startInfo = new ProcessStartInfo
 			{
 				FileName = "node",
