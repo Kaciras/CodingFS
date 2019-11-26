@@ -72,7 +72,7 @@ namespace CodingFS.VirtualFileSystem
 				}
 
 				fileName = MapPath(fileName);
-				var @fixed = scanner.FixedOn(Path.GetDirectoryName(fileName));
+				var @fixed = scanner.FixedOn(fileName);
 
 				files = new DirectoryInfo(fileName)
 					.EnumerateFileSystemInfos()
