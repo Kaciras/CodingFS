@@ -3,11 +3,11 @@ using BenchmarkDotNet.Running;
 
 namespace CodingFS.Benchmark
 {
-	class Program
+	internal class Program
 	{
-		static void Main(string[] args)
+		private static void Main(string[] args)
 		{
-			BenchmarkRunner.Run<WhereSelectPerf>();
+			BenchmarkRunner.Run<FilePathPerf>();
 		}
 	}
 }
