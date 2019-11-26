@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -31,6 +32,7 @@ namespace CodingFS.Workspaces
 			ResloveWorkspace();
 			ResloveModules();
 			ResloveExternalBuildSystem();
+			ResolveWebpackOutputPath();
 		}
 
 		private void ResloveWorkspace()
@@ -213,6 +215,48 @@ namespace CodingFS.Workspaces
 					dir = Path.Join(module, dir);
 				}
 				ignored.Add(dir, RecognizeType.Ignored);
+			}
+		}
+
+		// TODO: 异步等待进程
+		private void ResolveWebpackOutputPath()
+		{
+			var misc = Path.Join(root, ".idea/misc.xml");
+			if (!File.Exists(misc))
+			{
+				return;
+			}
+
+			var doc = new XmlDocument();
+			doc.Load(misc);
+			var option = doc.SelectNodes("//component[@name='WebPackConfiguration']/option[@name='path']");
+			if (option.Count == 0)
+			{
+				return;
+			}
+			var config = option.Item(0).Attributes["value"].Value;
+			config = config.Replace("$PROJECT_DIR$", root);
+
+			var startInfo = new ProcessStartInfo
+			{
+				FileName = "node",
+				WorkingDirectory = root,
+				RedirectStandardOutput = true,
+				RedirectStandardError = true,
+			};
+			startInfo.ArgumentList.Add(Path.Join(Directory.GetCurrentDirectory(), "Scripts/webpack-output.js"));
+			startInfo.ArgumentList.Add(config);
+
+			var process = Process.Start(startInfo);
+			process.WaitForExit();
+			if (process.ExitCode == 0)
+			{
+				ignored.Add(process.StandardOutput.ReadToEnd(), RecognizeType.Ignored);
+			}
+			else
+			{
+				var message = process.StandardError.ReadToEnd();
+				throw new InvalidOperationException(message);
 			}
 		}
 

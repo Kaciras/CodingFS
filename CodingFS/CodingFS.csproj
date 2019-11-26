@@ -16,4 +16,10 @@
     <PackageReference Include="System.IO.Abstractions" Version="7.0.7" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Scripts\webpack-output.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
