@@ -30,6 +30,12 @@ namespace CodingFS.Workspaces
 			map[EnsureRelativePath(path)] = type;
 		}
 
+		// 两个便捷方法，没有 AddNotCare 因为 NotCare 不用添加
+
+		public void AddDependency(string path) => Add(path, RecognizeType.Dependency);
+
+		public void AddIgnore(string path) => Add(path, RecognizeType.Ignored);
+
 		/// <summary>
 		/// 检查路径是相对路径，如果不是则尝试转换，转换失则败抛出ArgumentException。
 		/// </summary>

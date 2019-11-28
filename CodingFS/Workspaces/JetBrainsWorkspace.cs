@@ -4,7 +4,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Xml;
+using MoreLinq.Extensions;
 
 namespace CodingFS.Workspaces
 {
@@ -22,28 +24,47 @@ namespace CodingFS.Workspaces
 
 	internal class JetBrainsWorkspace : IWorkspace
 	{
-		readonly string root;
-		readonly PathDict ignored;
+		private readonly string root;
+		private readonly PathDict ignored;
 
 		public JetBrainsWorkspace(string root)
 		{
 			this.root = root;
 			ignored = new PathDict(root);
-			ResloveWorkspace();
-			ResloveModules();
-			ResloveExternalBuildSystem();
-			ResolveWebpackOutputPath();
 		}
 
-		private void ResloveWorkspace()
+		internal async Task Initialize()
 		{
-			var doc = new XmlDocument();
-			doc.Load(Path.Join(root, ".idea/workspace.xml"));
+			var webpack = ResolveWebpackOutputPath();
+			var modules = ResolveModules();
+			var ebs = ResolveExternalBuildSystem();
+			var workspace = ResolveWorkspace();
 
-			foreach (var item in ParseWorkspace(root, doc))
+			// 注意PathDict不是线程安全的
+			await Task.WhenAll(modules, ebs, webpack, workspace);
+
+			if (webpack.Result != null)
 			{
-				ignored.Add(item, RecognizeType.Ignored);
+				ignored.AddIgnore(webpack.Result);
 			}
+			modules.Result.ForEach(ignored.AddIgnore);
+			ebs.Result.ForEach(ignored.AddIgnore);
+			workspace.Result.ForEach(ignored.AddIgnore);
+		}
+
+		public RecognizeType Recognize(string path)
+		{
+			var relative = Path.GetRelativePath(root, path);
+
+			if (relative == ".idea")
+			{
+				return RecognizeType.Dependency;
+			}
+			if (Path.GetExtension(relative) == ".iml")
+			{
+				return RecognizeType.Dependency;
+			}
+			return ignored.Recognize(relative);
 		}
 
 		/// <summary>
@@ -52,64 +73,40 @@ namespace CodingFS.Workspaces
 		/// 
 		/// 这个方法从workspace.xml里读取被排除的文件列表。
 		/// </summary>
-		/// <param name="projectRoot">项目文件夹路径</param>
-		/// <param name="doc">解析后的workspace.xml</param>
 		/// <returns>被排除的文件</returns>
-		internal static IEnumerable<string> ParseWorkspace(string projectRoot, XmlDocument doc)
+		private async Task<IEnumerable<string>> ResolveWorkspace()
 		{
+			var xmlFile = Path.Join(root, ".idea/workspace.xml");
+			var doc = new XmlDocument();
+			doc.LoadXml(await File.ReadAllTextAsync(xmlFile));
+
 			var tsIgnores = doc.SelectNodes(
 				"//component[@name='TypeScriptGeneratedFilesManager']" +
 				"/option[@name='exactExcludedFiles']/list//option");
 
-			// 这个XML解析库竟然还是非泛型的
-			for (int i = 0; i < tsIgnores.Count; i++)
-			{
-				var value = tsIgnores[i].Attributes["value"].Value;
-
-				if (value.StartsWith("$PROJECT_DIR$/"))
-				{
-					value = value[14..];
-				}
-
-				// 绝对路径也有可能是项目下的文件
-				if (Path.IsPathRooted(value))
-				{
-					var rooted = value;
-					value = Path.GetRelativePath(projectRoot, value);
-
-					// Path.GetRelativePath 对于非子路径不报错，而是原样返回
-					if (rooted == value)
-					{
-						continue;
-					}
-				}
-
-				// 项目之外的不关心，node_modules已经由Node识别器处理了
-				if (value.StartsWith("..") ||
-					value.StartsWith("node_modules"))
-				{
-					continue;
-				}
-
-				yield return value;
-			}
+			return tsIgnores.Cast<XmlNode>()
+				.Select(node => ToRelative(node.Attributes["value"].Value))
+				.SkipWhile(Path.IsPathRooted)
+				.SkipWhile(path => path.StartsWith("..") || path.StartsWith("node_modules"));
 		}
 
 		/// <summary>
 		/// 在.idea目录下可能存在一个modules.xml文件，里面记录了IML文件的位置。
 		/// </summary>
-		private void ResloveModules()
+		private async Task<IEnumerable<string>> ResolveModules()
 		{
 			var xmlFile = Path.Join(root, ".idea/modules.xml");
-
 			if (!File.Exists(xmlFile))
 			{
-				return;
+				return Enumerable.Empty<string>();
 			}
+
 			var doc = new XmlDocument();
-			doc.Load(xmlFile);
+			doc.Load(await File.ReadAllTextAsync(xmlFile));
 
 			var modules = doc.SelectNodes("//component[@name='ProjectModuleManager']/modules//module");
+			var flatten = Enumerable.Empty<string>();
+
 			for (int i = 0; i < modules.Count; i++)
 			{
 				var imlFile = modules[i].Attributes["filepath"].Value[14..];
@@ -118,21 +115,58 @@ namespace CodingFS.Workspaces
 				var parent = Path.GetDirectoryName(imlFile);
 				if (parent == ".idea" || imlFile.Contains('/'))
 				{
-					ParseModuleManager(imlFile, null);
+					flatten = flatten.Concat(await ParseModuleManager(imlFile, null));
 				}
 				else
 				{
-					ParseModuleManager(imlFile, parent);
+					flatten = flatten.Concat(await ParseModuleManager(imlFile, parent));
 				}
 			}
+
+			return flatten;
 		}
 
 		/// <summary>
 		/// 在IDEA用户配置目录的 system/external_build_system/modules 下还有iml文件。
-		/// 
-		/// TODO：2019.2 开始找不到这个文件夹了
 		/// </summary>
-		private void ResloveExternalBuildSystem()
+		private async Task<IEnumerable<string>> ResolveExternalBuildSystem()
+		{
+			var configPath = GetUserConfigStore();
+			if (configPath == null)
+			{
+				return Enumerable.Empty<string>();
+			}
+
+			// 计算项目在 external_build_system 里对应的文件夹，计算方法见：
+			// https://github.com/JetBrains/intellij-community/blob/734efbef5b75dfda517731ca39fb404404fbe182/platform/platform-api/src/com/intellij/openapi/project/ProjectUtil.kt#L146
+
+			var cache = JavaStringHashcode(root).ToString("x2");
+			cache = Path.GetFileName(root) + "." + cache;
+			configPath = Path.Join(configPath, "system/external_build_system", cache, "modules");
+
+			if (!Directory.Exists(configPath))
+			{
+				return Enumerable.Empty<string>();
+			}
+
+			var flatten = Enumerable.Empty<string>();
+
+			foreach (var file in Directory.EnumerateFiles(configPath))
+			{
+				string? moduleDirectory = null;
+
+				var stem = Path.GetFileNameWithoutExtension(file);
+				if (Path.GetFileName(root) != stem)
+				{
+					moduleDirectory = stem;
+				}
+				flatten = flatten.Concat(await ParseModuleManager(file, moduleDirectory));
+			}
+
+			return flatten;
+		}
+
+		private string? GetUserConfigStore()
 		{
 			var IDEA_DIR_RE = new Regex(@"\.IntelliJIdea([0-9.]+)");
 			var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
@@ -156,33 +190,7 @@ namespace CodingFS.Workspaces
 				}
 			}
 
-			if (configPath == null)
-			{
-				return;
-			}
-
-			// 计算项目在 external_build_system 里对应的文件夹，计算方法见：
-			// https://github.com/JetBrains/intellij-community/blob/734efbef5b75dfda517731ca39fb404404fbe182/platform/platform-api/src/com/intellij/openapi/project/ProjectUtil.kt#L146
-
-			var cache = JavaStringHashcode(root).ToString("x2");
-			cache = Path.GetFileName(root) + "." + cache;
-			configPath = Path.Join(configPath, "system/external_build_system", cache, "modules");
-
-			if (!Directory.Exists(configPath))
-			{
-				return;
-			}
-			foreach (var file in Directory.EnumerateFiles(configPath))
-			{
-				string? moduleDirectory = null;
-
-				var stem = Path.GetFileNameWithoutExtension(file);
-				if (Path.GetFileName(root) != stem)
-				{
-					moduleDirectory = stem;
-				}
-				ParseModuleManager(file, moduleDirectory);
-			}
+			return configPath;
 		}
 
 		/// <summary>
@@ -190,49 +198,54 @@ namespace CodingFS.Workspaces
 		/// </summary>
 		/// <param name="imlFile"></param>
 		/// <param name="module"></param>
-		private void ParseModuleManager(string imlFile, string? module)
+		private async Task<IEnumerable<string>> ParseModuleManager(string imlFile, string? module)
 		{
 			if (!File.Exists(imlFile))
 			{
-				return;
+				return Enumerable.Empty<string>();
 			}
-
 			var doc = new XmlDocument();
-			doc.Load(imlFile);
+			doc.Load(await File.ReadAllTextAsync(imlFile));
+			return GetExcludesFromIml(doc, module);
+		}
 
-			var excludes = doc.SelectNodes("//component[@name='NewModuleRootManager']/content//excludeFolder");
-			for (int i = 0; i < excludes.Count; i++)
+		private IEnumerable<string> GetExcludesFromIml(XmlDocument doc, string? module)
+		{
+			var nodes = doc.SelectNodes("//component[@name='NewModuleRootManager']/content//excludeFolder");
+			for (int i = 0; i < nodes.Count; i++)
 			{
-				var dir = excludes[i].Attributes["url"].Value;
+				var folder = nodes[i].Attributes["url"].Value;
 
-				if (!dir.StartsWith("file://$MODULE_DIR$/"))
+				if (!folder.StartsWith("file://$MODULE_DIR$/"))
 				{
 					throw new Exception("断言失败");
 				}
-				dir = dir.Substring(20);
-				if (module != null)
+				folder = folder.Substring(20);
+
+				if (module == null)
 				{
-					dir = Path.Join(module, dir);
+					yield return folder;
 				}
-				ignored.Add(dir, RecognizeType.Ignored);
+				yield return Path.Join(module, folder);
 			}
 		}
 
 		// TODO: 异步等待进程
-		private void ResolveWebpackOutputPath()
+		private async Task<string?> ResolveWebpackOutputPath()
 		{
-			var misc = Path.Join(root, ".idea/misc.xml");
-			if (!File.Exists(misc))
+			var xmlFile = Path.Join(root, ".idea/misc.xml");
+			if (!File.Exists(xmlFile))
 			{
-				return;
+				return null;
 			}
 
 			var doc = new XmlDocument();
-			doc.Load(misc);
+			doc.Load(await File.ReadAllTextAsync(xmlFile));
+
 			var option = doc.SelectNodes("//component[@name='WebPackConfiguration']/option[@name='path']");
 			if (option.Count == 0)
 			{
-				return;
+				return null;
 			}
 			var config = option.Item(0).Attributes["value"].Value;
 			config = config.Replace("$PROJECT_DIR$", root);
@@ -245,35 +258,35 @@ namespace CodingFS.Workspaces
 				RedirectStandardOutput = true,
 				RedirectStandardError = true,
 			};
-			startInfo.ArgumentList.Add(Path.Join(Directory.GetCurrentDirectory(), "Scripts/webpack-output.js"));
+			startInfo.ArgumentList.Add(Path.Join(Environment.CurrentDirectory, "Scripts/webpack-output.js"));
 			startInfo.ArgumentList.Add(config);
 
 			var process = Process.Start(startInfo);
-			process.WaitForExit();
-			if (process.ExitCode == 0)
+			var taskSource = new TaskCompletionSource<string>();
+
+			process.Exited += (_, __) =>
 			{
-				ignored.Add(process.StandardOutput.ReadToEnd(), RecognizeType.Ignored);
-			}
-			else
-			{
-				var message = process.StandardError.ReadToEnd();
-				throw new InvalidOperationException(message);
-			}
+				if (process.ExitCode == 0)
+				{
+					taskSource.SetResult(process.StandardOutput.ReadToEnd());
+				}
+				else
+				{
+					var message = process.StandardError.ReadToEnd();
+					taskSource.SetException(new Exception(message));
+				}
+			};
+
+			return await taskSource.Task;
 		}
 
-		public RecognizeType Recognize(string path)
+		private string ToRelative(string value)
 		{
-			var relative = Path.GetRelativePath(root, path);
+			value = value.Replace("$PROJECT_DIR$", root);
 
-			if (relative == ".idea")
-			{
-				return RecognizeType.Dependency;
-			}
-			if (Path.GetExtension(relative) == ".iml")
-			{
-				return RecognizeType.Dependency;
-			}
-			return ignored.Recognize(relative);
+			// 绝对路径也有可能是项目下的文件
+			// Path.GetRelativePath 对于非子路径不报错，而是原样返回
+			return Path.GetRelativePath(root, value);
 		}
 
 		internal static int JavaStringHashcode(string str)
