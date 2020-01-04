@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 namespace CodingFS
 {
 	/// <summary>
-	/// 如果要用路径作为字典的键，则有两个问题要处理：统一Win和Unix分隔符、忽略尾部分隔符。
+	/// 如果要用路径作为字典的键，则有两个问题：统一Win和Unix分隔符、忽略尾部分隔符。
 	/// 如果直接处理字符串，则需要堆分配，使用此类包装一下，修改Equals和HashCode即可避免。
 	/// 
 	/// 之所以不直接用HashCode作为键有两个原因：
