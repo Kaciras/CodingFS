@@ -1,16 +1,11 @@
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
+using Microsoft.Build.Construction;
 
 namespace CodingFS.Workspaces
 {
 	public class VisualStudioIDE : IWorkspaceFactory
 	{
-		// VisualStudio 的 sln 文件里记录了项目的位置，示例：
-		// Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodingFS", "CodingFS\CodingFS.csproj", "{207E8E66-808C-4026-91D8-62F479792563}"
-		// 可以根据前面的“Project(”来识别这一行。
-		private readonly Regex ProjectRE = new Regex(@"Project\((.+)", RegexOptions.Multiline);
-
 		public IWorkspace? Match(string path)
 		{
 			var ignored = new PathDict(path);
@@ -21,13 +16,13 @@ namespace CodingFS.Workspaces
 				return null;
 			}
 
-			var match = ProjectRE.Match(File.ReadAllText(sln));
-			while (match.Success)
+			var solution = SolutionFile.Parse(sln);
+			foreach (var project in solution.ProjectsInOrder)
 			{
-				var project = match.Groups[1].Value.Split(", ")[1][1..^1];
-				var folder = Path.GetDirectoryName(project);
+				var type = Path.GetExtension(project.RelativePath);
+				var folder = Path.GetDirectoryName(project.AbsolutePath);
 
-				if (project.EndsWith(".csproj"))
+				if (type == ".csproj")
 				{
 					ignored.Add(Path.Join(folder, "obj"), RecognizeType.Ignored);
 					ignored.Add(Path.Join(folder, "bin"), RecognizeType.Ignored);
@@ -35,7 +30,7 @@ namespace CodingFS.Workspaces
 					// 应该不会有正常文件叫TestResults吧
 					ignored.Add("TestResults", RecognizeType.Ignored);
 				}
-				else if (project.EndsWith(".vcxproj"))
+				else if (type == ".vcxproj")
 				{
 					// C艹的项目会直接生成在解决方案目录里，Trie树会忽略重复的添加
 					ignored.Add("Debug", RecognizeType.Ignored);
@@ -43,7 +38,6 @@ namespace CodingFS.Workspaces
 					ignored.Add(Path.Join(folder, "Debug"), RecognizeType.Ignored);
 					ignored.Add(Path.Join(folder, "Release"), RecognizeType.Ignored);
 				}
-				match = match.NextMatch();
 			}
 
 			return new VisualStudioWorkspace(path, ignored);
