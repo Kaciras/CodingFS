@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Abstractions;
 using System.Runtime.CompilerServices;
 using CodingFS.VirtualFileSystem;
 using CodingFS.Workspaces;
@@ -66,7 +65,6 @@ namespace CodingFS
 		private static void Inspect(InspectOptions options)
 		{
 			Inspect(@"D:\Coding");
-			Inspect(@"D:\Project");
 		}
 
 		private static void Inspect(string root)
@@ -88,7 +86,6 @@ namespace CodingFS
 		private static void Clean(CleanOptions options)
 		{
 			Clean(@"D:\Coding", options);
-			Clean(@"D:\Project", options);
 		}
 
 		private static void Clean(string root, CleanOptions options)
@@ -133,7 +130,6 @@ namespace CodingFS
 			var map = new Dictionary<string, RootFileClassifier>
 			{
 				["Coding"] = new RootFileClassifier(@"D:\Coding", globals, factories),
-				["Project"] = new RootFileClassifier(@"D:\Project", globals, factories),
 			};
 
 			var fs = new UnsafeCodingFS(options.Type, map);
@@ -142,7 +138,7 @@ namespace CodingFS
 #if DEBUG
 			wrapper.Mount("x:\\", DokanOptions.DebugMode | DokanOptions.StderrOutput);
 #else
-			wrapper.Mount("x:\\", DokanOptions.OptimizeSingleNameSearch, new NullLogger());
+			wrapper.Mount("x:\\", new NullLogger());
 #endif
 		}
 	}
