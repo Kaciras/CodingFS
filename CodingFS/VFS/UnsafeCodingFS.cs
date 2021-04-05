@@ -7,10 +7,10 @@ using DokanNet;
 using Microsoft.Win32.SafeHandles;
 using AccessType = System.IO.FileAccess;
 
-namespace CodingFS.VirtualFileSystem
+namespace CodingFS.VFS
 {
 	/// <summary>
-	/// 相比于非Unsafe的实现，该实现使用IntPtr指针操作底层缓冲，避免额外的复制消耗。
+	/// 相比于非Unsafe的实现，该实现使用 IntPtr 指针操作底层缓冲，避免额外的复制消耗。
 	/// 
 	/// 这个文件的代码参考了官方的示例：
 	/// https://github.com/dokan-dev/dokan-dotnet/blob/master/sample/DokanNetMirror/UnsafeMirror.cs

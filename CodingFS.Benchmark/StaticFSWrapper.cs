@@ -4,7 +4,7 @@ using System.IO;
 using System.Security.AccessControl;
 using DokanNet;
 
-namespace CodingFS.VirtualFileSystem
+namespace CodingFS.Benchmark
 {
 	/// <summary>
 	/// 这个类的作用跟DynamicFSProxy一样，区别是静态实现了全部方法的异常处理。

@@ -4,7 +4,7 @@ using System.IO;
 using System.Security.AccessControl;
 using DokanNet;
 
-namespace CodingFS.VirtualFileSystem
+namespace CodingFS.VFS
 {
 	/// <summary>
 	/// IDokanOperations 的方法太多，而一般情况下并不需要用到全部，故该类提供它们的默认实现。

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
-using CodingFS.VirtualFileSystem;
+using CodingFS.VFS;
 using CodingFS.Workspaces;
 using CommandLine;
 using DokanNet;
@@ -133,7 +133,7 @@ namespace CodingFS
 			};
 
 			var fs = new UnsafeCodingFS(options.Type, map);
-			var wrapper = new StaticFSWrapper(fs);
+			var wrapper = AopFSWrapper.Create(fs);
 			//var wrapper = new StaticFSWrapper(new AbstractFileSystem(new FileSystem()));
 #if DEBUG
 			wrapper.Mount("x:\\", DokanOptions.DebugMode | DokanOptions.StderrOutput);

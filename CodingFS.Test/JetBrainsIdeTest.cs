@@ -26,7 +26,7 @@ namespace CodingFS.Test
 			var doc = new XmlDocument();
 			doc.LoadXml(Resources.workspace);
 
-			var ignores = JetBrainsWorkspace.ParseWorkspace(@"D:\Project\Blog\WebServer", doc).ToList();
+			var ignores = new JetBrainsWorkspace(@"D:\Project\Blog\WebServer", doc).ToList();
 
 			Assert.Equal(4, ignores.Count);
 			Assert.Equal("packages/devtool/lib/webpack/HooksInspectPlugin.js", ignores[0]);

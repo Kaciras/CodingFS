@@ -7,7 +7,7 @@ namespace CodingFS.Benchmark
 	{
 		private static void Main(string[] args)
 		{
-			BenchmarkRunner.Run<FilePathPerf>();
+			BenchmarkRunner.Run<FSWrapperPerf>();
 		}
 	}
 }

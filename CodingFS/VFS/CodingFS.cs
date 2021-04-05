@@ -5,7 +5,7 @@ using System.Linq;
 using DokanNet;
 using AccessType = System.IO.FileAccess;
 
-namespace CodingFS.VirtualFileSystem
+namespace CodingFS.VFS
 {
 	public class CodingFS : DokanOperationBase
 	{

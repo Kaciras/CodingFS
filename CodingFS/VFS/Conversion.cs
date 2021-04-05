@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using DokanNet;
 
-namespace CodingFS.VirtualFileSystem
+namespace CodingFS.VFS
 {
 	public static class Conversion
 	{
