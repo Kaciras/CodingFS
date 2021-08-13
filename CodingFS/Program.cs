@@ -139,6 +139,7 @@ namespace CodingFS
 			wrapper.Mount("x:\\", DokanOptions.DebugMode | DokanOptions.StderrOutput);
 #else
 			wrapper.Mount("x:\\", new NullLogger());
+			Console.WriteLine($"已挂载 CodingFS 到 x:");
 #endif
 		}
 	}
