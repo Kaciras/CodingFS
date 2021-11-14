@@ -1,7 +1,6 @@
-namespace CodingFS.Workspaces
+namespace CodingFS.Workspaces;
+
+public interface IWorkspaceFactory
 {
-	public interface IWorkspaceFactory
-	{
-		IWorkspace? Match(string path);
-	}
+	IWorkspace? Match(string path);
 }

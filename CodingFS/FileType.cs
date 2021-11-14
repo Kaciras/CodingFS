@@ -1,9 +1,8 @@
-namespace CodingFS
+namespace CodingFS;
+
+public enum FileType
 {
-	public enum FileType
-	{
-		Source,
-		Dependency,
-		Build,
-	}
+	Source,
+	Dependency,
+	Build,
 }

@@ -1,13 +1,12 @@
 using System;
 using BenchmarkDotNet.Running;
 
-namespace CodingFS.Benchmark
+namespace CodingFS.Benchmark;
+
+internal class Program
 {
-	internal class Program
+	private static void Main(string[] args)
 	{
-		private static void Main(string[] args)
-		{
-			BenchmarkRunner.Run<FSWrapperPerf>();
-		}
+		BenchmarkRunner.Run<FSWrapperPerf>();
 	}
 }
