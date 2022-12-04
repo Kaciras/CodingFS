@@ -1,12 +1,8 @@
 
 # CodingFS
 
-Ŀǰ��֧��Windows������ϵͳ�Ժ��ٿ��ǡ�
+一个虚拟文件系统，能够把编程项目中的文件分类为源码、依赖、构建结果三类，并过滤显示，仅支持 Windows。
 
-## ����˵��
+## 废弃说明
 
-�������Ŀ¼�ṹ�治���˸ɵ��£�������Ҳû����Ŀ�������ˣ����뱸�ݵ��������취��
-
-## ����
-
-����Ҫ[�������°��Dokany����](https://github.com/dokan-dev/dokany/releases)����װ��
+适配各种 IDE 目录结构太累，而且我也没这需求了，代码备份还是得用 VCS。
