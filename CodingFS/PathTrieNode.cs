@@ -6,7 +6,7 @@ using System.IO;
 namespace CodingFS;
 
 // TODO: 改成更省内存的数据结构
-public sealed class PathTrieNode<T>
+public struct PathTrieNode<T>
 {
 	public T Value { get; set; }
 

@@ -1,30 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace CodingFS.Workspaces;
 
-public class NodeJSWorkspaceFactory : IWorkspaceFactory
+public class NodeJSWorkspace : Workspace
 {
-	public IWorkspace? Match(string path)
-	{
-		if (File.Exists(Path.Combine(path, "package.json")))
-		{
-			return new NodeJSWorkspace(path);
-		}
-		return null;
-	}
-}
+	public string PackageManager { get; }
 
-public class NodeJSWorkspace : IWorkspace
-{
 	readonly string root;
 
-	public NodeJSWorkspace(string root)
+	public NodeJSWorkspace(string root, string packageManager)
 	{
 		this.root = root;
+		PackageManager = packageManager;
 	}
 
 	public RecognizeType Recognize(string path)
@@ -33,10 +20,26 @@ public class NodeJSWorkspace : IWorkspace
 		{
 			return RecognizeType.Dependency;
 		}
-		if (Path.GetRelativePath(root, path) == "dist")
-		{
-			return RecognizeType.Ignored;
-		}
+		//if (Path.GetRelativePath(root, path) == "dist")
+		//{
+		//	return RecognizeType.Ignored;
+		//}
 		return RecognizeType.NotCare;
+	}
+
+	public static Workspace? Match(string path)
+	{
+		if (!File.Exists(Path.Combine(path, "package.json")))
+		{
+			return null;
+		}
+
+		var packageManager = "npm";
+		if (!File.Exists(Path.Combine(path, "pnpm-lock.yaml")))
+		{
+			packageManager = "pnpm";
+		}
+
+		return new NodeJSWorkspace(path, packageManager);
 	}
 }

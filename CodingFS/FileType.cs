@@ -1,8 +1,10 @@
+using System;
 namespace CodingFS;
 
+[Flags]
 public enum FileType
 {
-	Source,
-	Dependency,
-	Build,
+	Source = 0,
+	Dependency = 1,
+	Generated = 2,
 }

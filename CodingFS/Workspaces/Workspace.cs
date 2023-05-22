@@ -1,6 +1,6 @@
 namespace CodingFS.Workspaces;
 
-public interface IWorkspace
+public interface Workspace
 {
 	RecognizeType Recognize(string file);
 }

@@ -4,7 +4,7 @@ using System.IO;
 
 namespace CodingFS.Workspaces;
 
-public class PathDict : IWorkspace
+public class PathDict : Workspace
 {
 	private readonly string directory;
 	private readonly IDictionary<FilePath, RecognizeType> map;

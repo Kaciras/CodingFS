@@ -12,9 +12,9 @@ public static class ClassifierExtension
 		{
 			var type = classifier.GetFileType(file);
 
-			if (type == FileType.Build)
+			if (type == FileType.Generated)
 			{
-				yield return (file, FileType.Build);
+				yield return (file, FileType.Generated);
 			}
 			else if (type == FileType.Dependency)
 			{

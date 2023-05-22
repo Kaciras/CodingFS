@@ -7,7 +7,7 @@ namespace CodingFS.Workspaces;
 /// <summary>
 /// 我自己的工作区有个 ThirdParty 目录放着clone的第三方项目，就识别为依赖吧。
 /// </summary>
-public sealed class CustomWorkspace : IWorkspace
+public sealed class CustomWorkspace : Workspace
 {
 	public RecognizeType Recognize(string file)
 	{

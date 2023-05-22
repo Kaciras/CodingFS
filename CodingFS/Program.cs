@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using CodingFS.VFS;
 using CodingFS.Workspaces;
 using CommandLine;
@@ -13,7 +14,7 @@ using DokanNet.Logging;
 namespace CodingFS;
 
 [Verb("mount", HelpText = "挂载为虚拟磁盘，仅包含指定类型的文件")]
-internal sealed class MountOptions
+internal sealed class MountArguments
 {
 	[Option('p', "point", Default = "x", HelpText = "指定盘符")]
 	public string Point { get; set; } = "x";
@@ -23,14 +24,14 @@ internal sealed class MountOptions
 }
 
 [Verb("inspect", HelpText = "在控制台打印出各种分类的文件")]
-internal sealed class InspectOptions
+internal sealed class InspectArguments
 {
 	[Option('s', "source", HelpText = "打印源文件（可能很多）")]
 	public bool Source { get; set; }
 }
 
 [Verb("clean", HelpText = "清理文件")]
-internal sealed class CleanOptions
+internal sealed class CleanArguments
 {
 	[Option('b', "build", Default = true, HelpText = "删除生成的文件")]
 	public bool Build { get; set; }
@@ -41,28 +42,29 @@ internal sealed class CleanOptions
 
 internal static class Program
 {
-	private static readonly IWorkspace[] globals =
+	private static readonly Workspace[] globals =
 	{
-			new CommonWorkspace(true),
-			new CustomWorkspace(),
-		};
+		new CommonWorkspace(true),
+		new CustomWorkspace(),
+	};
 
-	private static readonly IWorkspaceFactory[] factories =
+	private static readonly WorkspaceFactory[] factories =
 	{
-			new JetBrainsIDE(),
-			new NodeJSWorkspaceFactory(),
-			new VisualStudioIDE(),
-		};
+		JetBrainsWorkspace.Match,
+		NodeJSWorkspace.Match,
+		GitWorkspace.Match,
+		VisualStudioWorkspace.Match,
+	};
 
 	private static void Main(string[] args)
 	{
-		Parser.Default.ParseArguments<MountOptions, InspectOptions, CleanOptions>(args)
-			.WithParsed<MountOptions>(MountVFS)
-			.WithParsed<CleanOptions>(Clean)
-			.WithParsed<InspectOptions>(Inspect);
+		Parser.Default.ParseArguments<MountArguments, InspectArguments, CleanArguments>(args)
+			.WithParsed<MountArguments>(MountVFS)
+			.WithParsed<CleanArguments>(Clean)
+			.WithParsed<InspectArguments>(Inspect);
 	}
 
-	private static void Inspect(InspectOptions options)
+	private static void Inspect(InspectArguments args)
 	{
 		Inspect(@"D:\Coding");
 	}
@@ -78,17 +80,18 @@ internal static class Program
 			foreach (var file in files) Console.WriteLine(file);
 			Console.ResetColor();
 		}
+
 		var groups = classifier.Group();
 		PrintGroup(groups[FileType.Dependency], ConsoleColor.Blue, "Dependencies:");
-		PrintGroup(groups[FileType.Build], ConsoleColor.Red, "Generated files:");
+		PrintGroup(groups[FileType.Generated], ConsoleColor.Red, "Generated files:");
 	}
 
-	private static void Clean(CleanOptions options)
+	private static void Clean(CleanArguments args)
 	{
-		Clean(@"D:\Coding", options);
+		Clean(@"D:\Coding", args);
 	}
 
-	private static void Clean(string root, CleanOptions options)
+	private static void Clean(string root, CleanArguments args)
 	{
 		var classifier = new RootFileClassifier(root, globals, factories);
 		var countDeps = 0;
@@ -111,12 +114,12 @@ internal static class Program
 			switch (type)
 			{
 				case FileType.Dependency
-				when options.Dependencies:
+				when args.Dependencies:
 					Delete(file);
 					countDeps++;
 					break;
-				case FileType.Build
-				when options.Build:
+				case FileType.Generated
+				when args.Build:
 					Delete(file);
 					countBuild++;
 					break;
@@ -125,32 +128,31 @@ internal static class Program
 		Console.WriteLine($"清理完毕，删除了{countBuild}个生成的文件/目录，和{countDeps}个依赖文件/目录");
 	}
 
-	private static void MountVFS(MountOptions options)
+	private static void MountVFS(MountArguments args)
 	{
 		var map = new Dictionary<string, RootFileClassifier>
 		{
 			["Coding"] = new RootFileClassifier(@"D:\Coding", globals, factories),
 		};
 
-
+#if DEBUG
 		using var dokanLogger = new ConsoleLogger("[Dokan] ");
-		using var dokan = new Dokan(dokanLogger);
+		var mountOptions = DokanOptions.DebugMode | DokanOptions.StderrOutput;
+#else
+		var mountOptions = default(DokanOptions);
+		var dokanLogger = new NullLogger();
+		Console.WriteLine($@"CodingFS mounted at x:\");
+#endif
 
-		var wrapper = new DokanInstanceBuilder(dokan)
+		using var dokan = new Dokan(dokanLogger);
+		using var instance = new DokanInstanceBuilder(dokan)
 			.ConfigureOptions(options =>
 			{
 				options.MountPoint = "x:\\";
-				options.Options = DokanOptions.DebugMode | DokanOptions.StderrOutput;
+				options.Options = mountOptions;
 			})
-			.Build(AopFSWrapper.Create(new UnsafeCodingFS(options.Type, map)));
+			.Build(AopFSWrapper.Create(new UnsafeCodingFS(args.Type, map)));
 
-		//var wrapper = new StaticFSWrapper(new AbstractFileSystem(new FileSystem()));
-
-#if DEBUG
-		
-#else
-		wrapper.Mount("x:\\", new NullLogger());
-		Console.WriteLine($"已挂载 CodingFS 到 x:");
-#endif
+		new ManualResetEvent(false).WaitOne();
 	}
 }

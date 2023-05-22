@@ -4,9 +4,31 @@ using Microsoft.Build.Construction;
 
 namespace CodingFS.Workspaces;
 
-public class VisualStudioIDE : IWorkspaceFactory
+public class VisualStudioWorkspace : Workspace
 {
-	public IWorkspace? Match(string path)
+	private readonly string folder;
+	private readonly PathDict ignored;
+
+	public VisualStudioWorkspace(string folder, PathDict ignored)
+	{
+		this.folder = folder;
+		this.ignored = ignored;
+	}
+
+	public RecognizeType Recognize(string file)
+	{
+		var rpath = Path.GetRelativePath(folder, file);
+		if (Directory.Exists(file))
+		{
+			if (rpath == "packages" || rpath == ".vs")
+			{
+				return RecognizeType.Dependency;
+			}
+		}
+		return ignored.Recognize(rpath);
+	}
+
+	public static Workspace? Match(string path)
 	{
 		var ignored = new PathDict(path);
 
@@ -41,30 +63,5 @@ public class VisualStudioIDE : IWorkspaceFactory
 		}
 
 		return new VisualStudioWorkspace(path, ignored);
-	}
-}
-
-public class VisualStudioWorkspace : IWorkspace
-{
-	private readonly string folder;
-	private readonly PathDict ignored;
-
-	public VisualStudioWorkspace(string folder, PathDict ignored)
-	{
-		this.folder = folder;
-		this.ignored = ignored;
-	}
-
-	public RecognizeType Recognize(string file)
-	{
-		var rpath = Path.GetRelativePath(folder, file);
-		if (Directory.Exists(file))
-		{
-			if (rpath == "packages" || rpath == ".vs")
-			{
-				return RecognizeType.Dependency;
-			}
-		}
-		return ignored.Recognize(rpath);
 	}
 }

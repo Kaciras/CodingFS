@@ -7,6 +7,8 @@ using System.Buffers;
 
 namespace CodingFS;
 
+public delegate Workspace? WorkspaceFactory(string path);
+
 /// <summary>
 /// 文件分类器，以给定的目录为上下文，对这之下的文件进行分类。
 /// 
@@ -15,26 +17,29 @@ namespace CodingFS;
 /// </summary>
 public sealed class RootFileClassifier
 {
-	// Directory 和 Path 都跟IO库里的镜头类重名了，只能用这个烂名字
+	public int OuterDepth { get; set; } = int.MaxValue;
+
+	public int InnerDepth { get; set; } = int.MaxValue;
+
 	public string Root { get; }
 
-	private readonly PathTrieNode<IWorkspace[]> rootNode;
-	private readonly IWorkspaceFactory[] factories;
+	private readonly PathTrieNode<Workspace[]> rootNode;
+	private readonly WorkspaceFactory[] factories;
 
-	public RootFileClassifier(string root, IWorkspace[] globals, IWorkspaceFactory[] factories)
+	public RootFileClassifier(string root, Workspace[] globals, WorkspaceFactory[] factories)
 	{
 		Root = root;
-		rootNode = new PathTrieNode<IWorkspace[]>(globals);
 		this.factories = factories;
+		rootNode = new PathTrieNode<Workspace[]>(globals);
 	}
 
-	private IEnumerable<IWorkspace> GetWorkspaces(string file)
+	public IEnumerable<Workspace> GetWorkspaces(string file)
 	{
 		// 未检查是否属于该分类器的目录下
 		var relative = Path.GetRelativePath(Root, file);
 		var parts = relative.Split(Path.DirectorySeparatorChar);
 
-		var result = rootNode.Value;
+		IEnumerable<Workspace> result = rootNode.Value;
 		var node = rootNode;
 
 		for (int i = 0; i < parts.Length; i++)
@@ -45,19 +50,18 @@ public sealed class RootFileClassifier
 			{
 				node = child;
 			}
-
-			var tempDir = Path.Join(Root, string.Join('\\', parts.Take(i + 1)));
-			var matches = factories
-				.Select(f => f.Match(tempDir))
-				.Where(x => x != null)!
-				.ToArray<IWorkspace>();
-
-			node = node.PutChild(part, matches);
-
-			if (node.Value.Length > 0)
+			else
 			{
-				return result.Concat(node.Value);
+				var tempDir = Path.Join(Root, string.Join('\\', parts.Take(i + 1)));
+				var matches = factories
+					.Select(f => f(tempDir))
+					.Where(x => x != null)!
+					.ToArray<Workspace>();
+
+				node = node.PutChild(part, matches);
 			}
+
+			result = result.Concat(node.Value);
 		}
 
 		return result;
@@ -76,5 +80,14 @@ public sealed class RootFileClassifier
 	{
 		var directory = Path.GetDirectoryName(path);
 		return FixedOn(directory).GetFileType(path);
+	}
+
+	public IEnumerable<FileSystemInfo> ListFiles(string path, FileType type)
+	{
+		var @fixed = FixedOn(path);
+
+		return new DirectoryInfo(path)
+			.EnumerateFileSystemInfos()
+			.Where(info => (@fixed.GetFileType(info.FullName) & type) != 0);
 	}
 }

@@ -8,9 +8,9 @@ namespace CodingFS;
 
 public class WorkspaceFileClassifier
 {
-	private readonly IEnumerable<IWorkspace> workspaces;
+	private readonly IEnumerable<Workspace> workspaces;
 
-	public WorkspaceFileClassifier(IEnumerable<IWorkspace> workspaces)
+	public WorkspaceFileClassifier(IEnumerable<Workspace> workspaces)
 	{
 		this.workspaces = workspaces;
 	}
@@ -28,6 +28,6 @@ public class WorkspaceFileClassifier
 	{
 		return flags.HasFlag(RecognizeType.Dependency)
 			? FileType.Dependency : flags.HasFlag(RecognizeType.Ignored)
-			? FileType.Build : FileType.Source;
+			? FileType.Generated : FileType.Source;
 	}
 }

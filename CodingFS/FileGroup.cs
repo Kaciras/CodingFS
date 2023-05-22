@@ -13,7 +13,7 @@ public sealed class FileGroup
 	{
 		FileType.Source => Sources,
 		FileType.Dependency => Dependencies,
-		FileType.Build => Builds,
+		FileType.Generated => Builds,
 		_ => throw new Exception("未处理的FileType"),
 	};
 }

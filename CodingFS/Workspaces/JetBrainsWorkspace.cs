@@ -10,20 +10,13 @@ using MoreLinq.Extensions;
 
 namespace CodingFS.Workspaces;
 
-public class JetBrainsIDE : IWorkspaceFactory
+internal class JetBrainsWorkspace : Workspace
 {
-	public IWorkspace? Match(string path)
+	public static Workspace? Match(string path)
 	{
-		if (Directory.Exists(Path.Combine(path, ".idea")))
-		{
-			return new JetBrainsWorkspace(path);
-		}
-		return null;
+		return Directory.Exists(Path.Combine(path, ".idea")) ? new JetBrainsWorkspace(path) : null;
 	}
-}
 
-internal class JetBrainsWorkspace : IWorkspace
-{
 	private readonly string root;
 	private readonly PathDict ignored;
 
