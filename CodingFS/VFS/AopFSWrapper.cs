@@ -16,10 +16,7 @@ namespace CodingFS.VFS;
 /// </summary>
 public class AopFSWrapper : DispatchProxy
 {
-	// 正常使用Create创建是不会为null的
-#pragma warning disable CS8618
 	public IDokanOperations Native { get; set; }
-#pragma warning restore CS8618
 
 	/// <summary>
 	/// 把一些 IO 异常转换为对应的 NtStatus,如果不能转换则原样抛出。

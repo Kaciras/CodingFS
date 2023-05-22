@@ -1,12 +1,12 @@
 {
-  "profiles": {
-    "CodingFS": {
-      "commandName": "Project",
-      "commandLineArgs": "inspect"
-    },
-    "Mount": {
-      "commandName": "Project",
-      "commandLineArgs": "mount"
-    }
-  }
+	"profiles": {
+		"CodingFS": {
+			"commandName": "Project",
+			"commandLineArgs": "inspect"
+		},
+		"Mount": {
+			"commandName": "Project",
+			"commandLineArgs": "mount"
+		}
+	}
 }

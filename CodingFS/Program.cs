@@ -132,11 +132,22 @@ internal static class Program
 			["Coding"] = new RootFileClassifier(@"D:\Coding", globals, factories),
 		};
 
-		var fs = new UnsafeCodingFS(options.Type, map);
-		var wrapper = AopFSWrapper.Create(fs);
+
+		using var dokanLogger = new ConsoleLogger("[Dokan] ");
+		using var dokan = new Dokan(dokanLogger);
+
+		var wrapper = new DokanInstanceBuilder(dokan)
+			.ConfigureOptions(options =>
+			{
+				options.MountPoint = "x:\\";
+				options.Options = DokanOptions.DebugMode | DokanOptions.StderrOutput;
+			})
+			.Build(AopFSWrapper.Create(new UnsafeCodingFS(options.Type, map)));
+
 		//var wrapper = new StaticFSWrapper(new AbstractFileSystem(new FileSystem()));
+
 #if DEBUG
-			wrapper.Mount("x:\\", DokanOptions.DebugMode | DokanOptions.StderrOutput);
+		
 #else
 		wrapper.Mount("x:\\", new NullLogger());
 		Console.WriteLine($"已挂载 CodingFS 到 x:");

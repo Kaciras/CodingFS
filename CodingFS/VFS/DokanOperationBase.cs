@@ -78,7 +78,7 @@ public abstract class DokanOperationBase : IDokanOperations
 		out IList<FileInformation> streams,
 		IDokanFileInfo info)
 	{
-		streams = new FileInformation[0];
+		streams = Array.Empty<FileInformation>();
 		return DokanResult.NotImplemented;
 	}
 
@@ -133,7 +133,7 @@ public abstract class DokanOperationBase : IDokanOperations
 		return NtStatus.Success;
 	}
 
-	public virtual NtStatus Mounted(IDokanFileInfo info)
+	public NtStatus Mounted(string mountPoint, IDokanFileInfo info)
 	{
 		return NtStatus.Success;
 	}
