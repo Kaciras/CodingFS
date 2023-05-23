@@ -1,13 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.IO;
-using CodingFS.Workspaces;
 using System.Buffers;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace CodingFS;
-
-public delegate Workspace? WorkspaceFactory(string path);
 
 /// <summary>
 /// 文件分类器，以给定的目录为上下文，对这之下的文件进行分类。
@@ -33,20 +30,49 @@ public sealed class RootFileClassifier
 		rootNode = new PathTrieNode<Workspace[]>(globals);
 	}
 
-	public IEnumerable<Workspace> GetWorkspaces(string file)
+	string[] SplitPath(string path)
 	{
-		// 未检查是否属于该分类器的目录下
-		var relative = Path.GetRelativePath(Root, file);
-		var parts = relative.Split(Path.DirectorySeparatorChar);
+		var relative = Path.GetRelativePath(Root, path);
+		if (relative == null)
+		{
+			throw new Exception("Path outside the scanner");
+		}
+		return relative.Split(Path.DirectorySeparatorChar);
+	}
 
-		IEnumerable<Workspace> result = rootNode.Value;
+	public void Invalid(string directory)
+	{
+		var parts = SplitPath(directory);
+
+		var node = rootNode;
+		for (int i = 0; i < parts.Length - 1; i++)
+		{
+			var part = parts[i];
+			if (node.TryGet(part, out var child))
+			{
+				node = child;
+			}
+			else
+			{
+				return;
+			}
+		}
+
+		node.Remove(parts[^1]);
+	}
+
+	public WorkspacesInfo GetWorkspaces(string directory)
+	{
+		var parts = SplitPath(directory);
+
+		var workspaces = new List<Workspace>();
 		var node = rootNode;
 
 		for (int i = 0; i < parts.Length; i++)
 		{
 			var part = parts[i];
 
-			if (node.TryGetChild(part, out var child))
+			if (node.TryGet(part, out var child))
 			{
 				node = child;
 			}
@@ -58,36 +84,12 @@ public sealed class RootFileClassifier
 					.Where(x => x != null)!
 					.ToArray<Workspace>();
 
-				node = node.PutChild(part, matches);
+				node = node.Put(part, matches);
 			}
 
-			result = result.Concat(node.Value);
+			workspaces.AddRange(node.Value);
 		}
 
-		return result;
-	}
-
-	public WorkspaceFileClassifier FixedOn(string? directory)
-	{
-		if (directory == null)
-		{
-			return new WorkspaceFileClassifier(rootNode.Value);
-		}
-		return new WorkspaceFileClassifier(GetWorkspaces(directory));
-	}
-
-	public FileType GetFileType(string path)
-	{
-		var directory = Path.GetDirectoryName(path);
-		return FixedOn(directory).GetFileType(path);
-	}
-
-	public IEnumerable<FileSystemInfo> ListFiles(string path, FileType type)
-	{
-		var @fixed = FixedOn(path);
-
-		return new DirectoryInfo(path)
-			.EnumerateFileSystemInfos()
-			.Where(info => (@fixed.GetFileType(info.FullName) & type) != 0);
+		return new WorkspacesInfo(directory, workspaces); 
 	}
 }

@@ -25,7 +25,7 @@ public readonly struct FilePath
 
 	public override bool Equals(object? obj)
 	{
-		if (!(obj is FilePath path))
+		if (obj is not FilePath path)
 		{
 			return false;
 		}
@@ -78,5 +78,5 @@ public readonly struct FilePath
 	}
 
 	// 支持隐式转换，让调用方少写几个字
-	public static implicit operator FilePath(string value) => new FilePath(value);
+	public static implicit operator FilePath(string value) => new(value);
 }

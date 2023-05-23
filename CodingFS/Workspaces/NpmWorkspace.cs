@@ -2,13 +2,13 @@ using System.IO;
 
 namespace CodingFS.Workspaces;
 
-public class NodeJSWorkspace : Workspace
+public class NpmWorkspace : Workspace
 {
 	public string PackageManager { get; }
 
 	readonly string root;
 
-	public NodeJSWorkspace(string root, string packageManager)
+	public NpmWorkspace(string root, string packageManager)
 	{
 		this.root = root;
 		PackageManager = packageManager;
@@ -20,10 +20,6 @@ public class NodeJSWorkspace : Workspace
 		{
 			return RecognizeType.Dependency;
 		}
-		//if (Path.GetRelativePath(root, path) == "dist")
-		//{
-		//	return RecognizeType.Ignored;
-		//}
 		return RecognizeType.NotCare;
 	}
 
@@ -40,6 +36,6 @@ public class NodeJSWorkspace : Workspace
 			packageManager = "pnpm";
 		}
 
-		return new NodeJSWorkspace(path, packageManager);
+		return new NpmWorkspace(path, packageManager);
 	}
 }

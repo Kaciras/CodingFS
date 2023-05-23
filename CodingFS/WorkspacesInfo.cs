@@ -1,18 +1,23 @@
-using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using CodingFS.Workspaces;
 
 namespace CodingFS;
 
-public class WorkspaceFileClassifier
+public sealed class WorkspacesInfo
 {
-	private readonly IEnumerable<Workspace> workspaces;
+	private readonly IList<Workspace> workspaces;
+	private readonly string path;
 
-	public WorkspaceFileClassifier(IEnumerable<Workspace> workspaces)
+	internal WorkspacesInfo(string path, IList<Workspace> workspaces)
 	{
+		this.path = path;
 		this.workspaces = workspaces;
+	}
+
+	public IEnumerable<T> FindType<T>() where T : Workspace
+	{
+		return workspaces.OfType<T>();
 	}
 
 	public FileType GetFileType(string path)
@@ -24,10 +29,17 @@ public class WorkspaceFileClassifier
 	// 【分类依据】
 	// 根据 IDE 和 VCS 找出被忽略的文件，未被忽略的都是和源文件，再由项目结构的约定
 	// 从被忽略的文件里区分出依赖，最后剩下的都是生成的文件。
-	internal static FileType GetFileType(RecognizeType flags)
+	static FileType GetFileType(RecognizeType flags)
 	{
 		return flags.HasFlag(RecognizeType.Dependency)
 			? FileType.Dependency : flags.HasFlag(RecognizeType.Ignored)
 			? FileType.Generated : FileType.Source;
+	}
+
+	public IEnumerable<FileSystemInfo> ListFiles(FileType type)
+	{
+		return new DirectoryInfo(path)
+			.EnumerateFileSystemInfos()
+			.Where(info => GetFileType(info.FullName).HasFlag(type));
 	}
 }

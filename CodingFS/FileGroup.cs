@@ -14,6 +14,6 @@ public sealed class FileGroup
 		FileType.Source => Sources,
 		FileType.Dependency => Dependencies,
 		FileType.Generated => Builds,
-		_ => throw new Exception("未处理的FileType"),
+		_ => throw new ArgumentException("未处理的 FileType"),
 	};
 }
