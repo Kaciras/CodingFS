@@ -28,18 +28,10 @@ internal class JetBrainsWorkspace : Workspace
 
 	internal async Task Initialize()
 	{
-		var webpack = ResolveWebpackOutputPath();
 		var modules = ResolveModules();
 		var ebs = ResolveExternalBuildSystem();
 		var workspace = ResolveWorkspace();
 
-		// 注意PathDict不是线程安全的
-		await Task.WhenAll(modules, ebs, webpack, workspace);
-
-		if (webpack.Result != null)
-		{
-			ignored.AddIgnore(webpack.Result);
-		}
 		modules.Result.ForEach(ignored.AddIgnore);
 		ebs.Result.ForEach(ignored.AddIgnore);
 		workspace.Result.ForEach(ignored.AddIgnore);
@@ -221,56 +213,6 @@ internal class JetBrainsWorkspace : Workspace
 			}
 			yield return Path.Join(module, folder);
 		}
-	}
-
-	// TODO: 异步等待进程
-	private async Task<string?> ResolveWebpackOutputPath()
-	{
-		var xmlFile = Path.Join(root, ".idea/misc.xml");
-		if (!File.Exists(xmlFile))
-		{
-			return null;
-		}
-
-		var doc = new XmlDocument();
-		doc.Load(await File.ReadAllTextAsync(xmlFile));
-
-		var option = doc.SelectNodes("//component[@name='WebPackConfiguration']/option[@name='path']");
-		if (option.Count == 0)
-		{
-			return null;
-		}
-		var config = option.Item(0).Attributes["value"].Value;
-		config = config.Replace("$PROJECT_DIR$", root);
-
-		// webpack.config.js 里可能动态计算输出目录，故必须运行此文件。
-		var startInfo = new ProcessStartInfo
-		{
-			FileName = "node",
-			WorkingDirectory = root,
-			RedirectStandardOutput = true,
-			RedirectStandardError = true,
-		};
-		startInfo.ArgumentList.Add(Path.Join(Environment.CurrentDirectory, "Scripts/webpack-output.js"));
-		startInfo.ArgumentList.Add(config);
-
-		var process = Process.Start(startInfo);
-		var taskSource = new TaskCompletionSource<string>();
-
-		process.Exited += (_, __) =>
-		{
-			if (process.ExitCode == 0)
-			{
-				taskSource.SetResult(process.StandardOutput.ReadToEnd());
-			}
-			else
-			{
-				var message = process.StandardError.ReadToEnd();
-				taskSource.SetException(new Exception(message));
-			}
-		};
-
-		return await taskSource.Task;
 	}
 
 	private string ToRelative(string value)
