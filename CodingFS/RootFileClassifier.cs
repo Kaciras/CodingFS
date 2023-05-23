@@ -3,6 +3,7 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using CodingFS.Workspaces;
 
 namespace CodingFS;
 
@@ -14,6 +15,20 @@ namespace CodingFS;
 /// </summary>
 public sealed class RootFileClassifier
 {
+	public static readonly WorkspaceFactory[] factories =
+	{
+		JetBrainsWorkspace.Match,
+		NpmWorkspace.Match,
+		GitWorkspace.Match,
+		VisualStudioWorkspace.Match,
+	};
+
+	public static readonly Workspace[] globals =
+	{
+		new CustomWorkspace(),
+		new CommonWorkspace(true),
+	};
+
 	public int OuterDepth { get; set; } = int.MaxValue;
 
 	public int InnerDepth { get; set; } = int.MaxValue;
@@ -21,12 +36,10 @@ public sealed class RootFileClassifier
 	public string Root { get; }
 
 	private readonly PathTrieNode<Workspace[]> rootNode;
-	private readonly WorkspaceFactory[] factories;
 
-	public RootFileClassifier(string root, Workspace[] globals, WorkspaceFactory[] factories)
+	public RootFileClassifier(string root)
 	{
 		Root = root;
-		this.factories = factories;
 		rootNode = new PathTrieNode<Workspace[]>(globals);
 	}
 
