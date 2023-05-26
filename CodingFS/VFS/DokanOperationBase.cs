@@ -7,8 +7,8 @@ using DokanNet;
 namespace CodingFS.VFS;
 
 /// <summary>
-/// IDokanOperations 的方法太多，而一般情况下并不需要用到全部，故该类提供它们的默认实现。
-/// 该类实现的是一个只读的磁盘，里面没有任何文件，所有修改操作都将成功但不产生任何效果。
+/// Provide a default implement of IDokanOperations. 
+/// This class build a readonly, empty volume.
 /// </summary>
 public abstract class DokanOperationBase : IDokanOperations
 {
@@ -55,6 +55,8 @@ public abstract class DokanOperationBase : IDokanOperations
 		return DokanResult.Success;
 	}
 
+	// When file system applications only implement FindFiles,
+	// the wildcard patterns are automatically processed by Dokan.
 	public virtual NtStatus FindFilesWithPattern(
 		string fileName,
 		string searchPattern,
@@ -62,7 +64,7 @@ public abstract class DokanOperationBase : IDokanOperations
 		IDokanFileInfo info)
 	{
 		files = Array.Empty<FileInformation>();
-		return DokanResult.Success;
+		return DokanResult.NotImplemented;
 	}
 
 	public virtual NtStatus FindFiles(
@@ -70,7 +72,8 @@ public abstract class DokanOperationBase : IDokanOperations
 		out IList<FileInformation> files,
 		IDokanFileInfo info)
 	{
-		return FindFilesWithPattern(fileName, "*", out files, info);
+		files = Array.Empty<FileInformation>();
+		return DokanResult.NotImplemented;
 	}
 
 	public virtual NtStatus FindStreams(

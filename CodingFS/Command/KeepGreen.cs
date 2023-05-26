@@ -14,14 +14,14 @@ namespace CodingFS.Command;
 [Verb("keep-green", HelpText = "Keep dependencies update-to-date")]
 internal sealed class KeepGreen : CliCommand
 {
-	private void Execute()
+	public void Execute()
 	{
 		var filter = new RootFileClassifier(@"D:\Coding")
 		{
 			OuterDepth = 3,
 			InnerDepth = 2,
 		};
-		KeepGreen(filter, filter.Root);
+		Execute(filter, filter.Root);
 	}
 
 	private void Execute(RootFileClassifier filter, string path)
@@ -31,7 +31,7 @@ internal sealed class KeepGreen : CliCommand
 		{
 
 		}
-		foreach (var entry in info.ListFiles(FileType.Source))
+		foreach (var entry in info.ListFiles(FileType.SourceFile))
 		{
 			if (entry is FileInfo)
 			{
@@ -39,7 +39,7 @@ internal sealed class KeepGreen : CliCommand
 			}
 			else
 			{
-				KeepGreen(filter, entry.FullName);
+				Execute(filter, entry.FullName);
 			}
 		}
 	}

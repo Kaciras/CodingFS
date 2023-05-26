@@ -11,7 +11,7 @@ public sealed class FileGroup
 
 	public ICollection<string> this[FileType type] => type switch
 	{
-		FileType.Source => Sources,
+		FileType.SourceFile => Sources,
 		FileType.Dependency => Dependencies,
 		FileType.Generated => Builds,
 		_ => throw new ArgumentException("未处理的 FileType"),

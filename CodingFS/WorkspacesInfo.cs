@@ -26,14 +26,23 @@ public sealed class WorkspacesInfo
 		return GetFileType(flags);
 	}
 
-	// 【分类依据】
-	// 根据 IDE 和 VCS 找出被忽略的文件，未被忽略的都是和源文件，再由项目结构的约定
-	// 从被忽略的文件里区分出依赖，最后剩下的都是生成的文件。
+	/// <summary>
+	/// Judging the file type by the classification result of workspaces.
+	/// </summary>
 	static FileType GetFileType(RecognizeType flags)
 	{
-		return flags.HasFlag(RecognizeType.Dependency)
-			? FileType.Dependency : flags.HasFlag(RecognizeType.Ignored)
-			? FileType.Generated : FileType.Source;
+		if (flags.HasFlag(RecognizeType.Dependency))
+		{
+			return FileType.Dependency;
+		}
+		else if (flags.HasFlag(RecognizeType.Ignored))
+		{
+			return FileType.Generated;
+		}
+		else
+		{
+			return FileType.SourceFile;
+		}
 	}
 
 	public IEnumerable<FileSystemInfo> ListFiles(FileType type)

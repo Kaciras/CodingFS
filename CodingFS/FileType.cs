@@ -4,7 +4,7 @@ namespace CodingFS;
 [Flags]
 public enum FileType
 {
-	Source = 0,
+	SourceFile = 0,
 	Dependency = 1,
 	Generated = 2,
 }

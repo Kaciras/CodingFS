@@ -10,7 +10,8 @@ public static class ClassifierExtension
 		// EnumerateFiles 和 EnumerateDirectories 都是在 EnumerateFileSystemEntries 上过滤的
 		foreach (var file in Directory.EnumerateFileSystemEntries(dir))
 		{
-			var type = classifier.GetFileType(file);
+			
+			var type = classifier.GetWorkspaces(Path.GetDirectoryName(file)).GetFileType(file);
 
 			if (type == FileType.Generated)
 			{
@@ -29,7 +30,7 @@ public static class ClassifierExtension
 			}
 			else
 			{
-				yield return (file, FileType.Source);
+				yield return (file, FileType.SourceFile);
 			}
 		}
 	}

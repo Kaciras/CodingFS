@@ -24,17 +24,14 @@ internal class JetBrainsWorkspace : Workspace
 	{
 		this.root = root;
 		ignored = new PathDict(root);
-	}
 
-	internal async Task Initialize()
-	{
 		var modules = ResolveModules();
-		var ebs = ResolveExternalBuildSystem();
+		//var ebs = ResolveExternalBuildSystem();
 		var workspace = ResolveWorkspace();
 
-		modules.Result.ForEach(ignored.AddIgnore);
-		ebs.Result.ForEach(ignored.AddIgnore);
-		workspace.Result.ForEach(ignored.AddIgnore);
+		modules.ForEach(ignored.AddIgnore);
+		//ebs.ForEach(ignored.AddIgnore);
+		workspace.ForEach(ignored.AddIgnore);
 	}
 
 	public RecognizeType Recognize(string path)
@@ -59,18 +56,18 @@ internal class JetBrainsWorkspace : Workspace
 	/// 这个方法从workspace.xml里读取被排除的文件列表。
 	/// </summary>
 	/// <returns>被排除的文件</returns>
-	private async Task<IEnumerable<string>> ResolveWorkspace()
+	private IEnumerable<string> ResolveWorkspace()
 	{
 		var xmlFile = Path.Join(root, ".idea/workspace.xml");
 		var doc = new XmlDocument();
-		doc.LoadXml(await File.ReadAllTextAsync(xmlFile));
+		doc.Load(xmlFile);
 
 		var tsIgnores = doc.SelectNodes(
 			"//component[@name='TypeScriptGeneratedFilesManager']" +
 			"/option[@name='exactExcludedFiles']/list//option");
 
 		return tsIgnores.Cast<XmlNode>()
-			.Select(node => ToRelative(node.Attributes["value"].Value))
+			.Select(node => ToRelative(node.Attributes["value"]!.Value))
 			.SkipWhile(Path.IsPathRooted)
 			.SkipWhile(path => path.StartsWith("..") || path.StartsWith("node_modules"));
 	}
@@ -78,7 +75,7 @@ internal class JetBrainsWorkspace : Workspace
 	/// <summary>
 	/// 在.idea目录下可能存在一个modules.xml文件，里面记录了IML文件的位置。
 	/// </summary>
-	private async Task<IEnumerable<string>> ResolveModules()
+	private IEnumerable<string> ResolveModules()
 	{
 		var xmlFile = Path.Join(root, ".idea/modules.xml");
 		if (!File.Exists(xmlFile))
@@ -87,24 +84,24 @@ internal class JetBrainsWorkspace : Workspace
 		}
 
 		var doc = new XmlDocument();
-		doc.Load(await File.ReadAllTextAsync(xmlFile));
+		doc.Load(xmlFile);
 
-		var modules = doc.SelectNodes("//component[@name='ProjectModuleManager']/modules//module");
+		var modules = doc.SelectNodes("//component[@name='ProjectModuleManager']/modules//module")!;
 		var flatten = Enumerable.Empty<string>();
 
-		for (int i = 0; i < modules.Count; i++)
+		foreach (XmlNode module in modules)
 		{
-			var imlFile = modules[i].Attributes["filepath"].Value[14..];
+			var imlFile = module.Attributes["filepath"].Value[14..];
 			imlFile = Path.Join(root, imlFile);
 
 			var parent = Path.GetDirectoryName(imlFile);
 			if (parent == ".idea" || imlFile.Contains('/'))
 			{
-				flatten = flatten.Concat(await ParseModuleManager(imlFile, null));
+				flatten = flatten.Concat(ParseModuleManager(imlFile, null));
 			}
 			else
 			{
-				flatten = flatten.Concat(await ParseModuleManager(imlFile, parent));
+				flatten = flatten.Concat(ParseModuleManager(imlFile, parent));
 			}
 		}
 
@@ -114,7 +111,7 @@ internal class JetBrainsWorkspace : Workspace
 	/// <summary>
 	/// 在IDEA用户配置目录的 system/external_build_system/modules 下还有iml文件。
 	/// </summary>
-	private async Task<IEnumerable<string>> ResolveExternalBuildSystem()
+	private IEnumerable<string> ResolveExternalBuildSystem()
 	{
 		var configPath = GetUserConfigStore();
 		if (configPath == null)
@@ -145,7 +142,7 @@ internal class JetBrainsWorkspace : Workspace
 			{
 				moduleDirectory = stem;
 			}
-			flatten = flatten.Concat(await ParseModuleManager(file, moduleDirectory));
+			flatten = flatten.Concat(ParseModuleManager(file, moduleDirectory));
 		}
 
 		return flatten;
@@ -183,21 +180,17 @@ internal class JetBrainsWorkspace : Workspace
 	/// </summary>
 	/// <param name="imlFile"></param>
 	/// <param name="module"></param>
-	private async Task<IEnumerable<string>> ParseModuleManager(string imlFile, string? module)
+	private IEnumerable<string> ParseModuleManager(string imlFile, string? module)
 	{
 		if (!File.Exists(imlFile))
 		{
-			return Enumerable.Empty<string>();
+			yield break;
 		}
 		var doc = new XmlDocument();
-		doc.Load(await File.ReadAllTextAsync(imlFile));
-		return GetExcludesFromIml(doc, module);
-	}
+		doc.Load(imlFile);
 
-	private IEnumerable<string> GetExcludesFromIml(XmlDocument doc, string? module)
-	{
 		var nodes = doc.SelectNodes("//component[@name='NewModuleRootManager']/content//excludeFolder");
-		for (int i = 0; i < nodes.Count; i++)
+		for (int i = 0; i < nodes!.Count; i++)
 		{
 			var folder = nodes[i].Attributes["url"].Value;
 
@@ -205,13 +198,8 @@ internal class JetBrainsWorkspace : Workspace
 			{
 				throw new Exception("断言失败");
 			}
-			folder = folder.Substring(20);
-
-			if (module == null)
-			{
-				yield return folder;
-			}
-			yield return Path.Join(module, folder);
+			folder = folder[20..];
+			yield return module == null ? folder : Path.Join(module, folder);
 		}
 	}
 
