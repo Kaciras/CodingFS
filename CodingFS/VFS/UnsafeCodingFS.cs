@@ -15,7 +15,7 @@ namespace CodingFS.VFS;
 /// 这个文件的代码参考了官方的示例：
 /// https://github.com/dokan-dev/dokan-dotnet/blob/master/sample/DokanNetMirror/UnsafeMirror.cs
 /// </summary>
-internal class UnsafeCodingFS : CodingFS, IDokanOperationsUnsafe
+internal partial class UnsafeCodingFS : CodingFS, IDokanOperationsUnsafe
 {
 	public UnsafeCodingFS(FileType type, Dictionary<string, RootFileClassifier> map) : base(type, map) { }
 
@@ -30,28 +30,17 @@ internal class UnsafeCodingFS : CodingFS, IDokanOperationsUnsafe
 		if (info.Context == null)
 		{
 			using var stream = new FileStream(MapPath(fileName), FileMode.Open, AccessType.Read);
-			DoRead(stream, buffer, bufferLength, out bytesRead, offset);
+			DoRead(stream.SafeFileHandle, buffer, bufferLength, out bytesRead, offset);
 		}
 		else
 		{
 			var stream = (FileStream)info.Context;
 			lock (stream)
 			{
-				DoRead(stream, buffer, bufferLength, out bytesRead, offset);
+				DoRead(stream.SafeFileHandle, buffer, bufferLength, out bytesRead, offset);
 			}
 		}
 		return DokanResult.Success;
-	}
-
-	private static void DoRead(
-		FileStream stream,
-		IntPtr innerBuffer,
-		uint innerBufferLength,
-		out int innerBytesRead,
-		long innerOffset)
-	{
-		SetFilePointer(stream.SafeFileHandle, innerOffset);
-		ReadFile(stream.SafeFileHandle, innerBuffer, innerBufferLength, out innerBytesRead);
 	}
 
 	public NtStatus WriteFile(
@@ -65,60 +54,60 @@ internal class UnsafeCodingFS : CodingFS, IDokanOperationsUnsafe
 		if (info.Context == null)
 		{
 			using var stream = new FileStream(MapPath(fileName), FileMode.Open, AccessType.Write);
-			DoWrite(stream, buffer, bufferLength, out bytesWritten, offset);
+			DoWrite(stream.SafeFileHandle, buffer, bufferLength, out bytesWritten, offset);
 		}
 		else
 		{
 			var stream = (FileStream)info.Context;
 			lock (stream)
 			{
-				DoWrite(stream, buffer, bufferLength, out bytesWritten, offset);
+				DoWrite(stream.SafeFileHandle, buffer, bufferLength, out bytesWritten, offset);
 			}
 		}
 		return DokanResult.Success;
 	}
 
-	private static void DoWrite(
-		FileStream stream,
-		IntPtr innerBuffer,
-		uint innerBufferLength,
-		out int innerBytesWritten,
-		long innerOffset)
+	private static void DoRead(SafeFileHandle handle, IntPtr buffer, uint length, out int read, long offset)
 	{
-		SetFilePointer(stream.SafeFileHandle, innerOffset);
-		WriteFile(stream.SafeFileHandle, innerBuffer, innerBufferLength, out innerBytesWritten);
+		Check(SetFilePointerEx(handle, offset, IntPtr.Zero, 0));
+		Check(ReadFile(handle, buffer, length, out read, IntPtr.Zero));
 	}
 
-	public static void SetFilePointer(SafeFileHandle fileHandle, long offset)
+	private static void DoWrite(SafeFileHandle handle, IntPtr buffer, uint length, out int written, long offset)
 	{
-		if (!SetFilePointerEx(fileHandle, offset, IntPtr.Zero, 0))
-		{
-			throw new Win32Exception();
-		}
+		Check(SetFilePointerEx(handle, offset, IntPtr.Zero, 0));
+		Check(WriteFile(handle, buffer, length, out written, IntPtr.Zero));
 	}
 
-	public static void ReadFile(SafeFileHandle fileHandle, IntPtr buffer, uint bytesToRead, out int bytesRead)
+
+	[LibraryImport("kernel32.dll", SetLastError = true)]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	private static partial bool SetFilePointerEx(
+		SafeFileHandle hFile,
+		long liDistanceToMove,
+		IntPtr lpNewFilePointer,
+		uint dwMoveMethod);
+
+	[LibraryImport("kernel32.dll", SetLastError = true)]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	private static partial bool ReadFile(
+		SafeFileHandle hFile,
+		IntPtr lpBuffer,
+		uint nNumberOfBytesToRead,
+		out int lpNumberOfBytesRead,
+		IntPtr lpOverlapped);
+
+	[LibraryImport("kernel32.dll", SetLastError = true)]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	private static partial bool WriteFile(
+		SafeFileHandle hFile,
+		IntPtr lpBuffer,
+		uint nNumberOfBytesToWrite,
+		out int lpNumberOfBytesWritten,
+		IntPtr lpOverlapped);
+
+	private static void Check(bool success)
 	{
-		if (!ReadFile(fileHandle, buffer, bytesToRead, out bytesRead, IntPtr.Zero))
-		{
-			throw new Win32Exception();
-		}
+		if (!success) throw new Win32Exception();
 	}
-
-	public static void WriteFile(SafeFileHandle fileHandle, IntPtr buffer, uint bytesToWrite, out int bytesWritten)
-	{
-		if (!WriteFile(fileHandle, buffer, bytesToWrite, out bytesWritten, IntPtr.Zero))
-		{
-			throw new Win32Exception();
-		}
-	}
-
-	[DllImport("kernel32.dll", SetLastError = true)]
-	private static extern bool SetFilePointerEx(SafeFileHandle hFile, long liDistanceToMove, IntPtr lpNewFilePointer, uint dwMoveMethod);
-
-	[DllImport("kernel32.dll", SetLastError = true)]
-	private static extern bool ReadFile(SafeFileHandle hFile, IntPtr lpBuffer, uint nNumberOfBytesToRead, out int lpNumberOfBytesRead, IntPtr lpOverlapped);
-
-	[DllImport("kernel32.dll", SetLastError = true)]
-	private static extern bool WriteFile(SafeFileHandle hFile, IntPtr lpBuffer, uint nNumberOfBytesToWrite, out int lpNumberOfBytesWritten, IntPtr lpOverlapped);
 }
