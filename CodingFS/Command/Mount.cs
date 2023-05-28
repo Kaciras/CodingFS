@@ -23,10 +23,8 @@ internal class Mount : CliCommand
 
 	public void Execute()
 	{
-		var map = new Dictionary<string, RootFileClassifier>
-		{
-			["Coding"] = new RootFileClassifier(@"D:\Coding"),
-		};
+		var vfs = new UnsafeCodingFS("CodingFS") { Type = Type };
+		vfs.Map["Coding"] = new RootFileClassifier(@"D:\Coding");
 
 #if DEBUG
 		using var dokanLogger = new ConsoleLogger("[Dokan] ");
@@ -44,7 +42,7 @@ internal class Mount : CliCommand
 				options.MountPoint = $"{Point}:\\";
 				options.Options = mountOptions;
 			})
-			.Build(AopFSWrapper.Create(new UnsafeCodingFS(Type, map)));
+			.Build(AopFSWrapper.Create(vfs));
 
 		new ManualResetEvent(false).WaitOne();
 	}

@@ -9,14 +9,17 @@ namespace CodingFS.VFS;
 
 public class CodingFS : DokanOperationBase
 {
-	private readonly FileType type;
-	private readonly Dictionary<string, RootFileClassifier> map;
+	public Dictionary<string, RootFileClassifier> Map { get; } = new();
 
-	public CodingFS(FileType type, Dictionary<string, RootFileClassifier> map)
-	{
-		this.type = type;
-		this.map = map;
-	}
+	public FileType Type { get; set; }
+
+	public string Name { get; }
+
+	/// <summary>
+	/// Create a new CodingFS with name, the name will displayed as volume label.
+	/// </summary>
+	/// <param name="name"></param>
+	public CodingFS(string name) { Name = name; }
 
 	public override NtStatus GetVolumeInformation(
 		out string volumeLabel,
@@ -25,7 +28,7 @@ public class CodingFS : DokanOperationBase
 		out uint maximumComponentLength,
 		IDokanFileInfo info)
 	{
-		volumeLabel = $"CodingFS({type})";
+		volumeLabel = Name;
 		features = FileSystemFeatures.None;
 		fileSystemName = "CodingFS";
 		maximumComponentLength = 256;
@@ -36,7 +39,7 @@ public class CodingFS : DokanOperationBase
 	{
 		var split = value.Split(Path.DirectorySeparatorChar, 3);
 
-		if (map.TryGetValue(split[1], out var scanner))
+		if (Map.TryGetValue(split[1], out var scanner))
 		{
 			if (split.Length < 3)
 			{
@@ -57,7 +60,7 @@ public class CodingFS : DokanOperationBase
 	{
 		if (fileName == @"\")
 		{
-			files = map.Values
+			files = Map.Values
 				.Select(sc => Conversion.MapInfo(new DirectoryInfo(sc.Root)))
 				.ToArray();
 		}
@@ -65,7 +68,7 @@ public class CodingFS : DokanOperationBase
 		{
 			var root = fileName.Split(Path.DirectorySeparatorChar, 3)[1];
 
-			if (!map.TryGetValue(root, out var scanner))
+			if (!Map.TryGetValue(root, out var scanner))
 			{
 				throw new FileNotFoundException("文件不在映射区", root);
 			}
@@ -75,7 +78,7 @@ public class CodingFS : DokanOperationBase
 
 			files = new DirectoryInfo(fileName)
 				.EnumerateFileSystemInfos()
-				.Where(info => @fixed.GetFileType(info.FullName) == type)
+				.Where(info => @fixed.GetFileType(info.FullName) == Type)
 				.Select(Conversion.MapInfo).ToArray();
 		}
 
