@@ -1,12 +1,16 @@
 {
-	"profiles": {
-		"CodingFS": {
-			"commandName": "Project",
-			"commandLineArgs": "inspect"
-		},
-		"Mount": {
-			"commandName": "Project",
-			"commandLineArgs": "mount"
-		}
-	}
+  "profiles": {
+    "Mount": {
+      "commandName": "Project",
+      "commandLineArgs": "mount"
+    },
+    "Inspect": {
+      "commandName": "Project",
+      "commandLineArgs": "inspect"
+    },
+    "KeepGreen": {
+      "commandName": "Project",
+      "commandLineArgs": "keep-green"
+    }
+  }
 }

@@ -1,35 +1,53 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CodingFS.Workspaces;
-using CommandLine.Text;
 using CommandLine;
+using LibGit2Sharp;
 
 namespace CodingFS.Command;
-
 
 [Verb("keep-green", HelpText = "Keep dependencies update-to-date")]
 internal sealed class KeepGreen : CliCommand
 {
+	private RootFileClassifier filter;
+
+	int OuterDepth = 2;
+	int InnerDepth = 2;
+
 	public void Execute()
 	{
-		var filter = new RootFileClassifier(@"D:\Coding")
+		filter = new RootFileClassifier(@"D:\Coding")
 		{
-			OuterDepth = 3,
-			InnerDepth = 2,
+			OuterDepth = OuterDepth,
+			InnerDepth = InnerDepth,
 		};
-		Execute(filter, filter.Root);
+		Execute(filter.Root, OuterDepth, InnerDepth);
 	}
 
-	private void Execute(RootFileClassifier filter, string path)
+	private void Execute(string path, int outLimit, int innerLimit)
 	{
 		var info = filter.GetWorkspaces(path);
-		if (info.FindType<NpmWorkspace>().Any())
-		{
+		var git = info.FindType<GitWorkspace>().FirstOrDefault();
 
+		if (git == null)
+		{
+			if (--outLimit < 0)
+			{
+				return;
+			}
+		}
+		else
+		{
+			if (--innerLimit < 0)
+			{
+				return;
+			}
+			if (info.FindType<NpmWorkspace>().Any())
+			{
+				CheckGit(git.Root, DateTimeOffset.Now.Add(TimeSpan.FromDays(-7)));
+				return;
+			}
 		}
 		foreach (var entry in info.ListFiles(FileType.SourceFile))
 		{
@@ -39,7 +57,23 @@ internal sealed class KeepGreen : CliCommand
 			}
 			else
 			{
-				Execute(filter, entry.FullName);
+				Execute(entry.FullName, outLimit, innerLimit);
+			}
+		}
+	}
+
+	void CheckGit(string path, DateTimeOffset period)
+	{
+		using var repo = new Repository(path);
+		foreach (var commit in repo.Commits)
+		{
+			if (commit.Committer.When < period)
+			{
+				Console.WriteLine($"{path} should check for update");
+			}
+			if (commit.Message.Contains("update deps"))
+			{
+				return;
 			}
 		}
 	}
