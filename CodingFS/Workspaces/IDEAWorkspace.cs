@@ -1,37 +1,36 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Xml;
-using MoreLinq.Extensions;
 
 namespace CodingFS.Workspaces;
 
-internal class JetBrainsWorkspace : Workspace
+public class IDEAWorkspace : Workspace
 {
-	public static Workspace? Match(string path)
-	{
-		return Directory.Exists(Path.Combine(path, ".idea")) ? new JetBrainsWorkspace(path) : null;
-	}
-
+	private readonly JetBrainsDetector detector;
 	private readonly string root;
 	private readonly PathDict ignored;
 
-	public JetBrainsWorkspace(string root)
+	internal IDEAWorkspace(JetBrainsDetector detector, string root)
 	{
+		this.detector = detector;
 		this.root = root;
 		ignored = new PathDict(root);
 
-		var modules = ResolveModules();
-		//var ebs = ResolveExternalBuildSystem();
-		var workspace = ResolveWorkspace();
-
-		modules.ForEach(ignored.AddIgnore);
-		//ebs.ForEach(ignored.AddIgnore);
-		workspace.ForEach(ignored.AddIgnore);
+		foreach (var item in ResolveModules())
+		{
+			ignored.AddIgnore(item);
+		}
+		foreach (var item in ResolveWorkspace())
+		{
+			ignored.AddIgnore(item);
+		}
+		foreach (var item in ResolveExternalBuildSystem())
+		{
+			ignored.AddIgnore(item);
+		}
 	}
 
 	public RecognizeType Recognize(string path)
@@ -80,7 +79,8 @@ internal class JetBrainsWorkspace : Workspace
 		var xmlFile = Path.Join(root, ".idea/modules.xml");
 		if (!File.Exists(xmlFile))
 		{
-			return Enumerable.Empty<string>();
+			var imlFile = Path.Join(root, Path.GetFileName(root) + ".iml");
+			return ParseModuleManager(imlFile, null);
 		}
 
 		var doc = new XmlDocument();
@@ -109,6 +109,35 @@ internal class JetBrainsWorkspace : Workspace
 	}
 
 	/// <summary>
+	/// 在IDEA用户配置目录的 system/external_build_system/modules 下还有iml文件。
+	/// </summary>
+	private IEnumerable<string> ResolveExternalBuildSystem()
+	{
+		// 计算项目在 external_build_system 里对应的文件夹，计算方法见：
+		// https://github.com/JetBrains/intellij-community/blob/734efbef5b75dfda517731ca39fb404404fbe182/platform/platform-api/src/com/intellij/openapi/project/ProjectUtil.kt#L146
+		var extModules = detector.EBSModuleFiles(root);
+		if (extModules == null)
+		{
+			return Enumerable.Empty<string>();
+		}
+
+		var flatten = Enumerable.Empty<string>();
+
+		foreach (var file in Directory.EnumerateFiles(extModules))
+		{
+			string? moduleDirectory = null;
+			var stem = Path.GetFileNameWithoutExtension(file);
+			if (Path.GetFileName(root) != stem)
+			{
+				moduleDirectory = stem;
+			}
+			flatten = flatten.Concat(ParseModuleManager(file, moduleDirectory));
+		}
+
+		return flatten;
+	}
+
+	/// <summary>
 	/// 从模块配置文件（.iml）里读取被忽略的文件列表。
 	/// </summary>
 	/// <param name="imlFile"></param>
@@ -122,11 +151,12 @@ internal class JetBrainsWorkspace : Workspace
 		var doc = new XmlDocument();
 		doc.Load(imlFile);
 
-		var nodes = doc.SelectNodes("//component[@name='NewModuleRootManager']/content//excludeFolder");
-		for (int i = 0; i < nodes!.Count; i++)
-		{
-			var folder = nodes[i].Attributes["url"].Value;
+		var e1 = doc.SelectNodes("//component[@name='NewModuleRootManager']/content//excludeFolder");
+		var e2 = doc.SelectNodes("//component[@name='AdditionalModuleElements']/content//excludeFolder");
 
+		foreach (var node in e1!.Cast<XmlNode>().Concat(e2.Cast<XmlNode>()))
+		{
+			var folder = node.Attributes["url"].Value;
 			if (!folder.StartsWith("file://$MODULE_DIR$/"))
 			{
 				throw new Exception("断言失败");
@@ -143,10 +173,5 @@ internal class JetBrainsWorkspace : Workspace
 		// 绝对路径也有可能是项目下的文件
 		// Path.GetRelativePath 对于非子路径不报错，而是原样返回
 		return Path.GetRelativePath(root, value);
-	}
-
-	internal static int JavaStringHashcode(string str)
-	{
-		return str.Aggregate(0, (h, c) => 31 * h + c);
 	}
 }

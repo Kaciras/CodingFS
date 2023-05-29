@@ -16,7 +16,7 @@ public class JetBrainsIdeTest
 	[InlineData("", 0)]
 	public void JavaStringHashcode(string value, int hash)
 	{
-		var actual = JetBrainsWorkspace.JavaStringHashcode(value);
+		var actual = IDEAWorkspace.JavaStringHashcode(value);
 		Assert.Equal(hash, actual);
 	}
 
