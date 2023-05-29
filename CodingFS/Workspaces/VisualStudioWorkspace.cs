@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Build.Construction;
@@ -28,7 +29,7 @@ public class VisualStudioWorkspace : Workspace
 		return ignored.Recognize(rpath);
 	}
 
-	public static Workspace? Match(string path)
+	public static Workspace? Match(List<Workspace> ancestor, string path)
 	{
 		var ignored = new PathDict(path);
 
@@ -54,7 +55,7 @@ public class VisualStudioWorkspace : Workspace
 			}
 			else if (type == ".vcxproj")
 			{
-				// C艹的项目会直接生成在解决方案目录里，Trie树会忽略重复的添加
+				// C艹 的项目会直接生成在解决方案目录里，Trie 树会忽略重复的添加
 				ignored.Add("Debug", RecognizeType.Ignored);
 				ignored.Add("Release", RecognizeType.Ignored);
 				ignored.Add(Path.Join(folder, "Debug"), RecognizeType.Ignored);

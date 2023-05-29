@@ -1,11 +1,8 @@
+using System.Collections.Generic;
+
 namespace CodingFS;
 
-public delegate Workspace? WorkspaceFactory(string path);
-
-public interface WorkspaceDetector
-{
-	Workspace? Detect(string path);
-}
+public delegate Workspace? WorkspaceFactory(List<Workspace> parent, string path);
 
 public interface Workspace
 {

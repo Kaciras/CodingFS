@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CodingFS.Workspaces;
 
-public partial class JetBrainsDetector : WorkspaceDetector
+public partial class JetBrainsDetector
 {
 	[GeneratedRegex("^.+IntelliJIdea(20[0-9.]+)$")]
 	private static partial Regex JBConfigRE();
@@ -19,7 +19,7 @@ public partial class JetBrainsDetector : WorkspaceDetector
 	public JetBrainsDetector()
 	{
 		var IDEA_DIR_RE = JBConfigRE();
-		var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+		var home = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
 		var latest = Directory.EnumerateDirectories(Path.Join(home, "JetBrains"))
 			.Select(path => IDEA_DIR_RE.Match(path))
@@ -29,7 +29,7 @@ public partial class JetBrainsDetector : WorkspaceDetector
 		ideaConfigLow = latest?.Value;
 	}
 
-	public Workspace? Detect(string path)
+	public Workspace? Detect(List<Workspace> parent, string path)
 	{
 		return Directory.Exists(Path.Combine(path, ".idea")) ? new IDEAWorkspace(this, path) : null;
 	}
@@ -38,7 +38,7 @@ public partial class JetBrainsDetector : WorkspaceDetector
 	{
 		if (ideaConfigLow == null) return null;
 
-		var cache = JavaStringHashcode(path).ToString("x2");
+		var cache = JavaStringHashcode(path.Replace('\\', '/')).ToString("x2");
 		cache = Path.GetFileName(path) + "." + cache;
 		var modules = Path.Join(ideaConfigLow, "projects", cache, "external_build_system/modules");
 

@@ -17,7 +17,7 @@ public sealed class RootFileClassifier
 {
 	public static readonly WorkspaceFactory[] factories =
 	{
-		JetBrainsWorkspace.Match,
+		new JetBrainsDetector().Detect,
 		NpmWorkspace.Match,
 		GitWorkspace.Match,
 		VisualStudioWorkspace.Match,
@@ -93,7 +93,7 @@ public sealed class RootFileClassifier
 			{
 				var tempDir = Path.Join(Root, string.Join('\\', parts.Take(i + 1)));
 				var matches = factories
-					.Select(f => f(tempDir))
+					.Select(f => f(workspaces, tempDir))
 					.Where(x => x != null)!
 					.ToArray<Workspace>();
 
