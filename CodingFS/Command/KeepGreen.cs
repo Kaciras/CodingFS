@@ -51,11 +51,7 @@ internal sealed class KeepGreen : CliCommand
 		}
 		foreach (var entry in info.ListFiles(FileType.SourceFile))
 		{
-			if (entry is FileInfo)
-			{
-
-			}
-			else
+			if (entry is DirectoryInfo)
 			{
 				Execute(entry.FullName, outLimit, innerLimit);
 			}

@@ -20,13 +20,15 @@ public sealed class RootFileClassifier
 		new JetBrainsDetector().Detect,
 		NpmWorkspace.Match,
 		GitWorkspace.Match,
+		MavenWorkspace.Match,
+		CargoWorkspace.Match,
 		VisualStudioWorkspace.Match,
 	};
 
 	public static readonly Workspace[] globals =
 	{
 		new CustomWorkspace(),
-		new CommonWorkspace(true),
+		new CommonWorkspace(),
 	};
 
 	public int OuterDepth { get; set; } = int.MaxValue;
