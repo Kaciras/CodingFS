@@ -7,14 +7,18 @@ namespace CodingFS.Workspaces;
 /// </summary>
 public class CommonWorkspace : Workspace
 {
-	public RecognizeType Recognize(string directory)
+	public RecognizeType Recognize(string path)
 	{
-		var name = Path.GetFileName(directory);
+		var name = Path.GetFileName(path);
 		switch (name)
 		{
 			case "__pycache__":
+			case "Thumbs.db":
 				return RecognizeType.Ignored;
+			case ".DS_Store":
+				return RecognizeType.Dependency;
+			default:
+				return RecognizeType.NotCare;
 		}
-		return RecognizeType.NotCare;
 	}
 }

@@ -11,7 +11,7 @@ public class CargoWorkspace : Workspace
 {
 	public static Workspace? Match(List<Workspace> _, string path)
 	{
-		return Directory.Exists(Path.Join(path, "cargo.toml")) ? new CargoWorkspace() : null;
+		return File.Exists(Path.Join(path, "cargo.toml")) ? new CargoWorkspace() : null;
 	}
 
 	public RecognizeType Recognize(string file) => RecognizeType.NotCare;

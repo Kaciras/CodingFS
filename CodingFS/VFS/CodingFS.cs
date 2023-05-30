@@ -35,6 +35,16 @@ public class CodingFS : DokanOperationBase
 		return DokanResult.Success;
 	}
 
+	static FileInformation MapInfo(FileSystemInfo src) => new()
+	{
+		Attributes = src.Attributes,
+		FileName = src.Name,
+		LastAccessTime = src.LastAccessTime,
+		CreationTime = src.CreationTime,
+		LastWriteTime = src.LastWriteTime,
+		Length = (src as FileInfo)?.Length ?? 0
+	};
+
 	protected string MapPath(string value)
 	{
 		var split = value.Split(Path.DirectorySeparatorChar, 3);
@@ -61,7 +71,7 @@ public class CodingFS : DokanOperationBase
 		if (fileName == @"\")
 		{
 			files = Map.Values
-				.Select(sc => Conversion.MapInfo(new DirectoryInfo(sc.Root)))
+				.Select(sc => MapInfo(new DirectoryInfo(sc.Root)))
 				.ToArray();
 		}
 		else
@@ -79,7 +89,7 @@ public class CodingFS : DokanOperationBase
 			files = new DirectoryInfo(fileName)
 				.EnumerateFileSystemInfos()
 				.Where(info => @fixed.GetFileType(info.FullName) == Type)
-				.Select(Conversion.MapInfo).ToArray();
+				.Select(MapInfo).ToArray();
 		}
 
 		return DokanResult.Success;
@@ -105,7 +115,7 @@ public class CodingFS : DokanOperationBase
 			// 哪个傻逼想出来的文件和目录分开的API？
 			var rawPath = MapPath(fileName);
 			var rawInfo = new FileInfo(rawPath);
-			fileInfo = Conversion.MapInfo(rawInfo.Exists ? rawInfo : new DirectoryInfo(rawPath));
+			fileInfo = MapInfo(rawInfo.Exists ? rawInfo : new DirectoryInfo(rawPath));
 		}
 		return DokanResult.Success;
 	}
