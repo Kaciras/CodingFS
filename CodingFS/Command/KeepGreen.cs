@@ -45,7 +45,7 @@ internal sealed class KeepGreen : CliCommand
 			}
 			if (info.FindType<NpmWorkspace>().Any())
 			{
-				CheckGit(git.Root, DateTimeOffset.Now.Add(TimeSpan.FromDays(-7)));
+				CheckGit(git.Repository, DateTimeOffset.Now.Add(TimeSpan.FromDays(-7)));
 				return;
 			}
 		}
@@ -58,14 +58,13 @@ internal sealed class KeepGreen : CliCommand
 		}
 	}
 
-	void CheckGit(string path, DateTimeOffset period)
+	void CheckGit(Repository repo, DateTimeOffset period)
 	{
-		using var repo = new Repository(path);
 		foreach (var commit in repo.Commits)
 		{
 			if (commit.Committer.When < period)
 			{
-				Console.WriteLine($"{path} should check for update");
+				Console.WriteLine($"{repo.Info.Path} should check for update");
 			}
 			if (commit.Message.Contains("update deps"))
 			{

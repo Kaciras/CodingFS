@@ -5,9 +5,12 @@ namespace CodingFS.Workspaces;
 
 public class MavenWorkspace : Workspace
 {
-	public static Workspace? Match(List<Workspace> _, string path)
+	public static void Match(DetectContxt ctx)
 	{
-		return File.Exists(Path.Join(path, "pox.xml")) ? new MavenWorkspace() : null;
+		if (File.Exists(Path.Join(ctx.Path, "pox.xml")))
+		{
+			ctx.AddWorkspace(new MavenWorkspace());
+		}
 	}
 
 	public RecognizeType Recognize(string file) => RecognizeType.NotCare;

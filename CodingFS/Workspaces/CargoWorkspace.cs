@@ -1,17 +1,16 @@
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CodingFS.Workspaces;
 
 public class CargoWorkspace : Workspace
 {
-	public static Workspace? Match(List<Workspace> _, string path)
+	public static void Match(DetectContxt ctx)
 	{
-		return File.Exists(Path.Join(path, "cargo.toml")) ? new CargoWorkspace() : null;
+		var toml = Path.Join(ctx.Path, "cargo.toml");
+		if (File.Exists(toml))
+		{
+			ctx.AddWorkspace(new CargoWorkspace());
+		}
 	}
 
 	public RecognizeType Recognize(string file) => RecognizeType.NotCare;

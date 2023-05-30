@@ -28,26 +28,26 @@ public class NpmWorkspace : Workspace
 		return RecognizeType.NotCare;
 	}
 
-	public static Workspace? Match(List<Workspace> ancestor, string path)
+	public static void Match(DetectContxt ctx)
 	{
-		if (!File.Exists(Path.Combine(path, "package.json")))
+		if (!File.Exists(Path.Combine(ctx.Path, "package.json")))
 		{
-			return null;
+			return;
 		}
 
 		// 
-		var parent = ancestor.OfType<NpmWorkspace>().FirstOrDefault();
+		var parent = ctx.Parent.OfType<NpmWorkspace>().FirstOrDefault();
+		var type = "npm";
 
-		var packageManager = "npm";
-		if(parent != null)
+		if (parent != null)
 		{
-			packageManager = parent.PackageManager;
+			type = parent.PackageManager;
 		}
-		if (!File.Exists(Path.Combine(path, "pnpm-lock.yaml")))
+		if (!File.Exists(Path.Combine(ctx.Path, "pnpm-lock.yaml")))
 		{
-			packageManager = "pnpm";
+			type = "pnpm";
 		}
 
-		return new NpmWorkspace(parent, path, packageManager);
+		ctx.AddWorkspace(new NpmWorkspace(parent, ctx.Path, type));
 	}
 }

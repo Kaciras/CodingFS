@@ -29,9 +29,12 @@ public partial class JetBrainsDetector
 		ideaConfigLow = latest?.Value;
 	}
 
-	public Workspace? Detect(List<Workspace> parent, string path)
+	public void Detect(DetectContxt ctx)
 	{
-		return Directory.Exists(Path.Combine(path, ".idea")) ? new IDEAWorkspace(this, path) : null;
+		if (Directory.Exists(Path.Combine(ctx.Path, ".idea")))
+		{
+			ctx.AddWorkspace(new IDEAWorkspace(this, ctx.Path));
+		}
 	}
 
 	public string? EBSModuleFiles(string path)

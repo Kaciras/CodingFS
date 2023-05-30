@@ -34,37 +34,36 @@ public class VisualStudioWorkspace : Workspace
 		}
 	}
 
-	public static Workspace? Match(List<Workspace> ancestor, string path)
+	public static void Match(DetectContxt ctx)
 	{
-		var vsSln = ancestor.OfType<VisualStudioWorkspace>().FirstOrDefault();
-		if (vsSln != null)
+		var vsSln = ctx.Parent.OfType<VisualStudioWorkspace>().FirstOrDefault();
+
+		if (vsSln == null)
 		{
-			if (vsSln.projects.TryGetValue(path, out var file))
+			var slnFile = Directory.EnumerateFiles(ctx.Path)
+				.FirstOrDefault(i => i.EndsWith(".sln"));
+
+			if (slnFile != null)
 			{
-				return new MSBuildProject(path, file);
+				var projects = new Dictionary<string, string>();
+				var solution = SolutionFile.Parse(slnFile);
+
+				foreach (var project in solution.ProjectsInOrder)
+				{
+					var type = Path.GetExtension(project.RelativePath);
+					var folder = Path.GetDirectoryName(project.AbsolutePath)!;
+
+					projects[folder] = project.AbsolutePath;
+				}
+
+				vsSln = new VisualStudioWorkspace(ctx.Path, projects);
+				ctx.AddWorkspace(vsSln);
 			}
-			return null;
 		}
-		else
+
+		if (vsSln != null && vsSln.projects.TryGetValue(ctx.Path, out var file))
 		{
-			var sln = Directory.EnumerateFiles(path).FirstOrDefault(i => i.EndsWith(".sln"));
-			if (sln == null)
-			{
-				return null;
-			}
-
-			var projects = new Dictionary<string, string>();
-			var solution = SolutionFile.Parse(sln);
-
-			foreach (var project in solution.ProjectsInOrder)
-			{
-				var type = Path.GetExtension(project.RelativePath);
-				var folder = Path.GetDirectoryName(project.AbsolutePath)!;
-
-				projects[folder] = project.AbsolutePath;
-			}
-
-			return new VisualStudioWorkspace(path, projects);
+			ctx.AddWorkspace(new MSBuildProject(ctx.Path, file));
 		}
 	}
 }

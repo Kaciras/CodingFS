@@ -22,6 +22,7 @@ public sealed class RootFileClassifier
 		GitWorkspace.Match,
 		MavenWorkspace.Match,
 		CargoWorkspace.Match,
+		VSCodeWorkspace.Match,
 		VisualStudioWorkspace.Match,
 	};
 
@@ -94,12 +95,15 @@ public sealed class RootFileClassifier
 			else
 			{
 				var tempDir = Path.Join(Root, string.Join('\\', parts.Take(i + 1)));
-				var matches = factories
-					.Select(f => f(workspaces, tempDir))
-					.Where(x => x != null)!
-					.ToArray<Workspace>();
+				var matches = new List<Workspace>();
+				var ctx = new DetectContxt(workspaces, tempDir, matches);
 
-				node = node.Put(part, matches);
+				foreach (var factory in factories)
+				{
+					factory(ctx);
+				}
+
+				node = node.Put(part, matches.ToArray());
 			}
 
 			workspaces.AddRange(node.Value);
