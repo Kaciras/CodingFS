@@ -105,21 +105,27 @@ internal sealed class KeepGreen : CliCommand
 			return;
 		}
 
-		var now = DateTimeOffset.Now;
 		var project = Path.GetFileName(git.Folder);
-
-		foreach (var commit in git.Repository.Commits)
+		var now = DateTimeOffset.Now;
+		try
 		{
-			var duration = now - commit.Committer.When;
-			if (duration > period)
+			foreach (var commit in git.Repository.Commits)
 			{
-				Console.WriteLine($"{project} should check for update ({duration.Days} days)");
-				break;
+				var duration = now - commit.Committer.When;
+				if (duration > period)
+				{
+					Console.WriteLine($"{project} should check for update ({duration.Days} days)");
+					break;
+				}
+				if (commit.Message.Contains("update deps"))
+				{
+					break;
+				}
 			}
-			if (commit.Message.Contains("update deps"))
-			{
-				break;
-			}
+		} 
+		catch (NotFoundException)
+		{
+			// https://github.com/GitTools/GitVersion/issues/1043
 		}
 	}
 
