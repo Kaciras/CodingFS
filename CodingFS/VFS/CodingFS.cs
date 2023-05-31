@@ -112,10 +112,27 @@ public class CodingFS : DokanOperationBase
 		}
 		else
 		{
-			// 哪个傻逼想出来的文件和目录分开的API？
+			// 哪个傻逼想出来的文件和目录分开的 API？
 			var rawPath = MapPath(fileName);
-			var rawInfo = new FileInfo(rawPath);
-			fileInfo = MapInfo(rawInfo.Exists ? rawInfo : new DirectoryInfo(rawPath));
+			FileSystemInfo rawInfo = new FileInfo(rawPath);
+
+			if (rawInfo.Exists)
+			{
+				fileInfo = MapInfo(rawInfo);
+			}
+			else
+			{
+				rawInfo = new DirectoryInfo(rawPath);
+				if (rawInfo.Exists)
+				{
+					fileInfo = MapInfo(rawInfo);
+				}
+				else
+				{
+					fileInfo = default;
+					return DokanResult.PathNotFound;
+				}
+			}
 		}
 		return DokanResult.Success;
 	}
