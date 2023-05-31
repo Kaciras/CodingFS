@@ -129,7 +129,7 @@ public sealed class StaticFSWrapper : IDokanOperations
 
 	public NtStatus FindFiles(
 		string fileName,
-		out IList<FileInformation>? files,
+		out IList<FileInformation> files,
 		IDokanFileInfo info)
 	{
 		try
@@ -146,7 +146,7 @@ public sealed class StaticFSWrapper : IDokanOperations
 	public NtStatus FindFilesWithPattern(
 		string fileName,
 		string searchPattern,
-		out IList<FileInformation>? files,
+		out IList<FileInformation> files,
 		IDokanFileInfo info)
 	{
 		try
@@ -305,9 +305,9 @@ public sealed class StaticFSWrapper : IDokanOperations
 	}
 
 	public NtStatus GetVolumeInformation(
-		out string? volumeLabel,
+		out string volumeLabel,
 		out FileSystemFeatures features,
-		out string? fileSystemName,
+		out string fileSystemName,
 		out uint maximumComponentLength,
 		IDokanFileInfo info)
 	{
@@ -332,7 +332,7 @@ public sealed class StaticFSWrapper : IDokanOperations
 
 	public NtStatus GetFileSecurity(
 		string fileName,
-		out FileSystemSecurity? security,
+		out FileSystemSecurity security,
 		AccessControlSections sections,
 		IDokanFileInfo info)
 	{
@@ -363,11 +363,11 @@ public sealed class StaticFSWrapper : IDokanOperations
 		}
 	}
 
-	public NtStatus Mounted(IDokanFileInfo info)
+	public NtStatus Mounted(string mountPoint, IDokanFileInfo info)
 	{
 		try
 		{
-			return Native.Mounted(info);
+			return Native.Mounted(mountPoint, info);
 		}
 		catch (Exception e)
 		{
@@ -389,7 +389,7 @@ public sealed class StaticFSWrapper : IDokanOperations
 
 	public NtStatus FindStreams(
 		string fileName,
-		out IList<FileInformation>? streams,
+		out IList<FileInformation> streams,
 		IDokanFileInfo info)
 	{
 		try
