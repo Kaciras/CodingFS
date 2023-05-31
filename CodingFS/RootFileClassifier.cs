@@ -38,12 +38,12 @@ public sealed class RootFileClassifier
 
 	public string Root { get; }
 
-	private readonly PathTrieNode<Workspace[]> rootNode;
+	private readonly PathTrieNode<Workspace[]> cacheRoot;
 
 	public RootFileClassifier(string root)
 	{
 		Root = root;
-		rootNode = new PathTrieNode<Workspace[]>(globals);
+		cacheRoot = new PathTrieNode<Workspace[]>(globals);
 	}
 
 	string[] SplitPath(string path)
@@ -60,7 +60,7 @@ public sealed class RootFileClassifier
 	{
 		var parts = SplitPath(directory);
 
-		var node = rootNode;
+		var node = cacheRoot;
 		for (int i = 0; i < parts.Length - 1; i++)
 		{
 			var part = parts[i];
@@ -81,8 +81,8 @@ public sealed class RootFileClassifier
 	{
 		var parts = SplitPath(directory);
 
-		var workspaces = new List<Workspace>();
-		var node = rootNode;
+		var workspaces = new List<Workspace>(cacheRoot.Value);
+		var node = cacheRoot;
 
 		for (int i = 0; i < parts.Length; i++)
 		{
