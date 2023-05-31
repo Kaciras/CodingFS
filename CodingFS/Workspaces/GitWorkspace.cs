@@ -5,7 +5,7 @@ namespace CodingFS.Workspaces;
 
 public sealed class GitWorkspace : Workspace
 {
-	static bool Ignore { get; set; } = false;
+	public static bool Ignore { get; set; } = false;
 
 	public static void Match(DetectContxt ctx)
 	{
@@ -18,6 +18,8 @@ public sealed class GitWorkspace : Workspace
 	// Native handles in Repository implements destruction function,
 	// so just let GC to dispose them.
 	public Repository Repository { get; }
+
+	public string Folder => Path.GetDirectoryName(Repository.Info.Path[..^1])!;
 
  	public GitWorkspace(string path)
 	{

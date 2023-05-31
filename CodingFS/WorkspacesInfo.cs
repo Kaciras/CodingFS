@@ -6,23 +6,27 @@ namespace CodingFS;
 
 public sealed class WorkspacesInfo
 {
-	private readonly IList<Workspace> workspaces;
+	public IReadOnlyList<Workspace> Workspaces { get; }
+
+	public IReadOnlyList<Workspace> Current { get; }
+
 	private readonly string path;
 
-	internal WorkspacesInfo(string path, IList<Workspace> workspaces)
+	internal WorkspacesInfo(string path, IReadOnlyList<Workspace> workspaces, IReadOnlyList<Workspace> current)
 	{
 		this.path = path;
-		this.workspaces = workspaces;
+		Workspaces = workspaces;
+		Current = current;
 	}
 
 	public IEnumerable<T> FindType<T>() where T : Workspace
 	{
-		return workspaces.OfType<T>();
+		return Workspaces.OfType<T>();
 	}
 
 	public FileType GetFileType(string path)
 	{
-		var flags = workspaces.Aggregate(RecognizeType.NotCare, (v, c) => v | c.Recognize(path));
+		var flags = Workspaces.Aggregate(RecognizeType.NotCare, (v, c) => v | c.Recognize(path));
 		return GetFileType(flags);
 	}
 

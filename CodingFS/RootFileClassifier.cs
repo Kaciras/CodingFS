@@ -115,6 +115,6 @@ public sealed class RootFileClassifier
 			workspaces.AddRange(node.Value);
 		}
 
-		return new WorkspacesInfo(directory, workspaces); 
+		return new WorkspacesInfo(directory, workspaces, node.Value); 
 	}
 }

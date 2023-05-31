@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -26,16 +27,6 @@ internal sealed class KeepGreen : CliCommand
 		IterateProject(filter.Root, OuterDepth);
 	}
 
-	TimeSpan UpdateCycle(Workspace workspace) => workspace switch
-	{
-		NpmWorkspace => TimeSpan.FromDays(7),
-		MavenWorkspace => TimeSpan.FromDays(60),
-		CargoWorkspace => TimeSpan.FromDays(30),
-		MSBuildProject w when
-		(w.SDK == MSBuildProject.SDK_CSHARP) => TimeSpan.FromDays(60),
-		_ => TimeSpan.MaxValue,
-	};
-
 	void IterateProject(string path, int outLimit)
 	{
 		var info = filter.GetWorkspaces(path);
@@ -43,8 +34,9 @@ internal sealed class KeepGreen : CliCommand
 
 		if (git != null)
 		{
-			//IterateSubmodule(path, InnerDepth);
-			GitGC(git.Repository);
+			CheckUpdatable(git);
+			//GitGC(git.Repository);
+			return;
 		}
 
 		if (--outLimit == 0)
@@ -61,46 +53,90 @@ internal sealed class KeepGreen : CliCommand
 		}
 	}
 
-	void IterateSubmodule(string path, int innerLimit)
+	TimeSpan MinUpdateCycle(string path, int innerLimit)
 	{
+		var info = filter.GetWorkspaces(path);
+		var time = TimeSpan.MaxValue;
 
+		void SetTime(TimeSpan value)
+		{
+			if (value < time) time = value;
+		}
+
+		foreach (var workspace in info.Current)
+		{
+			switch (workspace)
+			{
+				case NpmWorkspace:
+					SetTime(TimeSpan.FromDays(7));
+					break;
+				case MavenWorkspace:
+					SetTime(TimeSpan.FromDays(60));
+					break;
+				case CargoWorkspace:
+					SetTime(TimeSpan.FromDays(30));
+					break;
+				case MSBuildProject w
+				when (w.SDK == MSBuildProject.SDK_CSHARP):
+					SetTime(TimeSpan.FromDays(60));
+					break;
+			}
+		}
+
+		if (--innerLimit > 0)
+		{
+			foreach (var entry in info.ListFiles(FileType.SourceFile))
+			{
+				if (entry is DirectoryInfo)
+				{
+					SetTime(MinUpdateCycle(entry.FullName, innerLimit));
+				}
+			}
+		}
+
+		return time;
 	}
 
-
-	void CheckGit(Repository repo, DateTimeOffset period)
+	void CheckUpdatable(GitWorkspace git)
 	{
-		var project = Path.GetDirectoryName(repo.Info.Path);
-		foreach (var commit in repo.Commits)
+		var period = MinUpdateCycle(git.Folder, InnerDepth);
+		if (period == TimeSpan.MaxValue)
 		{
-			if (commit.Committer.When < period)
+			return;
+		}
+
+		var now = DateTimeOffset.Now;
+		var project = Path.GetFileName(git.Folder);
+
+		foreach (var commit in git.Repository.Commits)
+		{
+			var duration = now - commit.Committer.When;
+			if (duration > period)
 			{
-				Console.WriteLine($"{project} should check for update");
+				Console.WriteLine($"{project} should check for update ({duration.Days} days)");
+				break;
 			}
 			if (commit.Message.Contains("update deps"))
 			{
-				return;
+				break;
 			}
 		}
 	}
 
-	void GitGC(Repository repo)
+	void GitGC(GitWorkspace git)
 	{
-		var project = Path.GetDirectoryName(repo.Info.Path[..^1]);
-
-		Process.Start(new ProcessStartInfo()
+		Process.Start(new ProcessStartInfo("git")
 		{
-			FileName = "git",
 			Arguments = "reflog expire --all --expire=now",
-			WorkingDirectory = project,
+			WorkingDirectory = git.Folder,
 		})!.WaitForExit();
 
-		Process.Start(new ProcessStartInfo()
+		Process.Start(new ProcessStartInfo("git")
 		{
-			FileName = "git",
 			Arguments = "gc --aggressive --prune=now --quiet",
-			WorkingDirectory = project,
+			WorkingDirectory = git.Folder,
 		})!.WaitForExit();
 
-		Console.WriteLine($"GC completed on {project}");
+		Console.WriteLine($"GC completed on {git.Folder}");
 	}
 }
