@@ -13,6 +13,7 @@ public class CommonWorkspace : Workspace
 		switch (name)
 		{
 			case "__pycache__":
+			case ".pytest_cache":
 			case "Thumbs.db":
 				return RecognizeType.Ignored;
 			case ".DS_Store":

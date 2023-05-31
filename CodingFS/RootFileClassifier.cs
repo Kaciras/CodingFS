@@ -15,7 +15,7 @@ namespace CodingFS;
 /// </summary>
 public sealed class RootFileClassifier
 {
-	public static readonly WorkspaceFactory[] factories =
+	public static readonly WorkspaceFactory[] FACTORIES =
 	{
 		new JetBrainsDetector().Detect,
 		NpmWorkspace.Match,
@@ -26,11 +26,13 @@ public sealed class RootFileClassifier
 		VisualStudioWorkspace.Match,
 	};
 
-	public static readonly Workspace[] globals =
+	public static readonly Workspace[] GLOBALS =
 	{
 		new CustomWorkspace(),
 		new CommonWorkspace(),
 	};
+
+	// ===============================================================
 
 	public int OuterDepth { get; set; } = int.MaxValue;
 
@@ -38,11 +40,15 @@ public sealed class RootFileClassifier
 
 	public string Root { get; }
 
+	private readonly WorkspaceFactory[] factories;
 	private readonly PathTrieNode<Workspace[]> cacheRoot;
 
-	public RootFileClassifier(string root)
+	public RootFileClassifier(string root): this(root, FACTORIES, GLOBALS) {}
+
+	public RootFileClassifier(string root, WorkspaceFactory[] factories, Workspace[] globals)
 	{
 		Root = root;
+		this.factories = factories;
 		cacheRoot = new PathTrieNode<Workspace[]>(globals);
 	}
 

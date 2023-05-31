@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using System.IO;
 using LibGit2Sharp;
-using Microsoft.Extensions.FileSystemGlobbing;
 
 namespace CodingFS.Workspaces;
 
@@ -17,6 +15,8 @@ public sealed class GitWorkspace : Workspace
 		}
 	}
 
+	// Native handles in Repository implements destruction function,
+	// so just let GC to dispose them.
 	public Repository Repository { get; }
 
  	public GitWorkspace(string path)

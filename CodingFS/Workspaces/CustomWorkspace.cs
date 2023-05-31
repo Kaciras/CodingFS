@@ -11,6 +11,13 @@ public sealed class CustomWorkspace : Workspace
 {
 	public RecognizeType Recognize(string file)
 	{
-		return file == @"D:\Coding\ThirdParty" ? RecognizeType.Dependency : RecognizeType.NotCare;
+		switch (file)
+		{
+			case @"D:\Coding\ThirdParty":
+			case @"D:\Coding\Blog\data":
+				return RecognizeType.Dependency;
+			default:
+				return RecognizeType.NotCare;
+		}
 	}
 }
