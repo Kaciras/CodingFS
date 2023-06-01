@@ -71,14 +71,14 @@ internal sealed class KeepGreen : CliCommand
 					SetTime(TimeSpan.FromDays(7));
 					break;
 				case MavenWorkspace:
-					SetTime(TimeSpan.FromDays(60));
+					SetTime(TimeSpan.FromDays(90));
 					break;
 				case CargoWorkspace:
 					SetTime(TimeSpan.FromDays(30));
 					break;
 				case MSBuildProject w
 				when (w.SDK == MSBuildProject.SDK_CSHARP):
-					SetTime(TimeSpan.FromDays(60));
+					SetTime(TimeSpan.FromDays(90));
 					break;
 			}
 		}
