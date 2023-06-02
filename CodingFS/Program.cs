@@ -4,6 +4,9 @@ using CommandLine;
 
 [assembly: InternalsVisibleTo("CodingFS.Test")]
 [assembly: InternalsVisibleTo("CodingFS.Benchmark")]
+
+[module: SkipLocalsInit]
+
 namespace CodingFS;
 
 internal static class Program

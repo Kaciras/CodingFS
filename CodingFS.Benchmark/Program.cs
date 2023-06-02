@@ -1,12 +1,11 @@
-using System;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using BenchmarkDotNet.Running;
+using CodingFS.Benchmark;
 
-namespace CodingFS.Benchmark;
+[module: SkipLocalsInit]
 
-internal class Program
-{
-	private static void Main(string[] args)
-	{
-		BenchmarkRunner.Run<FSWrapperPerf>();
-	}
-}
+BenchmarkRunner.Run<IdeaXMLPerf>();
+
+//var x = new IdeaXMLPerf();
+//x.CheckEquality();
