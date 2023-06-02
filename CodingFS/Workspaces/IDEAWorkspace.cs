@@ -9,9 +9,9 @@ namespace CodingFS.Workspaces;
 
 public class IDEAWorkspace : Workspace
 {
-	private readonly JetBrainsDetector detector;
-	private readonly string root;
-	private readonly PathDict ignored;
+	readonly JetBrainsDetector detector;
+	readonly string root;
+	readonly PathDict ignored;
 
 	internal IDEAWorkspace(JetBrainsDetector detector, string root)
 	{
@@ -49,12 +49,8 @@ public class IDEAWorkspace : Workspace
 	}
 
 	/// <summary>
-	/// JB的项目在文件夹下的.idea目录里存储配置，其中的 workspace.xml
-	/// 文件保存了与工作区域相关的信息，包括排除的文件等。
-	/// 
-	/// 这个方法从workspace.xml里读取被排除的文件列表。
+	/// Find excluded file patterns from ".idea/workspace.xml".
 	/// </summary>
-	/// <returns>被排除的文件</returns>
 	private IEnumerable<string> ResolveWorkspace()
 	{
 		var xmlFile = Path.Join(root, ".idea/workspace.xml");
@@ -62,13 +58,10 @@ public class IDEAWorkspace : Workspace
 		doc.Load(xmlFile);
 
 		var tsIgnores = doc.SelectNodes(
-			"//component[@name='TypeScriptGeneratedFilesManager']" +
-			"/option[@name='exactExcludedFiles']/list//option");
+			"//option[@name='exactExcludedFiles']/list//option");
 
 		return tsIgnores.Cast<XmlNode>()
-			.Select(node => ToRelative(node.Attributes["value"]!.Value))
-			.SkipWhile(Path.IsPathRooted)
-			.SkipWhile(path => path.StartsWith(".."));
+			.Select(node => ToRelative(node.Attributes["value"]!.Value));
 	}
 
 	/// <summary>
@@ -86,7 +79,7 @@ public class IDEAWorkspace : Workspace
 		var doc = new XmlDocument();
 		doc.Load(xmlFile);
 
-		var modules = doc.SelectNodes("//component[@name='ProjectModuleManager']/modules//module")!;
+		var modules = doc.SelectNodes("//module")!;
 		var flatten = Enumerable.Empty<string>();
 
 		foreach (XmlNode module in modules)
@@ -151,10 +144,7 @@ public class IDEAWorkspace : Workspace
 		var doc = new XmlDocument();
 		doc.Load(imlFile);
 
-		var e1 = doc.SelectNodes("//component[@name='NewModuleRootManager']/content//excludeFolder");
-		var e2 = doc.SelectNodes("//component[@name='AdditionalModuleElements']/content//excludeFolder");
-
-		foreach (var node in e1!.Cast<XmlNode>().Concat(e2.Cast<XmlNode>()))
+		foreach (XmlNode node in doc.SelectNodes("//excludeFolder")!)
 		{
 			var folder = node.Attributes["url"].Value;
 			if (!folder.StartsWith("file://$MODULE_DIR$/"))
