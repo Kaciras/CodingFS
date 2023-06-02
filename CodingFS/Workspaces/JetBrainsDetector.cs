@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using SpecialFolder = System.Environment.SpecialFolder;
 
 namespace CodingFS.Workspaces;
 
@@ -13,20 +11,17 @@ public partial class JetBrainsDetector
 	[GeneratedRegex("^.+IntelliJIdea(20[0-9.]+)$")]
 	private static partial Regex JBConfigRE();
 
-	private string? ideaConfigLow;
+	private string? configLow;
 
-	// 查找最新版的配置目录，JB的产品在更新了次版本号之后会创建一个新的配置文件夹
+	// 查找最新版的配置目录，JB 的产品在更新了次版本号之后会创建一个新的配置文件夹
 	public JetBrainsDetector()
 	{
-		var IDEA_DIR_RE = JBConfigRE();
-		var home = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+		var home = Environment.GetFolderPath(SpecialFolder.LocalApplicationData);
 
-		var latest = Directory.EnumerateDirectories(Path.Join(home, "JetBrains"))
-			.Select(path => IDEA_DIR_RE.Match(path))
+		configLow = Directory.EnumerateDirectories(Path.Join(home, "JetBrains"))
+			.Select(path => JBConfigRE().Match(path))
 			.Where(match => match.Success)
-			.MaxBy(match => Version.Parse(match.Groups[1].ValueSpan));
-
-		ideaConfigLow = latest?.Value;
+			.MaxBy(match => Version.Parse(match.Groups[1].ValueSpan))?.Value;
 	}
 
 	public void Detect(DetectContxt ctx)
@@ -39,11 +34,11 @@ public partial class JetBrainsDetector
 
 	public string? EBSModuleFiles(string path)
 	{
-		if (ideaConfigLow == null) return null;
+		if (configLow == null) return null;
 
 		var cache = JavaStringHashcode(path.Replace('\\', '/')).ToString("x2");
 		cache = Path.GetFileName(path) + "." + cache;
-		var modules = Path.Join(ideaConfigLow, "projects", cache, "external_build_system/modules");
+		var modules = Path.Join(configLow, "projects", cache, "external_build_system/modules");
 
 		return Directory.Exists(modules) ? modules : null;
 	}

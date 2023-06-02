@@ -42,15 +42,11 @@ public abstract class DokanOperationBase : IDokanOperations
 		out FileInformation fileInfo,
 		IDokanFileInfo info)
 	{
-		var time = DateTime.Now;
 		fileInfo = new FileInformation
 		{
 			FileName = fileName,
 			Length = 0,
 			Attributes = FileAttributes.Directory,
-			CreationTime = time,
-			LastAccessTime = time,
-			LastWriteTime = time,
 		};
 		return DokanResult.Success;
 	}
@@ -73,7 +69,7 @@ public abstract class DokanOperationBase : IDokanOperations
 		IDokanFileInfo info)
 	{
 		files = Array.Empty<FileInformation>();
-		return DokanResult.NotImplemented;
+		return DokanResult.Success;
 	}
 
 	public virtual NtStatus FindStreams(
@@ -136,7 +132,7 @@ public abstract class DokanOperationBase : IDokanOperations
 		return NtStatus.Success;
 	}
 
-	public NtStatus Mounted(string mountPoint, IDokanFileInfo info)
+	public virtual NtStatus Mounted(string mountPoint, IDokanFileInfo info)
 	{
 		return NtStatus.Success;
 	}

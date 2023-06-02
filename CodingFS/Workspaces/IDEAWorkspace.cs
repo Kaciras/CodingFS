@@ -68,7 +68,7 @@ public class IDEAWorkspace : Workspace
 		return tsIgnores.Cast<XmlNode>()
 			.Select(node => ToRelative(node.Attributes["value"]!.Value))
 			.SkipWhile(Path.IsPathRooted)
-			.SkipWhile(path => path.StartsWith("..") || path.StartsWith("node_modules"));
+			.SkipWhile(path => path.StartsWith(".."));
 	}
 
 	/// <summary>

@@ -86,9 +86,8 @@ public sealed class RootFileClassifier
 	public WorkspacesInfo GetWorkspaces(string directory)
 	{
 		var parts = SplitPath(directory);
-
-		var workspaces = new List<Workspace>(cacheRoot.Value);
 		var node = cacheRoot;
+		var workspaces = new List<Workspace>(node.Value);
 
 		for (int i = 0; i < parts.Length; i++)
 		{

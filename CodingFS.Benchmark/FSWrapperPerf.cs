@@ -3,7 +3,7 @@ using BenchmarkDotNet.Attributes;
 using CodingFS.VFS;
 using DokanNet;
 
-// 测试结果表明，动态代理在不出现异常的情况下比静态慢 17 倍，出现异常的情况下慢 3 倍。
+// 测试结果表明，动态代理在不出现异常的情况下比静态慢 23 倍，出现异常的情况下慢 3 倍。
 // 不过即使这样，单个操作的时间仍在微秒级，影响并不大。
 namespace CodingFS.Benchmark;
 
@@ -17,29 +17,29 @@ public class FSWrapperPerf
 		}
 	}
 
-	private readonly IDokanOperations staticProxy = new StaticFSWrapper(new TestFS());
-	private readonly IDokanOperations dynamicProxy = AopFSWrapper.Create(new TestFS());
+	readonly IDokanOperations staticProxy = new StaticFSWrapper(new TestFS());
+	readonly IDokanOperations dynamicProxy = AopFSWrapper.Create(new TestFS());
 
 	[Benchmark]
-	public NtStatus Static_ReadFile_Throws()
+	public NtStatus Static_Throws()
 	{
 		return staticProxy.Mounted(string.Empty, null);
 	}
 
 	[Benchmark]
-	public NtStatus Dynamic_ReadFile_Throws()
+	public NtStatus Dynamic_Throws()
 	{
 		return dynamicProxy.Mounted(string.Empty, null);
 	}
 
 	[Benchmark]
-	public NtStatus Static_ReadFile_Success()
+	public NtStatus Static_Success()
 	{
 		return staticProxy.FindFiles("test", out _, null);
 	}
 
 	[Benchmark]
-	public NtStatus Dynamic_ReadFile_Success()
+	public NtStatus Dynamic_Success()
 	{
 		return dynamicProxy.FindFiles("test", out _, null);
 	}
