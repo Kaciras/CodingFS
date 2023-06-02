@@ -3,7 +3,7 @@ using System.IO;
 using System.Reflection;
 using DokanNet;
 
-namespace CodingFS.VFS;
+namespace CodingFS.Benchmark;
 
 /// <summary>
 /// 包装一个 IDonakOperations 对象，将一些常见的异常转换为 NtStatus 返回。
@@ -22,7 +22,7 @@ public class AopFSWrapper : DispatchProxy
 	/// 把一些 IO 异常转换为对应的 NtStatus,如果不能转换则原样抛出。
 	/// </summary>
 	/// <param name="e">异常</param>
-	/// <returns>对应的NtStatus</returns>
+	/// <returns>对应的 NtStatus</returns>
 	private static NtStatus HandleException(Exception e) => e switch
 	{
 		FileNotFoundException _ => DokanResult.FileNotFound,

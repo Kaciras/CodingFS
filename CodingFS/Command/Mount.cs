@@ -42,7 +42,7 @@ internal class Mount : CliCommand
 				options.MountPoint = $"{Point}:\\";
 				options.Options = mountOptions;
 			})
-			.Build(AopFSWrapper.Create(vfs));
+			.Build(new StaticFSWrapper(vfs));
 
 		new ManualResetEvent(false).WaitOne();
 	}
