@@ -94,7 +94,7 @@ public abstract class DokanOperationBase : IDokanOperations
 		FileAttributes attributes,
 		IDokanFileInfo info)
 	{
-		return NtStatus.Success;
+		return DokanResult.Success;
 	}
 
 	// 空闲的空间要大一点，不然系统会提示清理磁盘。
@@ -109,7 +109,7 @@ public abstract class DokanOperationBase : IDokanOperations
 		freeBytesAvailable = FREE;
 		totalNumberOfBytes = FREE;
 		totalNumberOfFreeBytes = FREE;
-		return NtStatus.Success;
+		return DokanResult.Success;
 	}
 
 	public virtual NtStatus GetFileSecurity(
@@ -120,7 +120,7 @@ public abstract class DokanOperationBase : IDokanOperations
 	{
 		// 这个要返回 NotImplemented，Dokan 会自动允许所有权限。
 		security = null;
-		return NtStatus.NotImplemented;
+		return DokanResult.NotImplemented;
 	}
 
 	public virtual NtStatus LockFile(
@@ -129,12 +129,12 @@ public abstract class DokanOperationBase : IDokanOperations
 		long length,
 		IDokanFileInfo info)
 	{
-		return NtStatus.Success;
+		return DokanResult.Success;
 	}
 
 	public virtual NtStatus Mounted(string mountPoint, IDokanFileInfo info)
 	{
-		return NtStatus.Success;
+		return DokanResult.Success;
 	}
 
 	public virtual NtStatus MoveFile(
@@ -143,7 +143,7 @@ public abstract class DokanOperationBase : IDokanOperations
 		bool replace,
 		IDokanFileInfo info)
 	{
-		return NtStatus.Success;
+		return DokanResult.Success;
 	}
 
 	public virtual NtStatus SetAllocationSize(
@@ -151,7 +151,7 @@ public abstract class DokanOperationBase : IDokanOperations
 		long length,
 		IDokanFileInfo info)
 	{
-		return NtStatus.Success;
+		return DokanResult.Success;
 	}
 
 	public virtual NtStatus SetEndOfFile(
@@ -159,7 +159,7 @@ public abstract class DokanOperationBase : IDokanOperations
 		long length,
 		IDokanFileInfo info)
 	{
-		return NtStatus.Success;
+		return DokanResult.Success;
 	}
 
 	public virtual NtStatus SetFileAttributes(
@@ -167,7 +167,7 @@ public abstract class DokanOperationBase : IDokanOperations
 		FileAttributes attributes,
 		IDokanFileInfo info)
 	{
-		return NtStatus.Success;
+		return DokanResult.Success;
 	}
 
 	public virtual NtStatus SetFileSecurity(
@@ -176,7 +176,7 @@ public abstract class DokanOperationBase : IDokanOperations
 		AccessControlSections sections,
 		IDokanFileInfo info)
 	{
-		return NtStatus.Success;
+		return DokanResult.Success;
 	}
 
 	public virtual NtStatus SetFileTime(
@@ -186,7 +186,7 @@ public abstract class DokanOperationBase : IDokanOperations
 		DateTime? lastWriteTime,
 		IDokanFileInfo info)
 	{
-		return NtStatus.Success;
+		return DokanResult.Success;
 	}
 
 	public virtual NtStatus UnlockFile(
@@ -195,12 +195,12 @@ public abstract class DokanOperationBase : IDokanOperations
 		long length,
 		IDokanFileInfo info)
 	{
-		return NtStatus.Success;
+		return DokanResult.Success;
 	}
 
 	public virtual NtStatus Unmounted(IDokanFileInfo info)
 	{
-		return NtStatus.Success;
+		return DokanResult.Success;
 	}
 
 	public virtual NtStatus WriteFile(
@@ -216,16 +216,16 @@ public abstract class DokanOperationBase : IDokanOperations
 
 	public virtual NtStatus DeleteDirectory(string fileName, IDokanFileInfo info)
 	{
-		return NtStatus.Success;
+		return DokanResult.Success;
 	}
 
 	public virtual NtStatus DeleteFile(string fileName, IDokanFileInfo info)
 	{
-		return NtStatus.Success;
+		return DokanResult.Success;
 	}
 
 	public virtual NtStatus FlushFileBuffers(string fileName, IDokanFileInfo info)
 	{
-		return NtStatus.Success;
+		return DokanResult.Success;
 	}
 }

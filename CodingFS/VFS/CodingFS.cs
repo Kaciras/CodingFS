@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,6 +6,10 @@ using AccessType = System.IO.FileAccess;
 
 namespace CodingFS.VFS;
 
+/// <summary>
+/// This file system is designed as read-only, since writing to files may cause
+/// unexcepted overwrite to filtered files.
+/// </summary>
 public class CodingFS : DokanOperationBase
 {
 	public Dictionary<string, RootFileClassifier> Map { get; } = new();
