@@ -26,11 +26,11 @@ internal class Mount : CliCommand
 		var vfs = new UnsafeCodingFS("CodingFS") { Type = Type };
 		vfs.Map["Coding"] = new RootFileClassifier(@"D:\Coding");
 
+		var mountOptions = DokanOptions.WriteProtection;
 #if DEBUG
 		using var dokanLogger = new ConsoleLogger("[Dokan] ");
-		var mountOptions = DokanOptions.DebugMode | DokanOptions.StderrOutput;
+		mountOptions |= DokanOptions.DebugMode | DokanOptions.StderrOutput;
 #else
-		var mountOptions = default(DokanOptions);
 		var dokanLogger = new NullLogger();
 		Console.WriteLine($@"CodingFS mounted at x:\");
 #endif
