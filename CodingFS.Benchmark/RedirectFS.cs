@@ -21,12 +21,15 @@
  */
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using DokanNet;
+using Microsoft.Win32.SafeHandles;
 using FileAccess = DokanNet.FileAccess;
+using AccessType = System.IO.FileAccess;
 
 namespace CodingFS.Benchmark;
 
@@ -35,16 +38,14 @@ namespace CodingFS.Benchmark;
 /// <summary>
 /// Copied from https://github.com/dokan-dev/dokan-dotnet/blob/master/sample/DokanNetMirror/Mirror.cs
 /// </summary>
-public abstract class Mirror : IDokanOperations
+public abstract partial class RedirectFS : IDokanOperations
 {
-	const FileAccess DataAccess = FileAccess.ReadData | FileAccess.WriteData | FileAccess.AppendData |
-										  FileAccess.Execute |
-										  FileAccess.GenericExecute | FileAccess.GenericWrite |
-										  FileAccess.GenericRead;
+	const FileAccess DataAccess = FileAccess.Execute | FileAccess.GenericExecute
+								| FileAccess.GenericWrite | FileAccess.GenericRead 
+								| FileAccess.ReadData | FileAccess.WriteData | FileAccess.AppendData;
 
-	const FileAccess DataWriteAccess = FileAccess.WriteData | FileAccess.AppendData |
-											   FileAccess.Delete |
-											   FileAccess.GenericWrite;
+	const FileAccess DataWriteAccess = FileAccess.WriteData | FileAccess.AppendData
+									 | FileAccess.Delete | FileAccess.GenericWrite;
 
 	const long FREE_SPACE = 10 * 1024 * 1024 * 1024L;
 
@@ -165,9 +166,9 @@ public abstract class Mirror : IDokanOperations
 
 			try
 			{
-				var streamAccess = readAccess ? System.IO.FileAccess.Read : System.IO.FileAccess.ReadWrite;
+				var streamAccess = readAccess ? AccessType.Read : AccessType.ReadWrite;
 
-				if (mode == FileMode.CreateNew && readAccess) streamAccess = System.IO.FileAccess.ReadWrite;
+				if (mode == FileMode.CreateNew && readAccess) streamAccess = AccessType.ReadWrite;
 
 				info.Context = new FileStream(filePath, mode,
 					streamAccess, share, 4096, options);
@@ -235,7 +236,7 @@ public abstract class Mirror : IDokanOperations
 	{
 		if (info.Context == null) // memory mapped read
 		{
-			using var stream = new FileStream(GetPath(fileName), FileMode.Open, System.IO.FileAccess.Read);
+			using var stream = new FileStream(GetPath(fileName), FileMode.Open, AccessType.Read);
 			stream.Position = offset;
 			bytesRead = stream.Read(buffer, 0, buffer.Length);
 		}
@@ -258,7 +259,7 @@ public abstract class Mirror : IDokanOperations
 
 		if (info.Context == null)
 		{
-			using var stream = new FileStream(GetPath(fileName), append ? FileMode.Append : FileMode.Open, System.IO.FileAccess.Write);
+			using var stream = new FileStream(GetPath(fileName), append ? FileMode.Append : FileMode.Open, AccessType.Write);
 			if (!append) 
 			{
 				stream.Position = offset;
@@ -358,7 +359,7 @@ public abstract class Mirror : IDokanOperations
 				var ct = creationTime?.ToFileTime() ?? 0;
 				var lat = lastAccessTime?.ToFileTime() ?? 0;
 				var lwt = lastWriteTime?.ToFileTime() ?? 0;
-				if (NativeMethods.SetFileTime(stream.SafeFileHandle, ref ct, ref lat, ref lwt))
+				if (SetFileTime(stream.SafeFileHandle, ref ct, ref lat, ref lwt))
 					return DokanResult.Success;
 				throw Marshal.GetExceptionForHR(Marshal.GetLastWin32Error());
 			}
@@ -581,5 +582,101 @@ public abstract class Mirror : IDokanOperations
 		return DokanResult.Success;
 	}
 
+	public NtStatus ReadFile(
+		string fileName,
+		IntPtr buffer,
+		uint bufferLength,
+		out int bytesRead,
+		long offset,
+		IDokanFileInfo info)
+	{
+		if (info.Context == null)
+		{
+			using var stream = new FileStream(GetPath(fileName), FileMode.Open, AccessType.Read);
+			DoRead(stream.SafeFileHandle, buffer, bufferLength, out bytesRead, offset);
+		}
+		else
+		{
+			var stream = (FileStream)info.Context;
+			lock (stream)
+			{
+				DoRead(stream.SafeFileHandle, buffer, bufferLength, out bytesRead, offset);
+			}
+		}
+		return DokanResult.Success;
+	}
+
+	public NtStatus WriteFile(
+		string fileName,
+		IntPtr buffer,
+		uint bufferLength,
+		out int bytesWritten,
+		long offset,
+		IDokanFileInfo info)
+	{
+		if (info.Context == null)
+		{
+			using var stream = new FileStream(GetPath(fileName), FileMode.Open, AccessType.Write);
+			DoWrite(stream.SafeFileHandle, buffer, bufferLength, out bytesWritten, offset);
+		}
+		else
+		{
+			var stream = (FileStream)info.Context;
+			lock (stream)
+			{
+				DoWrite(stream.SafeFileHandle, buffer, bufferLength, out bytesWritten, offset);
+			}
+		}
+		return DokanResult.Success;
+	}
+
+	private static void DoRead(SafeFileHandle handle, IntPtr buffer, uint length, out int read, long offset)
+	{
+		Check(SetFilePointerEx(handle, offset, IntPtr.Zero, 0));
+		Check(ReadFile(handle, buffer, length, out read, IntPtr.Zero));
+	}
+
+	private static void DoWrite(SafeFileHandle handle, IntPtr buffer, uint length, out int written, long offset)
+	{
+		Check(SetFilePointerEx(handle, offset, IntPtr.Zero, 0));
+		Check(WriteFile(handle, buffer, length, out written, IntPtr.Zero));
+	}
+
 	#endregion Implementation of IDokanOperations
+
+	[LibraryImport("kernel32", SetLastError = true)]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	private static partial bool SetFileTime(SafeFileHandle hFile, ref long lpCreationTime, ref long lpLastAccessTime, ref long lpLastWriteTime);
+
+
+	[LibraryImport("kernel32.dll", SetLastError = true)]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	private static partial bool SetFilePointerEx(
+		SafeFileHandle hFile,
+		long liDistanceToMove,
+		IntPtr lpNewFilePointer,
+		uint dwMoveMethod);
+
+	[LibraryImport("kernel32.dll", SetLastError = true)]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	private static partial bool ReadFile(
+		SafeFileHandle hFile,
+		IntPtr lpBuffer,
+		uint nNumberOfBytesToRead,
+		out int lpNumberOfBytesRead,
+		IntPtr lpOverlapped);
+
+	[LibraryImport("kernel32.dll", SetLastError = true)]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	private static partial bool WriteFile(
+		SafeFileHandle hFile,
+		IntPtr lpBuffer,
+		uint nNumberOfBytesToWrite,
+		out int lpNumberOfBytesWritten,
+		IntPtr lpOverlapped);
+
+	private static void Check(bool success)
+	{
+		if (!success) throw new Win32Exception();
+	}
 }
