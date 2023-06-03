@@ -116,4 +116,26 @@ public sealed class RootFileClassifier
 
 		return new WorkspacesInfo(directory, workspaces, node.Value); 
 	}
+
+	
+	public IEnumerable<(string, FileType)> Walk(string root, FileType includes)
+	{
+		// EnumerateFiles 和 EnumerateDirectories 都是在这基础上过滤的。
+		foreach (var file in Directory.EnumerateFileSystemEntries(root))
+		{
+			var folder = Path.GetDirectoryName(file)!;
+			var type = GetWorkspaces(folder).GetFileType(file);
+
+			if (!includes.HasFlag(type))
+			{
+				continue;
+			}
+			yield return (file, type);
+
+			if (Directory.Exists(file))
+			{
+				foreach (var i in Walk(file, includes)) yield return i;
+			}
+		}
+	}
 }

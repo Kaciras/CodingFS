@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommandLine.Text;
 using CommandLine;
 
 namespace CodingFS.Command;
@@ -11,8 +9,8 @@ namespace CodingFS.Command;
 [Verb("inspect", HelpText = "在控制台打印出各种分类的文件")]
 internal sealed class Inspect : CliCommand
 {
-	[Option('s', "source", HelpText = "打印源文件（可能很多）")]
-	public bool Source { get; set; }
+	[Option('t', "type", HelpText = "过滤文件")]
+	public FileType Type { get; set; }
 
 	public void Execute()
 	{
@@ -23,6 +21,10 @@ internal sealed class Inspect : CliCommand
 	{
 		var classifier = new RootFileClassifier(root);
 
+		var groups = classifier.Walk(root, Type)
+			.GroupBy(v => v.Item2, v => v.Item1)
+			.ToImmutableDictionary(i => i.Key);
+
 		static void PrintGroup(IEnumerable<string> files, ConsoleColor color, string header)
 		{
 			Console.ForegroundColor = color;
@@ -31,7 +33,6 @@ internal sealed class Inspect : CliCommand
 			Console.ResetColor();
 		}
 
-		var groups = classifier.Group();
 		PrintGroup(groups[FileType.Dependency], ConsoleColor.Blue, "Dependencies:");
 		PrintGroup(groups[FileType.Generated], ConsoleColor.Red, "Generated files:");
 	}
