@@ -41,7 +41,7 @@ namespace CodingFS.Benchmark;
 public abstract partial class RedirectFS : IDokanOperations
 {
 	const FileAccess DataAccess = FileAccess.Execute | FileAccess.GenericExecute
-								| FileAccess.GenericWrite | FileAccess.GenericRead 
+								| FileAccess.GenericWrite | FileAccess.GenericRead
 								| FileAccess.ReadData | FileAccess.WriteData | FileAccess.AppendData;
 
 	const FileAccess DataWriteAccess = FileAccess.WriteData | FileAccess.AppendData
@@ -50,6 +50,16 @@ public abstract partial class RedirectFS : IDokanOperations
 	const long FREE_SPACE = 10 * 1024 * 1024 * 1024L;
 
 	protected abstract string GetPath(string fileName);
+
+	protected static FileInformation MapInfo(FileSystemInfo src) => new()
+	{
+		Attributes = src.Attributes,
+		FileName = src.Name,
+		LastAccessTime = src.LastAccessTime,
+		CreationTime = src.CreationTime,
+		LastWriteTime = src.LastWriteTime,
+		Length = (src as FileInfo)?.Length ?? 0
+	};
 
 	protected static int GetNumOfBytesToCopy(int bufferLength, long offset, IDokanFileInfo info, FileStream stream)
 	{
@@ -67,7 +77,8 @@ public abstract partial class RedirectFS : IDokanOperations
 
 	#region Implementation of IDokanOperations
 
-	public NtStatus CreateFile(string fileName, FileAccess access, FileShare share, FileMode mode,
+	public virtual NtStatus CreateFile(
+		string fileName, FileAccess access, FileShare share, FileMode mode,
 		FileOptions options, FileAttributes attributes, IDokanFileInfo info)
 	{
 		var result = DokanResult.Success;
@@ -134,26 +145,24 @@ public abstract partial class RedirectFS : IDokanOperations
 			{
 				case FileMode.Open:
 
-					if (pathExists)
-					{
-						// check if driver only wants to read attributes, security info, or open directory
-						if (readWriteAttributes || pathIsDirectory)
-						{
-							if (pathIsDirectory && (access & FileAccess.Delete) == FileAccess.Delete
-								&& (access & FileAccess.Synchronize) != FileAccess.Synchronize)
-								//It is a DeleteFile request on a directory
-								return DokanResult.AccessDenied;
-
-							info.IsDirectory = pathIsDirectory;
-							info.Context = new object();
-							// must set it to something if you return DokanError.Success
-
-							return DokanResult.Success;
-						}
-					}
-					else
+					if (!pathExists)
 					{
 						return DokanResult.FileNotFound;
+					}
+
+					// check if driver only wants to read attributes, security info, or open directory
+					if (readWriteAttributes || pathIsDirectory)
+					{
+						if (pathIsDirectory && (access & FileAccess.Delete) == FileAccess.Delete
+							&& (access & FileAccess.Synchronize) != FileAccess.Synchronize)
+							//It is a DeleteFile request on a directory
+							return DokanResult.AccessDenied;
+
+						info.IsDirectory = pathIsDirectory;
+						info.Context = new object();
+						// must set it to something if you return DokanError.Success
+
+						return DokanResult.Success;
 					}
 					break;
 
@@ -173,12 +182,11 @@ public abstract partial class RedirectFS : IDokanOperations
 				info.Context = new FileStream(filePath, mode,
 					streamAccess, share, 4096, options);
 
-				if (pathExists && (mode == FileMode.OpenOrCreate
-								   || mode == FileMode.Create))
+				if (pathExists && (mode == FileMode.OpenOrCreate || mode == FileMode.Create))
 					result = DokanResult.AlreadyExists;
 
-				var fileCreated = mode == FileMode.CreateNew 
-					|| mode == FileMode.Create 
+				var fileCreated = mode == FileMode.CreateNew
+					|| mode == FileMode.Create
 					|| (!pathExists && mode == FileMode.OpenOrCreate);
 
 				if (fileCreated)
@@ -192,20 +200,16 @@ public abstract partial class RedirectFS : IDokanOperations
 			}
 			catch (UnauthorizedAccessException)
 			{
-				if (info.Context is FileStream fileStream)
-				{
-					// returning AccessDenied cleanup and close won't be called,
-					// so we have to take care of the stream now
-					info.Context = null;
-					fileStream.Dispose();
-				}
+				// returning AccessDenied cleanup and close won't be called,
+				// so we have to take care of the stream now.
+				CloseFile(fileName, info);
 				return DokanResult.AccessDenied;
 			}
 		}
 		return result;
 	}
 
-	public void Cleanup(string fileName, IDokanFileInfo info)
+	public virtual void Cleanup(string fileName, IDokanFileInfo info)
 	{
 		CloseFile(fileName, info);
 
@@ -222,17 +226,22 @@ public abstract partial class RedirectFS : IDokanOperations
 		}
 	}
 
-	public void CloseFile(string fileName, IDokanFileInfo info)
+	public virtual void CloseFile(string fileName, IDokanFileInfo info)
 	{
-		if (info.Context != null)
+		if (info.Context is FileStream stream)
 		{
-			(info.Context as FileStream).Dispose();
+			stream.Dispose();
 			info.Context = null;
 		}
 		// could recreate cleanup code here but this is not called sometimes
 	}
 
-	public NtStatus ReadFile(string fileName, byte[] buffer, out int bytesRead, long offset, IDokanFileInfo info)
+	public virtual NtStatus ReadFile(
+		string fileName, 
+		byte[] buffer, 
+		out int bytesRead,
+		long offset, 
+		IDokanFileInfo info)
 	{
 		if (info.Context == null) // memory mapped read
 		{
@@ -243,7 +252,7 @@ public abstract partial class RedirectFS : IDokanOperations
 		else // normal read
 		{
 			var stream = info.Context as FileStream;
-			lock (stream) //Protect from overlapped read
+			lock (stream) // Protect from overlapped read
 			{
 				stream.Position = offset;
 				bytesRead = stream.Read(buffer, 0, buffer.Length);
@@ -252,26 +261,31 @@ public abstract partial class RedirectFS : IDokanOperations
 		return DokanResult.Success;
 	}
 
-	public NtStatus WriteFile(string fileName, byte[] buffer, out int bytesWritten, long offset, IDokanFileInfo info)
+	public virtual NtStatus WriteFile(
+		string fileName, 
+		byte[] buffer, 
+		out int bytesWritten,
+		long offset,
+		IDokanFileInfo info)
 	{
 		// Offset of -1 is an APPEND: https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-writefile
 		var append = offset == -1;
 
 		if (info.Context == null)
 		{
-			using var stream = new FileStream(GetPath(fileName), append ? FileMode.Append : FileMode.Open, AccessType.Write);
-			if (!append) 
+			var mode = append ? FileMode.Append : FileMode.Open;
+			using var stream = new FileStream(GetPath(fileName), mode, AccessType.Write);
+			if (!append)
 			{
 				stream.Position = offset;
 			}
-			var bytesToCopy = GetNumOfBytesToCopy(buffer.Length, offset, info, stream);
-			stream.Write(buffer, 0, bytesToCopy);
-			bytesWritten = bytesToCopy;
+			bytesWritten = GetNumOfBytesToCopy(buffer.Length, offset, info, stream);
+			stream.Write(buffer, 0, bytesWritten);
 		}
 		else
 		{
 			var stream = info.Context as FileStream;
-			lock (stream) //Protect from overlapped write
+			lock (stream) // Protect from overlapped write
 			{
 				if (append)
 				{
@@ -289,15 +303,16 @@ public abstract partial class RedirectFS : IDokanOperations
 				{
 					stream.Position = offset;
 				}
-				var bytesToCopy = GetNumOfBytesToCopy(buffer.Length, offset, info, stream);
-				stream.Write(buffer, 0, bytesToCopy);
-				bytesWritten = bytesToCopy;
+				bytesWritten = GetNumOfBytesToCopy(buffer.Length, offset, info, stream);
+				stream.Write(buffer, 0, bytesWritten);
 			}
 		}
 		return DokanResult.Success;
 	}
 
-	public NtStatus FlushFileBuffers(string fileName, IDokanFileInfo info)
+	public virtual NtStatus FlushFileBuffers(
+		string fileName, 
+		IDokanFileInfo info)
 	{
 		try
 		{
@@ -310,7 +325,10 @@ public abstract partial class RedirectFS : IDokanOperations
 		}
 	}
 
-	public NtStatus GetFileInformation(string fileName, out FileInformation fileInfo, IDokanFileInfo info)
+	public virtual NtStatus GetFileInformation(
+		string fileName,
+		out FileInformation fileInfo,
+		IDokanFileInfo info)
 	{
 		// may be called with info.Context == null, but usually it isn't
 		var filePath = GetPath(fileName);
@@ -321,28 +339,19 @@ public abstract partial class RedirectFS : IDokanOperations
 			finfo = new DirectoryInfo(filePath);
 		}
 
-		fileInfo = new FileInformation
-		{
-			Length = (finfo as FileInfo)?.Length ?? 0,
-			Attributes = finfo.Attributes,
-			FileName = fileName,
-			CreationTime = finfo.CreationTime,
-			LastWriteTime = finfo.LastWriteTime,
-			LastAccessTime = finfo.LastAccessTime,
-		};
+		fileInfo = MapInfo(finfo);
 		return DokanResult.Success;
 	}
 
-	public NtStatus FindFiles(string fileName, out IList<FileInformation> files, IDokanFileInfo info)
+	public virtual NtStatus FindFiles(string fileName, out IList<FileInformation> files, IDokanFileInfo info)
 	{
 		// This function is not called because FindFilesWithPattern is implemented
 		// Return DokanResult.NotImplemented in FindFilesWithPattern to make FindFiles called
 		files = FindFilesHelper(fileName, "*");
-
 		return DokanResult.Success;
 	}
 
-	public NtStatus SetFileAttributes(string fileName, FileAttributes attributes, IDokanFileInfo info)
+	public virtual NtStatus SetFileAttributes(string fileName, FileAttributes attributes, IDokanFileInfo info)
 	{
 		// MS-FSCC 2.6 File Attributes : There is no file attribute with the value 0x00000000
 		// because a value of 0x00000000 in the FileAttributes field means that the file attributes for this file MUST NOT be changed when setting basic information for the file
@@ -351,34 +360,38 @@ public abstract partial class RedirectFS : IDokanOperations
 		return DokanResult.Success;
 	}
 
-	public NtStatus SetFileTime(string fileName, DateTime? creationTime, DateTime? lastAccessTime,
-		DateTime? lastWriteTime, IDokanFileInfo info)
+	public virtual NtStatus SetFileTime(
+		string fileName,
+		DateTime? creationTime,
+		DateTime? lastAccessTime,
+		DateTime? lastWriteTime,
+		IDokanFileInfo info)
 	{
-			if (info.Context is FileStream stream)
-			{
-				var ct = creationTime?.ToFileTime() ?? 0;
-				var lat = lastAccessTime?.ToFileTime() ?? 0;
-				var lwt = lastWriteTime?.ToFileTime() ?? 0;
-				if (SetFileTime(stream.SafeFileHandle, ref ct, ref lat, ref lwt))
-					return DokanResult.Success;
-				throw Marshal.GetExceptionForHR(Marshal.GetLastWin32Error());
-			}
+		if (info.Context is FileStream stream)
+		{
+			var ct = creationTime?.ToFileTime() ?? 0;
+			var lat = lastAccessTime?.ToFileTime() ?? 0;
+			var lwt = lastWriteTime?.ToFileTime() ?? 0;
+			if (SetFileTime(stream.SafeFileHandle, ref ct, ref lat, ref lwt))
+				return DokanResult.Success;
+			throw Marshal.GetExceptionForHR(Marshal.GetLastWin32Error());
+		}
 
-			var filePath = GetPath(fileName);
+		var filePath = GetPath(fileName);
 
-			if (creationTime.HasValue)
-				File.SetCreationTime(filePath, creationTime.Value);
+		if (creationTime.HasValue)
+			File.SetCreationTime(filePath, creationTime.Value);
 
-			if (lastAccessTime.HasValue)
-				File.SetLastAccessTime(filePath, lastAccessTime.Value);
+		if (lastAccessTime.HasValue)
+			File.SetLastAccessTime(filePath, lastAccessTime.Value);
 
-			if (lastWriteTime.HasValue)
-				File.SetLastWriteTime(filePath, lastWriteTime.Value);
+		if (lastWriteTime.HasValue)
+			File.SetLastWriteTime(filePath, lastWriteTime.Value);
 
-			return DokanResult.Success;
+		return DokanResult.Success;
 	}
 
-	public NtStatus DeleteFile(string fileName, IDokanFileInfo info)
+	public virtual NtStatus DeleteFile(string fileName, IDokanFileInfo info)
 	{
 		var filePath = GetPath(fileName);
 
@@ -395,15 +408,18 @@ public abstract partial class RedirectFS : IDokanOperations
 		// we just check here if we could delete the file - the true deletion is in Cleanup
 	}
 
-	public NtStatus DeleteDirectory(string fileName, IDokanFileInfo info)
+	public virtual NtStatus DeleteDirectory(string fileName, IDokanFileInfo info)
 	{
-		return Directory.EnumerateFileSystemEntries(GetPath(fileName)).Any()
-				? DokanResult.DirectoryNotEmpty
-				: DokanResult.Success;
 		// if dir is not empty it can't be deleted
+		return Directory.EnumerateFileSystemEntries(GetPath(fileName)).Any()
+				? DokanResult.DirectoryNotEmpty : DokanResult.Success;
 	}
 
-	public NtStatus MoveFile(string oldName, string newName, bool replace, IDokanFileInfo info)
+	public virtual NtStatus MoveFile(
+		string oldName,
+		string newName,
+		bool replace,
+		IDokanFileInfo info)
 	{
 		var oldpath = GetPath(oldName);
 		var newpath = GetPath(newName);
@@ -411,7 +427,6 @@ public abstract partial class RedirectFS : IDokanOperations
 		CloseFile(oldName, info);
 
 		var exist = info.IsDirectory ? Directory.Exists(newpath) : File.Exists(newpath);
-
 		if (!exist)
 		{
 			info.Context = null;
@@ -425,7 +440,8 @@ public abstract partial class RedirectFS : IDokanOperations
 		{
 			info.Context = null;
 
-			if (info.IsDirectory) // Cannot replace directory destination - See MOVEFILE_REPLACE_EXISTING
+			// Cannot replace directory destination - See MOVEFILE_REPLACE_EXISTING
+			if (info.IsDirectory)
 				return DokanResult.AccessDenied;
 
 			File.Delete(newpath);
@@ -433,11 +449,13 @@ public abstract partial class RedirectFS : IDokanOperations
 			return DokanResult.Success;
 		}
 
-
 		return DokanResult.FileExists;
 	}
 
-	public NtStatus SetEndOfFile(string fileName, long length, IDokanFileInfo info)
+	public virtual NtStatus SetEndOfFile(
+		string fileName,
+		long length,
+		IDokanFileInfo info)
 	{
 		try
 		{
@@ -450,7 +468,10 @@ public abstract partial class RedirectFS : IDokanOperations
 		}
 	}
 
-	public NtStatus SetAllocationSize(string fileName, long length, IDokanFileInfo info)
+	public virtual NtStatus SetAllocationSize(
+		string fileName,
+		long length,
+		IDokanFileInfo info)
 	{
 		try
 		{
@@ -463,7 +484,11 @@ public abstract partial class RedirectFS : IDokanOperations
 		}
 	}
 
-	public NtStatus LockFile(string fileName, long offset, long length, IDokanFileInfo info)
+	public virtual NtStatus LockFile(
+		string fileName,
+		long offset,
+		long length,
+		IDokanFileInfo info)
 	{
 		try
 		{
@@ -476,7 +501,11 @@ public abstract partial class RedirectFS : IDokanOperations
 		}
 	}
 
-	public NtStatus UnlockFile(string fileName, long offset, long length, IDokanFileInfo info)
+	public virtual NtStatus UnlockFile(
+		string fileName,
+		long offset,
+		long length,
+		IDokanFileInfo info)
 	{
 		try
 		{
@@ -489,13 +518,12 @@ public abstract partial class RedirectFS : IDokanOperations
 		}
 	}
 
-	public NtStatus GetDiskFreeSpace(
-		out long freeBytesAvailable, 
-		out long totalNumberOfBytes, 
+	public virtual NtStatus GetDiskFreeSpace(
+		out long freeBytesAvailable,
+		out long totalNumberOfBytes,
 		out long totalNumberOfFreeBytes,
 		IDokanFileInfo info)
 	{
-
 		freeBytesAvailable = FREE_SPACE;
 		totalNumberOfBytes = FREE_SPACE;
 		totalNumberOfFreeBytes = FREE_SPACE;
@@ -513,14 +541,17 @@ public abstract partial class RedirectFS : IDokanOperations
 		fileSystemName = "Dokan Virtual FS";
 		maximumComponentLength = 256;
 		features = FileSystemFeatures.UnicodeOnDisk
-			| FileSystemFeatures.CaseSensitiveSearch 
-			| FileSystemFeatures.PersistentAcls 
+			| FileSystemFeatures.CaseSensitiveSearch
+			| FileSystemFeatures.PersistentAcls
 			| FileSystemFeatures.SupportsRemoteStorage
 			| FileSystemFeatures.CasePreservedNames;
 		return DokanResult.Success;
 	}
 
-	public NtStatus GetFileSecurity(string fileName, out FileSystemSecurity security, AccessControlSections sections,
+	public virtual NtStatus GetFileSecurity(
+		string fileName,
+		out FileSystemSecurity security,
+		AccessControlSections sections,
 		IDokanFileInfo info)
 	{
 		security = info.IsDirectory
@@ -529,60 +560,65 @@ public abstract partial class RedirectFS : IDokanOperations
 		return DokanResult.Success;
 	}
 
-	public NtStatus SetFileSecurity(string fileName, FileSystemSecurity security, AccessControlSections sections,
+	public virtual NtStatus SetFileSecurity(
+		string fileName,
+		FileSystemSecurity security,
+		AccessControlSections sections,
 		IDokanFileInfo info)
 	{
 		if (info.IsDirectory)
 		{
-			new DirectoryInfo(GetPath(fileName)).SetAccessControl((DirectorySecurity)security);
+			new DirectoryInfo(GetPath(fileName))
+				.SetAccessControl((DirectorySecurity)security);
 		}
 		else
 		{
-			new FileInfo(GetPath(fileName)).SetAccessControl((FileSecurity)security);
+			new FileInfo(GetPath(fileName))
+				.SetAccessControl((FileSecurity)security);
 		}
 		return DokanResult.Success;
 	}
 
-	public NtStatus Mounted(string mountPoint, IDokanFileInfo info)
+	public virtual NtStatus Mounted(string mountPoint, IDokanFileInfo info)
 	{
 		return DokanResult.Success;
 	}
 
-	public NtStatus Unmounted(IDokanFileInfo info)
+	public virtual NtStatus Unmounted(IDokanFileInfo info)
 	{
 		return DokanResult.Success;
 	}
 
-	public NtStatus FindStreams(string fileName, out IList<FileInformation> streams, IDokanFileInfo info)
+	public virtual NtStatus FindStreams(
+		string fileName,
+		out IList<FileInformation> streams,
+		IDokanFileInfo info)
 	{
 		streams = Array.Empty<FileInformation>();
 		return DokanResult.NotImplemented;
 	}
 
-	public IList<FileInformation> FindFilesHelper(string fileName, string searchPattern)
+	public virtual IList<FileInformation> FindFilesHelper(
+		string fileName,
+		string searchPattern)
 	{
 		return new DirectoryInfo(GetPath(fileName))
 			.EnumerateFileSystemInfos()
 			.Where(finfo => DokanHelper.DokanIsNameInExpression(searchPattern, finfo.Name, true))
-			.Select(finfo => new FileInformation
-			{
-				Attributes = finfo.Attributes,
-				CreationTime = finfo.CreationTime,
-				LastAccessTime = finfo.LastAccessTime,
-				LastWriteTime = finfo.LastWriteTime,
-				Length = (finfo as FileInfo)?.Length ?? 0,
-				FileName = finfo.Name
-			}).ToArray();
+			.Select(MapInfo).ToArray();
 	}
 
-	public NtStatus FindFilesWithPattern(string fileName, string searchPattern, out IList<FileInformation> files,
+	public virtual NtStatus FindFilesWithPattern(
+		string fileName,
+		string searchPattern,
+		out IList<FileInformation> files,
 		IDokanFileInfo info)
 	{
 		files = FindFilesHelper(fileName, searchPattern);
 		return DokanResult.Success;
 	}
 
-	public NtStatus ReadFile(
+	public virtual NtStatus ReadFile(
 		string fileName,
 		IntPtr buffer,
 		uint bufferLength,
@@ -606,7 +642,7 @@ public abstract partial class RedirectFS : IDokanOperations
 		return DokanResult.Success;
 	}
 
-	public NtStatus WriteFile(
+	public virtual NtStatus WriteFile(
 		string fileName,
 		IntPtr buffer,
 		uint bufferLength,
@@ -630,19 +666,24 @@ public abstract partial class RedirectFS : IDokanOperations
 		return DokanResult.Success;
 	}
 
-	private static void DoRead(SafeFileHandle handle, IntPtr buffer, uint length, out int read, long offset)
+	static void DoRead(SafeFileHandle handle, IntPtr buffer, uint length, out int read, long offset)
 	{
 		Check(SetFilePointerEx(handle, offset, IntPtr.Zero, 0));
 		Check(ReadFile(handle, buffer, length, out read, IntPtr.Zero));
 	}
 
-	private static void DoWrite(SafeFileHandle handle, IntPtr buffer, uint length, out int written, long offset)
+	static void DoWrite(SafeFileHandle handle, IntPtr buffer, uint length, out int written, long offset)
 	{
 		Check(SetFilePointerEx(handle, offset, IntPtr.Zero, 0));
 		Check(WriteFile(handle, buffer, length, out written, IntPtr.Zero));
 	}
 
 	#endregion Implementation of IDokanOperations
+
+	static void Check(bool success)
+	{
+		if (!success) throw new Win32Exception();
+	}
 
 	[LibraryImport("kernel32", SetLastError = true)]
 	[return: MarshalAs(UnmanagedType.Bool)]
@@ -651,32 +692,13 @@ public abstract partial class RedirectFS : IDokanOperations
 
 	[LibraryImport("kernel32.dll", SetLastError = true)]
 	[return: MarshalAs(UnmanagedType.Bool)]
-	private static partial bool SetFilePointerEx(
-		SafeFileHandle hFile,
-		long liDistanceToMove,
-		IntPtr lpNewFilePointer,
-		uint dwMoveMethod);
+	private static partial bool SetFilePointerEx(SafeFileHandle hFile, long liDistanceToMove, IntPtr lpNewFilePointer, uint dwMoveMethod);
 
 	[LibraryImport("kernel32.dll", SetLastError = true)]
 	[return: MarshalAs(UnmanagedType.Bool)]
-	private static partial bool ReadFile(
-		SafeFileHandle hFile,
-		IntPtr lpBuffer,
-		uint nNumberOfBytesToRead,
-		out int lpNumberOfBytesRead,
-		IntPtr lpOverlapped);
+	private static partial bool ReadFile(SafeFileHandle hFile, IntPtr lpBuffer, uint nNumberOfBytesToRead, out int lpNumberOfBytesRead, IntPtr lpOverlapped);
 
 	[LibraryImport("kernel32.dll", SetLastError = true)]
 	[return: MarshalAs(UnmanagedType.Bool)]
-	private static partial bool WriteFile(
-		SafeFileHandle hFile,
-		IntPtr lpBuffer,
-		uint nNumberOfBytesToWrite,
-		out int lpNumberOfBytesWritten,
-		IntPtr lpOverlapped);
-
-	private static void Check(bool success)
-	{
-		if (!success) throw new Win32Exception();
-	}
+	private static partial bool WriteFile(SafeFileHandle hFile, IntPtr lpBuffer, uint nNumberOfBytesToWrite, out int lpNumberOfBytesWritten, IntPtr lpOverlapped);
 }
