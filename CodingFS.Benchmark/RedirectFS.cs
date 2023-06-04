@@ -21,15 +21,14 @@
  */
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using DokanNet;
 using Microsoft.Win32.SafeHandles;
-using FileAccess = DokanNet.FileAccess;
 using AccessType = System.IO.FileAccess;
+using FileAccess = DokanNet.FileAccess;
 
 namespace CodingFS.Benchmark;
 
@@ -237,19 +236,19 @@ public abstract partial class RedirectFS : IDokanOperations
 	}
 
 	public virtual NtStatus ReadFile(
-		string fileName, 
-		byte[] buffer, 
+		string fileName,
+		byte[] buffer,
 		out int bytesRead,
-		long offset, 
+		long offset,
 		IDokanFileInfo info)
 	{
-		if (info.Context == null) // memory mapped read
+		if (info.Context == null)
 		{
 			using var stream = new FileStream(GetPath(fileName), FileMode.Open, AccessType.Read);
 			stream.Position = offset;
 			bytesRead = stream.Read(buffer, 0, buffer.Length);
 		}
-		else // normal read
+		else
 		{
 			var stream = info.Context as FileStream;
 			lock (stream) // Protect from overlapped read
@@ -262,8 +261,8 @@ public abstract partial class RedirectFS : IDokanOperations
 	}
 
 	public virtual NtStatus WriteFile(
-		string fileName, 
-		byte[] buffer, 
+		string fileName,
+		byte[] buffer,
 		out int bytesWritten,
 		long offset,
 		IDokanFileInfo info)
@@ -311,7 +310,7 @@ public abstract partial class RedirectFS : IDokanOperations
 	}
 
 	public virtual NtStatus FlushFileBuffers(
-		string fileName, 
+		string fileName,
 		IDokanFileInfo info)
 	{
 		try
@@ -330,16 +329,40 @@ public abstract partial class RedirectFS : IDokanOperations
 		out FileInformation fileInfo,
 		IDokanFileInfo info)
 	{
-		// may be called with info.Context == null, but usually it isn't
-		var filePath = GetPath(fileName);
-		FileSystemInfo finfo = new FileInfo(filePath);
-
-		if (!finfo.Exists)
+		// 这个根文件夹必须要有，否则会出现许多奇怪的错误。
+		if (fileName == @"\")
 		{
-			finfo = new DirectoryInfo(filePath);
+			fileInfo = new FileInformation
+			{
+				FileName = fileName,
+				Length = 0,
+				Attributes = FileAttributes.Directory,
+			};
 		}
+		else
+		{
+			// 哪个傻逼想出来的文件和目录分开的 API？
+			var rawPath = GetPath(fileName);
+			FileSystemInfo rawInfo = new FileInfo(rawPath);
 
-		fileInfo = MapInfo(finfo);
+			if (rawInfo.Exists)
+			{
+				fileInfo = MapInfo(rawInfo);
+			}
+			else
+			{
+				rawInfo = new DirectoryInfo(rawPath);
+				if (rawInfo.Exists)
+				{
+					fileInfo = MapInfo(rawInfo);
+				}
+				else
+				{
+					fileInfo = default;
+					return DokanResult.PathNotFound;
+				}
+			}
+		}
 		return DokanResult.Success;
 	}
 
@@ -618,87 +641,9 @@ public abstract partial class RedirectFS : IDokanOperations
 		return DokanResult.Success;
 	}
 
-	public virtual NtStatus ReadFile(
-		string fileName,
-		IntPtr buffer,
-		uint bufferLength,
-		out int bytesRead,
-		long offset,
-		IDokanFileInfo info)
-	{
-		if (info.Context == null)
-		{
-			using var stream = new FileStream(GetPath(fileName), FileMode.Open, AccessType.Read);
-			DoRead(stream.SafeFileHandle, buffer, bufferLength, out bytesRead, offset);
-		}
-		else
-		{
-			var stream = (FileStream)info.Context;
-			lock (stream)
-			{
-				DoRead(stream.SafeFileHandle, buffer, bufferLength, out bytesRead, offset);
-			}
-		}
-		return DokanResult.Success;
-	}
-
-	public virtual NtStatus WriteFile(
-		string fileName,
-		IntPtr buffer,
-		uint bufferLength,
-		out int bytesWritten,
-		long offset,
-		IDokanFileInfo info)
-	{
-		if (info.Context == null)
-		{
-			using var stream = new FileStream(GetPath(fileName), FileMode.Open, AccessType.Write);
-			DoWrite(stream.SafeFileHandle, buffer, bufferLength, out bytesWritten, offset);
-		}
-		else
-		{
-			var stream = (FileStream)info.Context;
-			lock (stream)
-			{
-				DoWrite(stream.SafeFileHandle, buffer, bufferLength, out bytesWritten, offset);
-			}
-		}
-		return DokanResult.Success;
-	}
-
-	static void DoRead(SafeFileHandle handle, IntPtr buffer, uint length, out int read, long offset)
-	{
-		Check(SetFilePointerEx(handle, offset, IntPtr.Zero, 0));
-		Check(ReadFile(handle, buffer, length, out read, IntPtr.Zero));
-	}
-
-	static void DoWrite(SafeFileHandle handle, IntPtr buffer, uint length, out int written, long offset)
-	{
-		Check(SetFilePointerEx(handle, offset, IntPtr.Zero, 0));
-		Check(WriteFile(handle, buffer, length, out written, IntPtr.Zero));
-	}
-
 	#endregion Implementation of IDokanOperations
-
-	static void Check(bool success)
-	{
-		if (!success) throw new Win32Exception();
-	}
 
 	[LibraryImport("kernel32", SetLastError = true)]
 	[return: MarshalAs(UnmanagedType.Bool)]
 	private static partial bool SetFileTime(SafeFileHandle hFile, ref long lpCreationTime, ref long lpLastAccessTime, ref long lpLastWriteTime);
-
-
-	[LibraryImport("kernel32.dll", SetLastError = true)]
-	[return: MarshalAs(UnmanagedType.Bool)]
-	private static partial bool SetFilePointerEx(SafeFileHandle hFile, long liDistanceToMove, IntPtr lpNewFilePointer, uint dwMoveMethod);
-
-	[LibraryImport("kernel32.dll", SetLastError = true)]
-	[return: MarshalAs(UnmanagedType.Bool)]
-	private static partial bool ReadFile(SafeFileHandle hFile, IntPtr lpBuffer, uint nNumberOfBytesToRead, out int lpNumberOfBytesRead, IntPtr lpOverlapped);
-
-	[LibraryImport("kernel32.dll", SetLastError = true)]
-	[return: MarshalAs(UnmanagedType.Bool)]
-	private static partial bool WriteFile(SafeFileHandle hFile, IntPtr lpBuffer, uint nNumberOfBytesToWrite, out int lpNumberOfBytesWritten, IntPtr lpOverlapped);
 }

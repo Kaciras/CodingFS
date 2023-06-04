@@ -1,4 +1,5 @@
 using System.Reflection;
+using CodingFS.VFS;
 using DokanNet;
 
 namespace CodingFS.Benchmark;
