@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using DokanNet;
 
@@ -23,13 +24,20 @@ public sealed class StaticFSWrapper : IDokanOperations
 	/// </summary>
 	/// <param name="e">异常</param>
 	/// <returns>对应的 NtStatus</returns>
-	static NtStatus HandleException(Exception e) => e switch
+	internal static NtStatus HandleException(Exception e)
 	{
-		DirectoryNotFoundException _ => DokanResult.PathNotFound,
-		FileNotFoundException _ => DokanResult.FileNotFound,
-		UnauthorizedAccessException _ => DokanResult.AccessDenied,
-		_ => throw e,
-	};
+		switch (e)
+		{
+			case DirectoryNotFoundException:
+				return DokanResult.PathNotFound;
+			case FileNotFoundException:
+				return DokanResult.FileNotFound;
+			case UnauthorizedAccessException:
+				return DokanResult.AccessDenied;
+		}
+		return (uint)Marshal.GetHRForException(e) == 0x80070020 
+			? DokanResult.SharingViolation : throw e;
+	}
 
 	#region ================== Delegated Methods ==================
 

@@ -6,19 +6,20 @@ using SpecialFolder = System.Environment.SpecialFolder;
 
 namespace CodingFS.Workspaces;
 
-public partial class JetBrainsDetector
+public sealed partial class JetBrainsDetector
 {
 	[GeneratedRegex("^.+IntelliJIdea(20[0-9.]+)$")]
 	private static partial Regex JBConfigRE();
 
-	private string? configLow;
+	private string? localConfig;
 
 	// 查找最新版的配置目录，JB 的产品在更新了次版本号之后会创建一个新的配置文件夹
 	public JetBrainsDetector()
 	{
 		var home = Environment.GetFolderPath(SpecialFolder.LocalApplicationData);
 
-		configLow = Directory.EnumerateDirectories(Path.Join(home, "JetBrains"))
+		localConfig = Directory
+			.EnumerateDirectories(Path.Join(home, "JetBrains"))
 			.Select(path => JBConfigRE().Match(path))
 			.Where(match => match.Success)
 			.MaxBy(match => Version.Parse(match.Groups[1].ValueSpan))?.Value;
@@ -34,11 +35,11 @@ public partial class JetBrainsDetector
 
 	public string? EBSModuleFiles(string path)
 	{
-		if (configLow == null) return null;
+		if (localConfig == null) return null;
 
 		var cache = JavaStringHashcode(path.Replace('\\', '/')).ToString("x2");
 		cache = Path.GetFileName(path) + "." + cache;
-		var modules = Path.Join(configLow, "projects", cache, "external_build_system/modules");
+		var modules = Path.Join(localConfig, "projects", cache, "external_build_system/modules");
 
 		return Directory.Exists(modules) ? modules : null;
 	}

@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using System.Reflection;
 using DokanNet;
 
@@ -18,19 +16,6 @@ public class AopFSWrapper : DispatchProxy
 {
 	public IDokanOperations Native { get; set; }
 
-	/// <summary>
-	/// 把一些 IO 异常转换为对应的 NtStatus,如果不能转换则原样抛出。
-	/// </summary>
-	/// <param name="e">异常</param>
-	/// <returns>对应的 NtStatus</returns>
-	private static NtStatus HandleException(Exception e) => e switch
-	{
-		FileNotFoundException _ => DokanResult.FileNotFound,
-		DirectoryNotFoundException _ => DokanResult.PathNotFound,
-		UnauthorizedAccessException _ => DokanResult.AccessDenied,
-		_ => throw e,
-	};
-
 	protected override object? Invoke(MethodInfo method, object[] args)
 	{
 		try
@@ -40,7 +25,7 @@ public class AopFSWrapper : DispatchProxy
 		catch (TargetInvocationException e)
 		when (method.ReturnType == typeof(NtStatus))
 		{
-			return HandleException(e.InnerException!);
+			return StaticFSWrapper.HandleException(e.InnerException!);
 		}
 	}
 

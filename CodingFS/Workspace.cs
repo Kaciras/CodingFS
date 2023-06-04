@@ -2,6 +2,11 @@ using System.Collections.Generic;
 
 namespace CodingFS;
 
+public interface Workspace
+{
+	RecognizeType Recognize(string file);
+}
+
 public readonly struct DetectContxt
 {
 	public readonly IReadOnlyList<Workspace> Parent;
@@ -23,8 +28,3 @@ public readonly struct DetectContxt
 }
 
 public delegate void WorkspaceFactory(DetectContxt ctx);
-
-public interface Workspace
-{
-	RecognizeType Recognize(string file);
-}
