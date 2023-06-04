@@ -5,10 +5,7 @@ using CodingFS.Benchmark;
 
 [module: SkipLocalsInit]
 
-BenchmarkRunner.Run<IdeaXMLPerf>();
-
-//var x = new IdeaXMLPerf();
-//x.CheckEquality();
+BenchmarkRunner.Run<FileClassifierPerf>();
 
 //var fsw = new FSUnsafePerf();
 //fsw.MountFileSystem();

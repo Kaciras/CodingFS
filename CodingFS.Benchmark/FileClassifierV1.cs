@@ -1,39 +1,48 @@
 using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using CodingFS.Workspaces;
 
 namespace CodingFS;
 
-/// <summary>
-/// 文件分类器，以给定的目录为上下文，对这之下的文件进行分类。
-/// 
-/// 【线程安全】
-/// 该类不是线程安全的，请勿并发调用。
-/// </summary>
-public sealed class RootFileClassifier
+file struct PathTrieNode<T>
 {
-	public static readonly WorkspaceFactory[] FACTORIES =
+	private IDictionary<string, PathTrieNode<T>>? children;
+
+	public T Value { get; set; }
+
+	public PathTrieNode(T value)
 	{
-		new JetBrainsDetector().Detect,
-		NpmWorkspace.Match,
-		GitWorkspace.Match,
-		MavenWorkspace.Match,
-		CargoWorkspace.Match,
-		VSCodeWorkspace.Match,
-		VisualStudioWorkspace.Match,
-	};
+		Value = value;
+	}
 
-	public static readonly Workspace[] GLOBALS =
+	public bool TryGet(string part, [MaybeNullWhen(false)] out PathTrieNode<T> child)
 	{
-		new CustomWorkspace(),
-		new CommonWorkspace(),
-	};
+		if (children == null)
+		{
+			child = default!;
+			return false;
+		}
+		return children.TryGetValue(part, out child!);
+	}
 
-	// ===============================================================
+	public void Remove(string part)
+	{
+		children?.Remove(part);
+	}
 
+	public PathTrieNode<T> Put(string part, T value)
+	{
+		children ??= new Dictionary<string, PathTrieNode<T>>();
+		return children[part] = new PathTrieNode<T>(value);
+	}
+}
+
+internal sealed class FileClassifierV1
+{
 	public int OuterDepth { get; set; } = int.MaxValue;
 
 	public int InnerDepth { get; set; } = int.MaxValue;
@@ -43,9 +52,9 @@ public sealed class RootFileClassifier
 	private readonly WorkspaceFactory[] factories;
 	private readonly PathTrieNode<Workspace[]> cacheRoot;
 
-	public RootFileClassifier(string root): this(root, FACTORIES, GLOBALS) {}
+	public FileClassifierV1(string root): this(root, FileClassifier.FACTORIES, FileClassifier.GLOBALS) {}
 
-	public RootFileClassifier(string root, WorkspaceFactory[] factories, Workspace[] globals)
+	public FileClassifierV1(string root, WorkspaceFactory[] factories, Workspace[] globals)
 	{
 		Root = root;
 		this.factories = factories;
@@ -115,27 +124,5 @@ public sealed class RootFileClassifier
 		}
 
 		return new WorkspacesInfo(directory, workspaces, node.Value); 
-	}
-
-	
-	public IEnumerable<(string, FileType)> Walk(string root, FileType includes)
-	{
-		// EnumerateFiles 和 EnumerateDirectories 都是在这基础上过滤的。
-		foreach (var file in Directory.EnumerateFileSystemEntries(root))
-		{
-			var folder = Path.GetDirectoryName(file)!;
-			var type = GetWorkspaces(folder).GetFileType(file);
-
-			if (!includes.HasFlag(type))
-			{
-				continue;
-			}
-			yield return (file, type);
-
-			if (Directory.Exists(file))
-			{
-				foreach (var i in Walk(file, includes)) yield return i;
-			}
-		}
 	}
 }

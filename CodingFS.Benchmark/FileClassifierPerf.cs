@@ -5,41 +5,35 @@ using BenchmarkDotNet.Attributes;
 
 namespace CodingFS.Benchmark;
 
+/// <summary>
+/// |        Method |       Mean |   Error |  StdDev |   Gen0 | Allocated |
+/// |-------------- |-----------:|--------:|--------:|-------:|----------:|
+/// | V1_StringPath | 1,494.4 ns | 5.82 ns | 4.86 ns | 0.4292 |   3.51 KB |
+/// |   GetFileType |   505.1 ns | 5.58 ns | 5.22 ns | 0.2871 |   2.35 KB |
+/// </summary>
+[MemoryDiagnoser]
 public class FileClassifierPerf
 {
-	//WorkspaceFileClassifier wfs = new WorkspaceFileClassifier();
+	const string DIR = "/foo/Projects/CSharp/CodingFS/CodingFS/bin/Debug/net7.0/runtimes/win-x64/native";
+	const string PATH = DIR + "/test.txt";
 
-	//[Benchmark]
-	//public FileType GetType()
-	//{
-
-	//}
-
-	private readonly string value;
-	private readonly int hashCode;
-
-	public FileClassifierPerf()
+	static void Fac1(DetectContxt ctx)
 	{
-		value = "test_project/src/application.json";
-		hashCode = value.GetHashCode();
+
+	}
+
+	readonly FileClassifierV1 filter = new("/foo", new WorkspaceFactory[] { Fac1 }, Array.Empty<Workspace>());
+	readonly FileClassifier filter2 = new("/foo", new WorkspaceFactory[] { Fac1 }, Array.Empty<Workspace>());
+
+	[Benchmark]
+	public FileType V1_StringPath()
+	{
+		return filter.GetWorkspaces(DIR).GetFileType(PATH);
 	}
 
 	[Benchmark]
-	public bool StringEquals()
+	public FileType GetFileType()
 	{
-		return "test_project/src/application.xaml".Equals(value);
-	}
-
-	[Benchmark]
-	public bool SpanEquals()
-	{
-		var span = "test_project/src/application.xaml".AsSpan();
-		return span.SequenceEqual(value);
-	}
-
-	[Benchmark]
-	public bool EqualByHash()
-	{
-		return "test_project/src/application.xaml".GetHashCode() == hashCode;
+		return filter2.GetWorkspaces(DIR).GetFileType(PATH);
 	}
 }
