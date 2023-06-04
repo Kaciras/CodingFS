@@ -9,3 +9,7 @@ BenchmarkRunner.Run<IdeaXMLPerf>();
 
 //var x = new IdeaXMLPerf();
 //x.CheckEquality();
+
+//var fsw = new FSUnsafePerf();
+//fsw.MountFileSystem();
+//fsw.ReadDefault();

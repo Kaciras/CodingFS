@@ -1,0 +1,1532 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="8f1a3396-8976-4080-89b5-10d0ea0ece55" name="Changes" comment="update deps">
+      <change beforePath="$PROJECT_DIR$/packages/devtool/__tests__/html-string.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/devtool/__tests__/html-string.spec.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/devtool/lib/plugin/html-string.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/devtool/lib/plugin/html-string.ts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+        <option value="TypeScript File" />
+        <option value="HTML File" />
+        <option value="tsconfig.json" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <excluded-from-favorite>
+      <branch-storage>
+        <map>
+          <entry type="LOCAL">
+            <value>
+              <list>
+                <branch-info repo="$PROJECT_DIR$" source="master" />
+              </list>
+            </value>
+          </entry>
+        </map>
+      </branch-storage>
+    </excluded-from-favorite>
+    <option name="PUSH_TAGS">
+      <GitPushTagMode>
+        <option name="argument" value="--tags" />
+        <option name="title" value="All" />
+      </GitPushTagMode>
+    </option>
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="media-cache-api" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="MIXED" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectId" id="205YhW8jEE5CpSWCLb9g4SzY1y3" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;javascript.nodejs.core.library.configured.version&quot;: &quot;20.2.0&quot;,
+    &quot;javascript.nodejs.core.library.typings.version&quot;: &quot;20.2.0&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Coding/Blog/WebServer/packages/media&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs.jest.jest_package&quot;: &quot;D:/Coding/Blog/WebServer/node_modules/jest&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;pnpm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;settings.typescriptcompiler&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;D:\\Coding\\Blog\\WebServer\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Coding\Blog\WebServer\packages\media" />
+      <recent name="D:\Coding\Blog\WebServer\packages\devtool" />
+      <recent name="D:\Coding\Blog\WebServer\packages\markdown" />
+      <recent name="D:\Coding\Blog\WebServer" />
+      <recent name="D:\Coding\Blog\WebServer\packages\media\__tests__\fixtures" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Coding\Blog\WebServer\packages\markdown\lib" />
+      <recent name="D:\Coding\Blog\WebServer\packages\server\__tests__\koa" />
+      <recent name="D:\Coding\Blog\WebServer\packages\markdown\__tests__" />
+      <recent name="D:\Coding\Blog\WebServer\packages\devtool\__tests__\fixtures" />
+      <recent name="D:\Coding\Blog\WebServer\packages\media\__tests__" />
+    </key>
+  </component>
+  <component name="RunManager" selected="npm.test">
+    <configuration name="All Tests" type="JavaScriptTestRunnerVitest" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <vitest-package value="$PROJECT_DIR$/node_modules/vitest" />
+      <working-dir value="$PROJECT_DIR$" />
+      <envs />
+      <scope-kind value="ALL" />
+      <method v="2" />
+    </configuration>
+    <configuration name="compress-asset.spec.ts" type="JavaScriptTestRunnerVitest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <vitest-package value="$PROJECT_DIR$/node_modules/vitest" />
+      <working-dir value="$PROJECT_DIR$" />
+      <envs />
+      <scope-kind value="TEST_FILE" />
+      <test-file value="$PROJECT_DIR$/packages/devtool/__tests__/compress-asset.spec.ts" />
+      <method v="2" />
+    </configuration>
+    <configuration name="html-string.spec.ts" type="JavaScriptTestRunnerVitest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <vitest-package value="$PROJECT_DIR$/node_modules/vitest" />
+      <working-dir value="$PROJECT_DIR$" />
+      <envs />
+      <scope-kind value="TEST_FILE" />
+      <test-file value="$PROJECT_DIR$/packages/devtool/__tests__/html-string.spec.ts" />
+      <method v="2" />
+    </configuration>
+    <configuration name="should keep expressions" type="JavaScriptTestRunnerVitest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <vitest-package value="$PROJECT_DIR$/node_modules/vitest" />
+      <working-dir value="$PROJECT_DIR$" />
+      <envs />
+      <scope-kind value="TEST" />
+      <test-file value="$PROJECT_DIR$/packages/devtool/__tests__/html-string.spec.ts" />
+      <test-names>
+        <test-name value="should keep expressions" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="should remove whitespaces between tags" type="JavaScriptTestRunnerVitest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <vitest-package value="$PROJECT_DIR$/node_modules/vitest" />
+      <working-dir value="$PROJECT_DIR$" />
+      <envs />
+      <scope-kind value="TEST" />
+      <test-file value="$PROJECT_DIR$/packages/devtool/__tests__/html-string.spec.ts" />
+      <test-names>
+        <test-name value="should remove whitespaces between tags" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="build-cache" type="NodeJSConfigurationType" application-parameters="build-cache --profile=dev" path-to-js-file="$PROJECT_DIR$/packages/devtool/bin/blog-devtool.js" working-dir="$PROJECT_DIR$/../website">
+      <method v="2" />
+    </configuration>
+    <configuration name="build-dev" type="NodeJSConfigurationType" application-parameters="build --profile=dev" path-to-js-file="$PROJECT_DIR$/packages/devtool/bin/blog-devtool.js" working-dir="$PROJECT_DIR$/../website">
+      <method v="2" />
+    </configuration>
+    <configuration name="build-local" type="NodeJSConfigurationType" application-parameters="build --profile=local" path-to-js-file="$PROJECT_DIR$/packages/devtool/bin/blog-devtool.js" working-dir="$PROJECT_DIR$/../website">
+      <method v="2" />
+    </configuration>
+    <configuration name="build-prod" type="NodeJSConfigurationType" application-parameters="build --profile=prod" path-to-js-file="$PROJECT_DIR$/packages/devtool/bin/blog-devtool.js" working-dir="$PROJECT_DIR$/../website">
+      <method v="2" />
+    </configuration>
+    <configuration name="dev" type="NodeJSConfigurationType" application-parameters="serve --profile=dev" path-to-js-file="$PROJECT_DIR$/packages/devtool/bin/blog-devtool.js" working-dir="$PROJECT_DIR$/../website">
+      <method v="2" />
+    </configuration>
+    <configuration name="run-dev" type="NodeJSConfigurationType" application-parameters="run --profile=dev" path-to-js-file="$PROJECT_DIR$/packages/devtool/bin/blog-devtool.js" working-dir="$PROJECT_DIR$/../website">
+      <method v="2" />
+    </configuration>
+    <configuration name="run-local" type="NodeJSConfigurationType" application-parameters="run --profile=local" path-to-js-file="$PROJECT_DIR$/packages/devtool/bin/blog-devtool.js" working-dir="$PROJECT_DIR$/../website">
+      <method v="2" />
+    </configuration>
+    <configuration name="run-prod" type="NodeJSConfigurationType" application-parameters="run --profile=prod" path-to-js-file="$PROJECT_DIR$/packages/devtool/bin/blog-devtool.js" working-dir="$PROJECT_DIR$/../website">
+      <method v="2" />
+    </configuration>
+    <configuration name="upload-source" type="NodeJSConfigurationType" application-parameters="upload-source --profile=prod" path-to-js-file="$PROJECT_DIR$/packages/devtool/bin/blog-devtool.js" working-dir="$PROJECT_DIR$/../website">
+      <method v="2" />
+    </configuration>
+    <configuration name="vitest.mjs" type="NodeJSConfigurationType" application-parameters="--run" nameIsGenerated="true" path-to-js-file="node_modules/vitest/vitest.mjs" working-dir="$PROJECT_DIR$">
+      <method v="2" />
+    </configuration>
+    <configuration name="test" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="test" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Node.js.vitest.mjs" />
+      <item itemvalue="Node.js.dev" />
+      <item itemvalue="Node.js.build-local" />
+      <item itemvalue="Node.js.build-dev" />
+      <item itemvalue="Node.js.build-prod" />
+      <item itemvalue="Node.js.upload-source" />
+      <item itemvalue="Node.js.run-dev" />
+      <item itemvalue="Node.js.run-local" />
+      <item itemvalue="Node.js.run-prod" />
+      <item itemvalue="Node.js.build-cache" />
+      <item itemvalue="npm.test" />
+      <item itemvalue="Vitest.All Tests" />
+      <item itemvalue="Vitest.should remove whitespaces between tags" />
+      <item itemvalue="Vitest.should keep expressions" />
+      <item itemvalue="Vitest.compress-asset.spec.ts" />
+      <item itemvalue="Vitest.html-string.spec.ts" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.test" />
+        <item itemvalue="Vitest.should remove whitespaces between tags" />
+        <item itemvalue="Vitest.should keep expressions" />
+        <item itemvalue="Vitest.compress-asset.spec.ts" />
+        <item itemvalue="Vitest.html-string.spec.ts" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="1" Folder0="D:\配置文件" CustomDictionaries="1" CustomDictionary0="D:\配置文件\Kaciras.dic" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8f1a3396-8976-4080-89b5-10d0ea0ece55" name="Changes" comment="" />
+      <created>1635336034685</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1635336034685</updated>
+      <workItem from="1635336036272" duration="1127000" />
+      <workItem from="1635407934011" duration="4041000" />
+      <workItem from="1635480490630" duration="116000" />
+      <workItem from="1635482217845" duration="6749000" />
+      <workItem from="1635494365666" duration="2796000" />
+      <workItem from="1635643944559" duration="341000" />
+      <workItem from="1635829214391" duration="1834000" />
+      <workItem from="1635831611811" duration="2496000" />
+      <workItem from="1635900618993" duration="5232000" />
+      <workItem from="1635988303607" duration="8071000" />
+      <workItem from="1636033303051" duration="110000" />
+      <workItem from="1636075537891" duration="18303000" />
+      <workItem from="1636122783759" duration="667000" />
+      <workItem from="1636159203539" duration="4979000" />
+      <workItem from="1636252204965" duration="1685000" />
+      <workItem from="1636256872305" duration="1768000" />
+      <workItem from="1636335281207" duration="19770000" />
+      <workItem from="1636462839410" duration="352000" />
+      <workItem from="1636463220429" duration="50000" />
+      <workItem from="1636464452296" duration="152000" />
+      <workItem from="1636464995884" duration="240000" />
+      <workItem from="1636529469436" duration="1406000" />
+      <workItem from="1636678988525" duration="4160000" />
+      <workItem from="1636764541013" duration="866000" />
+      <workItem from="1637054546447" duration="2943000" />
+      <workItem from="1637061045360" duration="657000" />
+      <workItem from="1637062304793" duration="626000" />
+      <workItem from="1637063936386" duration="4000" />
+      <workItem from="1637129956185" duration="1405000" />
+      <workItem from="1637135006050" duration="2169000" />
+      <workItem from="1637199086041" duration="1505000" />
+      <workItem from="1637213274519" duration="1073000" />
+      <workItem from="1637284122771" duration="2377000" />
+      <workItem from="1637395202798" duration="770000" />
+      <workItem from="1637459710415" duration="750000" />
+      <workItem from="1637480105545" duration="1724000" />
+      <workItem from="1637643317760" duration="1387000" />
+      <workItem from="1637719509098" duration="567000" />
+      <workItem from="1637721796165" duration="26000" />
+      <workItem from="1637889859925" duration="99000" />
+      <workItem from="1638517661565" duration="1208000" />
+      <workItem from="1638598345336" duration="52000" />
+      <workItem from="1638893577493" duration="116000" />
+      <workItem from="1638928010744" duration="1335000" />
+      <workItem from="1638945224229" duration="668000" />
+      <workItem from="1639019762632" duration="1741000" />
+      <workItem from="1639109078631" duration="1438000" />
+      <workItem from="1639281356451" duration="777000" />
+      <workItem from="1639285657811" duration="665000" />
+      <workItem from="1639448100677" duration="1548000" />
+      <workItem from="1639832183325" duration="918000" />
+      <workItem from="1639913429628" duration="164000" />
+      <workItem from="1640437517888" duration="2162000" />
+      <workItem from="1640680270667" duration="2155000" />
+      <workItem from="1640760726384" duration="1078000" />
+      <workItem from="1640785967467" duration="2635000" />
+      <workItem from="1640860439424" duration="2010000" />
+      <workItem from="1640940368041" duration="1188000" />
+      <workItem from="1640942473039" duration="9727000" />
+      <workItem from="1641024168608" duration="2906000" />
+      <workItem from="1641092512161" duration="1491000" />
+      <workItem from="1641113856351" duration="1840000" />
+      <workItem from="1641175897594" duration="739000" />
+      <workItem from="1641210738337" duration="1661000" />
+      <workItem from="1641270415237" duration="7243000" />
+      <workItem from="1641360147057" duration="11393000" />
+      <workItem from="1641468753412" duration="8003000" />
+      <workItem from="1641541704379" duration="7444000" />
+      <workItem from="1641560336237" duration="422000" />
+      <workItem from="1641560853633" duration="1302000" />
+      <workItem from="1641611430297" duration="127000" />
+      <workItem from="1641625982675" duration="3460000" />
+      <workItem from="1641641038644" duration="6935000" />
+      <workItem from="1641704375248" duration="10439000" />
+      <workItem from="1641799782396" duration="8158000" />
+      <workItem from="1641873373191" duration="12941000" />
+      <workItem from="1641972377594" duration="8269000" />
+      <workItem from="1641991635068" duration="412000" />
+      <workItem from="1641992428551" duration="509000" />
+      <workItem from="1642056303207" duration="2509000" />
+      <workItem from="1642069178603" duration="8528000" />
+      <workItem from="1642133873768" duration="9557000" />
+      <workItem from="1642155890028" duration="235000" />
+      <workItem from="1642156554250" duration="600000" />
+      <workItem from="1642240339952" duration="12985000" />
+      <workItem from="1642307627814" duration="6925000" />
+      <workItem from="1642327690923" duration="654000" />
+      <workItem from="1642416992034" duration="73000" />
+      <workItem from="1642497410863" duration="24000" />
+      <workItem from="1642826569422" duration="24509000" />
+      <workItem from="1642905183952" duration="8502000" />
+      <workItem from="1642916294196" duration="447000" />
+      <workItem from="1642917786450" duration="6702000" />
+      <workItem from="1642926737936" duration="1028000" />
+      <workItem from="1642928222058" duration="2067000" />
+      <workItem from="1642930350479" duration="10776000" />
+      <workItem from="1642944521260" duration="469000" />
+      <workItem from="1642995190514" duration="6516000" />
+      <workItem from="1643002524234" duration="6098000" />
+      <workItem from="1643008978201" duration="7197000" />
+      <workItem from="1643025765874" duration="5345000" />
+      <workItem from="1643034158823" duration="1987000" />
+      <workItem from="1643080285138" duration="31233000" />
+      <workItem from="1643165308384" duration="16475000" />
+      <workItem from="1643184957150" duration="10511000" />
+      <workItem from="1643203818168" duration="39000" />
+      <workItem from="1643203918338" duration="2885000" />
+      <workItem from="1643251779121" duration="6539000" />
+      <workItem from="1643263170579" duration="1151000" />
+      <workItem from="1643267575420" duration="460000" />
+      <workItem from="1643268277024" duration="130000" />
+      <workItem from="1643275407083" duration="2537000" />
+      <workItem from="1643291453879" duration="5238000" />
+      <workItem from="1643334868230" duration="23971000" />
+      <workItem from="1643367757214" duration="2440000" />
+      <workItem from="1643422594875" duration="24320000" />
+      <workItem from="1643451415829" duration="11464000" />
+      <workItem from="1643511485088" duration="11642000" />
+      <workItem from="1643541133004" duration="4603000" />
+      <workItem from="1643597036139" duration="2200000" />
+      <workItem from="1643612979244" duration="454000" />
+      <workItem from="1643617432705" duration="8865000" />
+      <workItem from="1643681529401" duration="6867000" />
+      <workItem from="1643721344337" duration="216000" />
+      <workItem from="1643722399584" duration="138000" />
+      <workItem from="1643775166472" duration="5895000" />
+      <workItem from="1643893850738" duration="438000" />
+      <workItem from="1643944428938" duration="1412000" />
+      <workItem from="1643955604986" duration="152000" />
+      <workItem from="1644050746027" duration="16056000" />
+      <workItem from="1644118405297" duration="3085000" />
+      <workItem from="1644140496469" duration="6360000" />
+      <workItem from="1644151681155" duration="7419000" />
+      <workItem from="1644199383101" duration="14722000" />
+      <workItem from="1644224318966" duration="160000" />
+      <workItem from="1644225639062" duration="2920000" />
+      <workItem from="1644243109613" duration="439000" />
+      <workItem from="1644317365641" duration="107000" />
+      <workItem from="1644318172459" duration="9685000" />
+      <workItem from="1644390530139" duration="2826000" />
+      <workItem from="1644465266398" duration="1456000" />
+      <workItem from="1644579114000" duration="79000" />
+      <workItem from="1644581315721" duration="994000" />
+      <workItem from="1644656259254" duration="1406000" />
+      <workItem from="1644672212068" duration="678000" />
+      <workItem from="1644722799960" duration="1998000" />
+      <workItem from="1644753975093" duration="562000" />
+      <workItem from="1644810185121" duration="951000" />
+      <workItem from="1644833134549" duration="11549000" />
+      <workItem from="1644893292928" duration="8367000" />
+      <workItem from="1644919679210" duration="5698000" />
+      <workItem from="1644977085438" duration="1440000" />
+      <workItem from="1644983472685" duration="173000" />
+      <workItem from="1644991647140" duration="4715000" />
+      <workItem from="1645018942555" duration="667000" />
+      <workItem from="1645020465643" duration="19000" />
+      <workItem from="1645020758839" duration="621000" />
+      <workItem from="1645065072937" duration="2552000" />
+      <workItem from="1645084088160" duration="3427000" />
+      <workItem from="1645094432557" duration="233000" />
+      <workItem from="1645100943926" duration="39000" />
+      <workItem from="1645101945101" duration="3528000" />
+      <workItem from="1645154480216" duration="3394000" />
+      <workItem from="1645174359469" duration="11139000" />
+      <workItem from="1645240990481" duration="5174000" />
+      <workItem from="1645269434509" duration="9423000" />
+      <workItem from="1645324327227" duration="5386000" />
+      <workItem from="1645430610471" duration="343000" />
+      <workItem from="1645450406566" duration="2649000" />
+      <workItem from="1645498930986" duration="10346000" />
+      <workItem from="1645529213255" duration="33000" />
+      <workItem from="1645533348754" duration="834000" />
+      <workItem from="1645538172263" duration="579000" />
+      <workItem from="1645540492025" duration="627000" />
+      <workItem from="1645582937777" duration="429000" />
+      <workItem from="1645603297564" duration="1288000" />
+      <workItem from="1645606098018" duration="1818000" />
+      <workItem from="1645611516980" duration="421000" />
+      <workItem from="1645670589536" duration="1009000" />
+      <workItem from="1645685888709" duration="62000" />
+      <workItem from="1645688066951" duration="427000" />
+      <workItem from="1646024169867" duration="38000" />
+      <workItem from="1646204910058" duration="5588000" />
+      <workItem from="1646213898719" duration="1627000" />
+      <workItem from="1646224323055" duration="4468000" />
+      <workItem from="1646272984554" duration="4324000" />
+      <workItem from="1646301267360" duration="3990000" />
+      <workItem from="1646369705288" duration="8082000" />
+      <workItem from="1646444434798" duration="12730000" />
+      <workItem from="1646484017388" duration="2567000" />
+      <workItem from="1646530563349" duration="864000" />
+      <workItem from="1646532586733" duration="744000" />
+      <workItem from="1646563603096" duration="203000" />
+      <workItem from="1646746418719" duration="1800000" />
+      <workItem from="1646790953848" duration="1890000" />
+      <workItem from="1646815000561" duration="8187000" />
+      <workItem from="1646875231450" duration="711000" />
+      <workItem from="1646883439894" duration="11738000" />
+      <workItem from="1646958635113" duration="2285000" />
+      <workItem from="1646989604875" duration="9354000" />
+      <workItem from="1647049848473" duration="4344000" />
+      <workItem from="1647067082508" duration="262000" />
+      <workItem from="1647067434680" duration="501000" />
+      <workItem from="1647071315239" duration="4780000" />
+      <workItem from="1647078963187" duration="2453000" />
+      <workItem from="1647157169230" duration="405000" />
+      <workItem from="1647238975685" duration="1407000" />
+      <workItem from="1647244332993" duration="2848000" />
+      <workItem from="1647247547695" duration="4667000" />
+      <workItem from="1647254363460" duration="3606000" />
+      <workItem from="1647308624206" duration="8230000" />
+      <workItem from="1647396782722" duration="2421000" />
+      <workItem from="1647425949492" duration="886000" />
+      <workItem from="1647592586307" duration="8356000" />
+      <workItem from="1647611120854" duration="504000" />
+      <workItem from="1647749925715" duration="2109000" />
+      <workItem from="1647768311907" duration="6723000" />
+      <workItem from="1648005450090" duration="514000" />
+      <workItem from="1648028021312" duration="5564000" />
+      <workItem from="1648051396907" duration="26000" />
+      <workItem from="1648051666514" duration="571000" />
+      <workItem from="1648089177440" duration="372000" />
+      <workItem from="1648093047084" duration="2421000" />
+      <workItem from="1648106494443" duration="554000" />
+      <workItem from="1648126722114" duration="640000" />
+      <workItem from="1648196589476" duration="6565000" />
+      <workItem from="1648264512039" duration="12562000" />
+      <workItem from="1648368327792" duration="6574000" />
+      <workItem from="1648453487266" duration="1127000" />
+      <workItem from="1648455822389" duration="1541000" />
+      <workItem from="1648466238637" duration="63000" />
+      <workItem from="1648467010902" duration="3489000" />
+      <workItem from="1648528878966" duration="6824000" />
+      <workItem from="1648545309099" duration="150000" />
+      <workItem from="1648545570846" duration="1083000" />
+      <workItem from="1648547695317" duration="2476000" />
+      <workItem from="1648554763195" duration="1819000" />
+      <workItem from="1648614967518" duration="6256000" />
+      <workItem from="1648697651859" duration="3739000" />
+      <workItem from="1648711916572" duration="4011000" />
+      <workItem from="1648868860263" duration="5176000" />
+      <workItem from="1648887526498" duration="1172000" />
+      <workItem from="1648968662435" duration="5708000" />
+      <workItem from="1648979124818" duration="1333000" />
+      <workItem from="1648981900170" duration="208000" />
+      <workItem from="1648993684395" duration="2597000" />
+      <workItem from="1648997649189" duration="844000" />
+      <workItem from="1649040214117" duration="7024000" />
+      <workItem from="1649067633144" duration="8201000" />
+      <workItem from="1649124184595" duration="4131000" />
+      <workItem from="1649155979497" duration="209000" />
+      <workItem from="1649160157294" duration="613000" />
+      <workItem from="1649208232084" duration="1128000" />
+      <workItem from="1649232110917" duration="426000" />
+      <workItem from="1649239021570" duration="1303000" />
+      <workItem from="1649247680367" duration="545000" />
+      <workItem from="1649815037750" duration="1056000" />
+      <workItem from="1649993539200" duration="35000" />
+      <workItem from="1650120381791" duration="149000" />
+      <workItem from="1650121554863" duration="439000" />
+      <workItem from="1650265840723" duration="1215000" />
+      <workItem from="1650279687282" duration="7464000" />
+      <workItem from="1650428276024" duration="1539000" />
+      <workItem from="1650430078712" duration="367000" />
+      <workItem from="1651044895563" duration="652000" />
+      <workItem from="1651133378241" duration="45000" />
+      <workItem from="1651137170234" duration="2595000" />
+      <workItem from="1651140818096" duration="725000" />
+      <workItem from="1651152756272" duration="1393000" />
+      <workItem from="1651205932679" duration="7951000" />
+      <workItem from="1651222456043" duration="5096000" />
+      <workItem from="1651369721575" duration="522000" />
+      <workItem from="1651372600686" duration="830000" />
+      <workItem from="1651483319081" duration="896000" />
+      <workItem from="1651487949425" duration="1024000" />
+      <workItem from="1651547412991" duration="202000" />
+      <workItem from="1651670998683" duration="1376000" />
+      <workItem from="1651736328842" duration="180000" />
+      <workItem from="1651800840032" duration="1849000" />
+      <workItem from="1651923761198" duration="110000" />
+      <workItem from="1652153610204" duration="8657000" />
+      <workItem from="1652172245118" duration="1161000" />
+      <workItem from="1652264033592" duration="1462000" />
+      <workItem from="1652265552175" duration="1416000" />
+      <workItem from="1652275581025" duration="1350000" />
+      <workItem from="1652318277455" duration="3322000" />
+      <workItem from="1652358624349" duration="245000" />
+      <workItem from="1652453186037" duration="359000" />
+      <workItem from="1652592962877" duration="712000" />
+      <workItem from="1652773396517" duration="220000" />
+      <workItem from="1652839171196" duration="1265000" />
+      <workItem from="1652859848081" duration="544000" />
+      <workItem from="1653124696655" duration="2602000" />
+      <workItem from="1653461776096" duration="108000" />
+      <workItem from="1653487501199" duration="3627000" />
+      <workItem from="1653530526525" duration="303000" />
+      <workItem from="1653566727675" duration="2364000" />
+      <workItem from="1653615425283" duration="204000" />
+      <workItem from="1653652767987" duration="352000" />
+      <workItem from="1653729067262" duration="682000" />
+      <workItem from="1653897792547" duration="4809000" />
+      <workItem from="1653913226968" duration="4474000" />
+      <workItem from="1653958945477" duration="15026000" />
+      <workItem from="1654137871784" duration="14614000" />
+      <workItem from="1654168929534" duration="95000" />
+      <workItem from="1654325729667" duration="1521000" />
+      <workItem from="1654331832828" duration="9148000" />
+      <workItem from="1654393378993" duration="6355000" />
+      <workItem from="1654840933709" duration="7422000" />
+      <workItem from="1655383711189" duration="10000" />
+      <workItem from="1655433719117" duration="2499000" />
+      <workItem from="1655903046757" duration="29000" />
+      <workItem from="1655944924758" duration="247000" />
+      <workItem from="1656037917874" duration="2630000" />
+      <workItem from="1656123658517" duration="11000" />
+      <workItem from="1656641461920" duration="1110000" />
+      <workItem from="1657157428638" duration="34000" />
+      <workItem from="1657246290964" duration="783000" />
+      <workItem from="1657851661471" duration="17186000" />
+      <workItem from="1658452688210" duration="612000" />
+      <workItem from="1658642712231" duration="1933000" />
+      <workItem from="1658812303179" duration="2687000" />
+      <workItem from="1658815330194" duration="79000" />
+      <workItem from="1658831963100" duration="35000" />
+      <workItem from="1658832135990" duration="7000" />
+      <workItem from="1659021495143" duration="687000" />
+      <workItem from="1659063131109" duration="590000" />
+      <workItem from="1659063740632" duration="645000" />
+      <workItem from="1659148234360" duration="6000" />
+      <workItem from="1659710417947" duration="247000" />
+      <workItem from="1659773714683" duration="605000" />
+      <workItem from="1659795143412" duration="89000" />
+      <workItem from="1660284553037" duration="944000" />
+      <workItem from="1660468743669" duration="3617000" />
+      <workItem from="1660485874524" duration="2293000" />
+      <workItem from="1660526629852" duration="2484000" />
+      <workItem from="1660898984430" duration="228000" />
+      <workItem from="1661501939676" duration="420000" />
+      <workItem from="1662093450237" duration="344000" />
+      <workItem from="1662264378336" duration="2608000" />
+      <workItem from="1662780043905" duration="5040000" />
+      <workItem from="1662862017488" duration="463000" />
+      <workItem from="1662863034067" duration="454000" />
+      <workItem from="1663384002649" duration="1101000" />
+      <workItem from="1663751893549" duration="5889000" />
+      <workItem from="1663809108710" duration="144000" />
+      <workItem from="1663821419231" duration="4967000" />
+      <workItem from="1663984334293" duration="9532000" />
+      <workItem from="1664010536062" duration="3659000" />
+      <workItem from="1664073826308" duration="1059000" />
+      <workItem from="1664109655441" duration="1124000" />
+      <workItem from="1664281588643" duration="108000" />
+      <workItem from="1664549529115" duration="836000" />
+      <workItem from="1664587373611" duration="6573000" />
+      <workItem from="1665051145294" duration="3806000" />
+      <workItem from="1665112815481" duration="9248000" />
+      <workItem from="1665142278389" duration="7182000" />
+      <workItem from="1665208835152" duration="3263000" />
+      <workItem from="1665219688075" duration="5781000" />
+      <workItem from="1665289825548" duration="2902000" />
+      <workItem from="1665295202100" duration="2716000" />
+      <workItem from="1665301579051" duration="1852000" />
+      <workItem from="1665410058867" duration="463000" />
+      <workItem from="1665412384562" duration="69000" />
+      <workItem from="1665412537268" duration="57000" />
+      <workItem from="1665543627393" duration="456000" />
+      <workItem from="1665544172591" duration="4028000" />
+      <workItem from="1665837279682" duration="1255000" />
+      <workItem from="1666005203925" duration="802000" />
+      <workItem from="1666427724549" duration="17000" />
+      <workItem from="1666600598517" duration="1835000" />
+      <workItem from="1666961151600" duration="83000" />
+      <workItem from="1667038807925" duration="33000" />
+      <workItem from="1667133523290" duration="383000" />
+      <workItem from="1667184122355" duration="522000" />
+      <workItem from="1667450806380" duration="10858000" />
+      <workItem from="1667557352194" duration="3972000" />
+      <workItem from="1667612583669" duration="4867000" />
+      <workItem from="1667633442810" duration="5080000" />
+      <workItem from="1667725393991" duration="3974000" />
+      <workItem from="1667788080037" duration="240000" />
+      <workItem from="1667788933004" duration="1875000" />
+      <workItem from="1667796033817" duration="236000" />
+      <workItem from="1667799647478" duration="7479000" />
+      <workItem from="1667903963207" duration="4515000" />
+      <workItem from="1667959475176" duration="11370000" />
+      <workItem from="1668342089782" duration="688000" />
+      <workItem from="1668436690946" duration="146000" />
+      <workItem from="1668570156231" duration="19414000" />
+      <workItem from="1668651492214" duration="804000" />
+      <workItem from="1668758295556" duration="2568000" />
+      <workItem from="1668774958684" duration="34000" />
+      <workItem from="1669000979942" duration="277000" />
+      <workItem from="1669002812077" duration="169000" />
+      <workItem from="1669105160340" duration="678000" />
+      <workItem from="1669105854632" duration="4566000" />
+      <workItem from="1669121239440" duration="64000" />
+      <workItem from="1669719711911" duration="363000" />
+      <workItem from="1669810953450" duration="527000" />
+      <workItem from="1670145109636" duration="16000" />
+      <workItem from="1670308129320" duration="4488000" />
+      <workItem from="1670466156007" duration="168000" />
+      <workItem from="1670552071066" duration="618000" />
+      <workItem from="1670552825091" duration="5184000" />
+      <workItem from="1670817565423" duration="641000" />
+      <workItem from="1670900667662" duration="7599000" />
+      <workItem from="1670987121818" duration="74000" />
+      <workItem from="1671351043214" duration="1201000" />
+      <workItem from="1671514503348" duration="1035000" />
+      <workItem from="1671515562277" duration="2624000" />
+      <workItem from="1672211203555" duration="1769000" />
+      <workItem from="1672748642741" duration="1103000" />
+      <workItem from="1672792270037" duration="1550000" />
+      <workItem from="1672835244389" duration="296000" />
+      <workItem from="1673262571097" duration="864000" />
+      <workItem from="1673268291379" duration="1085000" />
+      <workItem from="1673432285171" duration="3615000" />
+      <workItem from="1673489591406" duration="69000" />
+      <workItem from="1673670520415" duration="644000" />
+      <workItem from="1673671962299" duration="4184000" />
+      <workItem from="1673945373649" duration="118000" />
+      <workItem from="1674020380112" duration="153000" />
+      <workItem from="1674138523351" duration="2603000" />
+      <workItem from="1674467994891" duration="2795000" />
+      <workItem from="1674545779061" duration="8158000" />
+      <workItem from="1674608018965" duration="907000" />
+      <workItem from="1674610245606" duration="2334000" />
+      <workItem from="1674636937586" duration="7534000" />
+      <workItem from="1674707416916" duration="66000" />
+      <workItem from="1674710413973" duration="11000" />
+      <workItem from="1674799568048" duration="439000" />
+      <workItem from="1675217760485" duration="169000" />
+      <workItem from="1675306601766" duration="12354000" />
+      <workItem from="1675387499212" duration="203000" />
+      <workItem from="1675843957650" duration="324000" />
+      <workItem from="1676378636955" duration="2050000" />
+      <workItem from="1676436745697" duration="4856000" />
+      <workItem from="1676524209420" duration="11000" />
+      <workItem from="1676884268637" duration="4915000" />
+      <workItem from="1676962684917" duration="8172000" />
+      <workItem from="1677027041566" duration="11860000" />
+      <workItem from="1677120351582" duration="654000" />
+      <workItem from="1677131063084" duration="14733000" />
+      <workItem from="1677242142484" duration="6170000" />
+      <workItem from="1677249699258" duration="1557000" />
+      <workItem from="1677300334323" duration="19141000" />
+      <workItem from="1677327129012" duration="337000" />
+      <workItem from="1677334975066" duration="2347000" />
+      <workItem from="1677390492906" duration="15263000" />
+      <workItem from="1677500397789" duration="2533000" />
+      <workItem from="1677505023684" duration="1531000" />
+      <workItem from="1677569163142" duration="593000" />
+      <workItem from="1677569769304" duration="9389000" />
+      <workItem from="1677640117450" duration="5591000" />
+      <workItem from="1677654724679" duration="622000" />
+      <workItem from="1677759966776" duration="600000" />
+      <workItem from="1677763484695" duration="28000" />
+      <workItem from="1677805799682" duration="4432000" />
+      <workItem from="1677821152911" duration="610000" />
+      <workItem from="1677844581355" duration="2057000" />
+      <workItem from="1677850746355" duration="809000" />
+      <workItem from="1677892314763" duration="3821000" />
+      <workItem from="1678006676935" duration="2983000" />
+      <workItem from="1678064150221" duration="6763000" />
+      <workItem from="1678154106626" duration="1374000" />
+      <workItem from="1678246263142" duration="2794000" />
+      <workItem from="1678324985685" duration="2106000" />
+      <workItem from="1678412824715" duration="521000" />
+      <workItem from="1678413379508" duration="2896000" />
+      <workItem from="1678499894137" duration="14223000" />
+      <workItem from="1678540176446" duration="201000" />
+      <workItem from="1678708036954" duration="3659000" />
+      <workItem from="1678718753595" duration="953000" />
+      <workItem from="1678757948606" duration="7080000" />
+      <workItem from="1678840775797" duration="5396000" />
+      <workItem from="1678882105570" duration="1445000" />
+      <workItem from="1678891617570" duration="72000" />
+      <workItem from="1678931733828" duration="6471000" />
+      <workItem from="1679017746096" duration="3052000" />
+      <workItem from="1679060288288" duration="21000" />
+      <workItem from="1679101809757" duration="966000" />
+      <workItem from="1679473406754" duration="799000" />
+      <workItem from="1679474243500" duration="585000" />
+      <workItem from="1679475672574" duration="241000" />
+      <workItem from="1679491824044" duration="1268000" />
+      <workItem from="1679824369937" duration="2913000" />
+      <workItem from="1680057542518" duration="1021000" />
+      <workItem from="1680667302365" duration="119000" />
+      <workItem from="1681271188933" duration="766000" />
+      <workItem from="1681896246606" duration="238000" />
+      <workItem from="1681912150488" duration="2067000" />
+      <workItem from="1681957882176" duration="787000" />
+      <workItem from="1682474016378" duration="581000" />
+      <workItem from="1682475169459" duration="9073000" />
+      <workItem from="1682518511777" duration="3971000" />
+      <workItem from="1682584964554" duration="1047000" />
+      <workItem from="1683077269990" duration="620000" />
+      <workItem from="1683343929859" duration="24000" />
+      <workItem from="1684378279247" duration="300000" />
+      <workItem from="1684378608948" duration="25000" />
+      <workItem from="1684663745810" duration="913000" />
+      <workItem from="1685071596193" duration="1127000" />
+    </task>
+    <task id="LOCAL-00342" summary="update deps">
+      <created>1672793716530</created>
+      <option name="number" value="00342" />
+      <option name="presentableId" value="LOCAL-00342" />
+      <option name="project" value="LOCAL" />
+      <updated>1672793716530</updated>
+    </task>
+    <task id="LOCAL-00343" summary="fix tests, re-enable vitest multi threading">
+      <created>1672793772850</created>
+      <option name="number" value="00343" />
+      <option name="presentableId" value="LOCAL-00343" />
+      <option name="project" value="LOCAL" />
+      <updated>1672793772850</updated>
+    </task>
+    <task id="LOCAL-00344" summary="update deps">
+      <created>1673441489346</created>
+      <option name="number" value="00344" />
+      <option name="presentableId" value="LOCAL-00344" />
+      <option name="project" value="LOCAL" />
+      <updated>1673441489346</updated>
+    </task>
+    <task id="LOCAL-00345" summary="update deps">
+      <created>1674020523352</created>
+      <option name="number" value="00345" />
+      <option name="presentableId" value="LOCAL-00345" />
+      <option name="project" value="LOCAL" />
+      <updated>1674020523352</updated>
+    </task>
+    <task id="LOCAL-00346" summary="update deps">
+      <created>1674608281556</created>
+      <option name="number" value="00346" />
+      <option name="presentableId" value="LOCAL-00346" />
+      <option name="project" value="LOCAL" />
+      <updated>1674608281556</updated>
+    </task>
+    <task id="LOCAL-00347" summary="update deps">
+      <created>1674610286956</created>
+      <option name="number" value="00347" />
+      <option name="presentableId" value="LOCAL-00347" />
+      <option name="project" value="LOCAL" />
+      <updated>1674610286956</updated>
+    </task>
+    <task id="LOCAL-00348" summary="add collapsible support for markdown renderer">
+      <created>1674640879824</created>
+      <option name="number" value="00348" />
+      <option name="presentableId" value="LOCAL-00348" />
+      <option name="project" value="LOCAL" />
+      <updated>1674640879824</updated>
+    </task>
+    <task id="LOCAL-00349" summary="update deps">
+      <created>1675217920991</created>
+      <option name="number" value="00349" />
+      <option name="presentableId" value="LOCAL-00349" />
+      <option name="project" value="LOCAL" />
+      <updated>1675217920991</updated>
+    </task>
+    <task id="LOCAL-00350" summary="improve sentry proxy middleware">
+      <created>1675331944172</created>
+      <option name="number" value="00350" />
+      <option name="presentableId" value="LOCAL-00350" />
+      <option name="project" value="LOCAL" />
+      <updated>1675331944172</updated>
+    </task>
+    <task id="LOCAL-00351" summary="improve sentry proxy middleware">
+      <created>1675332088440</created>
+      <option name="number" value="00351" />
+      <option name="presentableId" value="LOCAL-00351" />
+      <option name="project" value="LOCAL" />
+      <updated>1675332088440</updated>
+    </task>
+    <task id="LOCAL-00352" summary="update deps">
+      <created>1675844133916</created>
+      <option name="number" value="00352" />
+      <option name="presentableId" value="LOCAL-00352" />
+      <option name="project" value="LOCAL" />
+      <updated>1675844133916</updated>
+    </task>
+    <task id="LOCAL-00353" summary="update deps">
+      <created>1676436988534</created>
+      <option name="number" value="00353" />
+      <option name="presentableId" value="LOCAL-00353" />
+      <option name="project" value="LOCAL" />
+      <updated>1676436988535</updated>
+    </task>
+    <task id="LOCAL-00354" summary="update deps">
+      <created>1677027793821</created>
+      <option name="number" value="00354" />
+      <option name="presentableId" value="LOCAL-00354" />
+      <option name="project" value="LOCAL" />
+      <updated>1677027793821</updated>
+    </task>
+    <task id="LOCAL-00355" summary="markdown: introduce CollectLinks plugin">
+      <created>1677072551689</created>
+      <option name="number" value="00355" />
+      <option name="presentableId" value="LOCAL-00355" />
+      <option name="project" value="LOCAL" />
+      <updated>1677072551689</updated>
+    </task>
+    <task id="LOCAL-00356" summary="merge small chunks into entry chunk">
+      <created>1677148434329</created>
+      <option name="number" value="00356" />
+      <option name="presentableId" value="LOCAL-00356" />
+      <option name="project" value="LOCAL" />
+      <updated>1677148434329</updated>
+    </task>
+    <task id="LOCAL-00357" summary="split out manualChunks implement">
+      <created>1677150191582</created>
+      <option name="number" value="00357" />
+      <option name="presentableId" value="LOCAL-00357" />
+      <option name="project" value="LOCAL" />
+      <updated>1677150191582</updated>
+    </task>
+    <task id="LOCAL-00358" summary="cleanup code">
+      <created>1677152972837</created>
+      <option name="number" value="00358" />
+      <option name="presentableId" value="LOCAL-00358" />
+      <option name="project" value="LOCAL" />
+      <updated>1677152972837</updated>
+    </task>
+    <task id="LOCAL-00359" summary="improve performance of `getChunksDFS`">
+      <created>1677248247969</created>
+      <option name="number" value="00359" />
+      <option name="presentableId" value="LOCAL-00359" />
+      <option name="project" value="LOCAL" />
+      <updated>1677248247969</updated>
+    </task>
+    <task id="LOCAL-00360" summary="remove classname of SVG">
+      <created>1677300704181</created>
+      <option name="number" value="00360" />
+      <option name="presentableId" value="LOCAL-00360" />
+      <option name="project" value="LOCAL" />
+      <updated>1677300704181</updated>
+    </task>
+    <task id="LOCAL-00361" summary="introduce `htmlStringPlugin`">
+      <created>1677319413596</created>
+      <option name="number" value="00361" />
+      <option name="presentableId" value="LOCAL-00361" />
+      <option name="project" value="LOCAL" />
+      <updated>1677319413596</updated>
+    </task>
+    <task id="LOCAL-00362" summary="miscellaneous">
+      <created>1677391571992</created>
+      <option name="number" value="00362" />
+      <option name="presentableId" value="LOCAL-00362" />
+      <option name="project" value="LOCAL" />
+      <updated>1677391571992</updated>
+    </task>
+    <task id="LOCAL-00363" summary="add tests for HTML string plugin">
+      <created>1677397011679</created>
+      <option name="number" value="00363" />
+      <option name="presentableId" value="LOCAL-00363" />
+      <option name="project" value="LOCAL" />
+      <updated>1677397011679</updated>
+    </task>
+    <task id="LOCAL-00364" summary="avoid Rollup empty chunk warning by customize `rollupOptions.onwarn`">
+      <created>1677397148666</created>
+      <option name="number" value="00364" />
+      <option name="presentableId" value="LOCAL-00364" />
+      <option name="project" value="LOCAL" />
+      <updated>1677397148666</updated>
+    </task>
+    <task id="LOCAL-00365" summary="introduce diagnostics API">
+      <created>1677405556562</created>
+      <option name="number" value="00365" />
+      <option name="presentableId" value="LOCAL-00365" />
+      <option name="project" value="LOCAL" />
+      <updated>1677405556562</updated>
+    </task>
+    <task id="LOCAL-00366" summary="update deps">
+      <created>1677640918941</created>
+      <option name="number" value="00366" />
+      <option name="presentableId" value="LOCAL-00366" />
+      <option name="project" value="LOCAL" />
+      <updated>1677640918941</updated>
+    </task>
+    <task id="LOCAL-00367" summary="update snapshots">
+      <created>1677641022016</created>
+      <option name="number" value="00367" />
+      <option name="presentableId" value="LOCAL-00367" />
+      <option name="project" value="LOCAL" />
+      <updated>1677641022016</updated>
+    </task>
+    <task id="LOCAL-00368" summary="regenerate lockfile">
+      <created>1677641543058</created>
+      <option name="number" value="00368" />
+      <option name="presentableId" value="LOCAL-00368" />
+      <option name="project" value="LOCAL" />
+      <updated>1677641543058</updated>
+    </task>
+    <task id="LOCAL-00369" summary="Disable HTML minification until htmlnano releasees a new version">
+      <created>1677645391793</created>
+      <option name="number" value="00369" />
+      <option name="presentableId" value="LOCAL-00369" />
+      <option name="project" value="LOCAL" />
+      <updated>1677645391793</updated>
+    </task>
+    <task id="LOCAL-00370" summary="bump version">
+      <created>1677650959903</created>
+      <option name="number" value="00370" />
+      <option name="presentableId" value="LOCAL-00370" />
+      <option name="project" value="LOCAL" />
+      <updated>1677650959903</updated>
+    </task>
+    <task id="LOCAL-00371" summary="update deps">
+      <created>1678255441072</created>
+      <option name="number" value="00371" />
+      <option name="presentableId" value="LOCAL-00371" />
+      <option name="project" value="LOCAL" />
+      <updated>1678255441073</updated>
+    </task>
+    <task id="LOCAL-00372" summary="markdown: refactor collapsible rule">
+      <created>1678512241712</created>
+      <option name="number" value="00372" />
+      <option name="presentableId" value="LOCAL-00372" />
+      <option name="project" value="LOCAL" />
+      <updated>1678512241712</updated>
+    </task>
+    <task id="LOCAL-00373" summary="update deps">
+      <created>1678841718813</created>
+      <option name="number" value="00373" />
+      <option name="presentableId" value="LOCAL-00373" />
+      <option name="project" value="LOCAL" />
+      <updated>1678841718813</updated>
+    </task>
+    <task id="LOCAL-00374" summary="finalize uploaded source maps">
+      <created>1678841872934</created>
+      <option name="number" value="00374" />
+      <option name="presentableId" value="LOCAL-00374" />
+      <option name="project" value="LOCAL" />
+      <updated>1678841872935</updated>
+    </task>
+    <task id="LOCAL-00375" summary="update deps">
+      <created>1679474180044</created>
+      <option name="number" value="00375" />
+      <option name="presentableId" value="LOCAL-00375" />
+      <option name="project" value="LOCAL" />
+      <updated>1679474180044</updated>
+    </task>
+    <task id="LOCAL-00376" summary="change moduleResolution to &quot;bundler&quot;">
+      <created>1679475905314</created>
+      <option name="number" value="00376" />
+      <option name="presentableId" value="LOCAL-00376" />
+      <option name="project" value="LOCAL" />
+      <updated>1679475905314</updated>
+    </task>
+    <task id="LOCAL-00377" summary="replace deepmerge with Vite builtin `mergeConfig`">
+      <created>1679492276196</created>
+      <option name="number" value="00377" />
+      <option name="presentableId" value="LOCAL-00377" />
+      <option name="project" value="LOCAL" />
+      <updated>1679492276196</updated>
+    </task>
+    <task id="LOCAL-00378" summary="update deps">
+      <created>1680057966082</created>
+      <option name="number" value="00378" />
+      <option name="presentableId" value="LOCAL-00378" />
+      <option name="project" value="LOCAL" />
+      <updated>1680057966082</updated>
+    </task>
+    <task id="LOCAL-00379" summary="fix deprecated warnings">
+      <created>1680058395734</created>
+      <option name="number" value="00379" />
+      <option name="presentableId" value="LOCAL-00379" />
+      <option name="project" value="LOCAL" />
+      <updated>1680058395734</updated>
+    </task>
+    <task id="LOCAL-00380" summary="polish">
+      <created>1680058443962</created>
+      <option name="number" value="00380" />
+      <option name="presentableId" value="LOCAL-00380" />
+      <option name="project" value="LOCAL" />
+      <updated>1680058443962</updated>
+    </task>
+    <task id="LOCAL-00381" summary="bump version">
+      <created>1680058484061</created>
+      <option name="number" value="00381" />
+      <option name="presentableId" value="LOCAL-00381" />
+      <option name="project" value="LOCAL" />
+      <updated>1680058484061</updated>
+    </task>
+    <task id="LOCAL-00382" summary="update deps">
+      <created>1680667396359</created>
+      <option name="number" value="00382" />
+      <option name="presentableId" value="LOCAL-00382" />
+      <option name="project" value="LOCAL" />
+      <updated>1680667396359</updated>
+    </task>
+    <task id="LOCAL-00383" summary="update deps">
+      <created>1681271306801</created>
+      <option name="number" value="00383" />
+      <option name="presentableId" value="LOCAL-00383" />
+      <option name="project" value="LOCAL" />
+      <updated>1681271306801</updated>
+    </task>
+    <task id="LOCAL-00384" summary="update deps, require Node 20">
+      <created>1681913149900</created>
+      <option name="number" value="00384" />
+      <option name="presentableId" value="LOCAL-00384" />
+      <option name="project" value="LOCAL" />
+      <updated>1681913149900</updated>
+    </task>
+    <task id="LOCAL-00385" summary="update deps">
+      <created>1682474586362</created>
+      <option name="number" value="00385" />
+      <option name="presentableId" value="LOCAL-00385" />
+      <option name="project" value="LOCAL" />
+      <updated>1682474586363</updated>
+    </task>
+    <task id="LOCAL-00386" summary="remove htmlnano">
+      <created>1682480842880</created>
+      <option name="number" value="00386" />
+      <option name="presentableId" value="LOCAL-00386" />
+      <option name="project" value="LOCAL" />
+      <updated>1682480842880</updated>
+    </task>
+    <task id="LOCAL-00387" summary="update deps">
+      <created>1683077834005</created>
+      <option name="number" value="00387" />
+      <option name="presentableId" value="LOCAL-00387" />
+      <option name="project" value="LOCAL" />
+      <updated>1683077834005</updated>
+    </task>
+    <task id="LOCAL-00388" summary="update deps">
+      <created>1684378537118</created>
+      <option name="number" value="00388" />
+      <option name="presentableId" value="LOCAL-00388" />
+      <option name="project" value="LOCAL" />
+      <updated>1684378537119</updated>
+    </task>
+    <task id="LOCAL-00389" summary="update deps">
+      <created>1685071937882</created>
+      <option name="number" value="00389" />
+      <option name="presentableId" value="LOCAL-00389" />
+      <option name="project" value="LOCAL" />
+      <updated>1685071937882</updated>
+    </task>
+    <task id="LOCAL-00390" summary="fix missing coverage provider in vitest config">
+      <created>1685072785012</created>
+      <option name="number" value="00390" />
+      <option name="presentableId" value="LOCAL-00390" />
+      <option name="project" value="LOCAL" />
+      <updated>1685072785012</updated>
+    </task>
+    <option name="localTasksCounter" value="391" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+    <option name="exactExcludedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/packages/server/__tests__/AppBuilder.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/__tests__/functions.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/__tests__/functions.spec.js" />
+        <option value="$PROJECT_DIR$/packages/server/__tests__/AppBuilder.spec.js" />
+        <option value="$PROJECT_DIR$/packages/server/__tests__/blog.spec.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/image/SVGOptimizer.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/image/RasterOptimizer.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/image/param-processor.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/image/encoder.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/image/SVGOptimizer.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/image/param-processor.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/image/preset-processor.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/image/preset-processor.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/image/encoder.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/image/RasterOptimizer.js" />
+        <option value="$PROJECT_DIR$/packages/server/__tests__/blog.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/__tests__/command/build-cache.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/__tests__/command/build-cache.spec.js" />
+        <option value="$PROJECT_DIR$/packages/media/__tests__/image/SVGOptimizer.spec.js" />
+        <option value="$PROJECT_DIR$/packages/media/__tests__/image/encoder.spec.js" />
+        <option value="$PROJECT_DIR$/packages/media/__tests__/image/preset-processor.spec.js" />
+        <option value="$PROJECT_DIR$/packages/media/__tests__/image/RasterOptimizer.spec.js" />
+        <option value="$PROJECT_DIR$/packages/media/__tests__/image/param-processor.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/__tests__/image/param-processor.spec.js" />
+        <option value="$PROJECT_DIR$/packages/media/__tests__/image/encoder.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/__tests__/image/SVGOptimizer.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/__tests__/image/RasterOptimizer.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/__tests__/image/preset-processor.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/__tests__/common.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/__tests__/VariantService.spec.js" />
+        <option value="$PROJECT_DIR$/packages/media/__tests__/DispatchService.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/__tests__/CachedService.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/markdown/lib/media.js" />
+        <option value="$PROJECT_DIR$/packages/markdown/lib/media.js.map" />
+        <option value="$PROJECT_DIR$/packages/markdown/lib/index.js.map" />
+        <option value="$PROJECT_DIR$/packages/markdown/lib/index.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/__tests__/test-utils.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/__tests__/test-utils.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/feed.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/vue-ssr.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/blog.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/Launcher.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/Launcher.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/blog.js" />
+        <option value="$PROJECT_DIR$/packages/media/__tests__/CachedService.spec.js" />
+        <option value="$PROJECT_DIR$/packages/media/__tests__/VariantService.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/__tests__/test-utils.js" />
+        <option value="$PROJECT_DIR$/packages/media/__tests__/DispatchService.spec.js" />
+        <option value="$PROJECT_DIR$/packages/media/__tests__/test-utils.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/__tests__/common.spec.js" />
+        <option value="$PROJECT_DIR$/packages/media/__tests__/LocalFileStore.spec.js" />
+        <option value="$PROJECT_DIR$/packages/media/__tests__/LocalFileStore.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/command/run.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/command/run.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/feed.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/media.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/media.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/vue-ssr.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/command/build.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/command/build.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/main.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/main.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/command/build-cache.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/command/build-cache.js" />
+        <option value="$PROJECT_DIR$/vite.config.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/command/serve.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/command/serve.js" />
+        <option value="$PROJECT_DIR$/vite.config.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/MediaService.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/LocalFileStore.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/MediaService.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/DispatchService.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/CachedService.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/errors.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/LocalFileStore.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/errors.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/FileStore.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/DispatchService.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/VariantService.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/VariantService.js" />
+        <option value="$PROJECT_DIR$/packages/markdown/__tests__/media.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/markdown/__tests__/media.spec.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/FileStore.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/CachedService.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/functions.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/AppBuilder.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/config.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/functions.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/AppBuilder.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/config.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/static-files.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/send-range.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/sitemap.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/sitemap.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/static-files.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/send-range.js" />
+        <option value="$PROJECT_DIR$/packages/server/__tests__/test-utils.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/__tests__/test-utils.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/common.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/common.js.map" />
+        <option value="$PROJECT_DIR$/packages/markdown/__perfs__/media.perf.js.map" />
+        <option value="$PROJECT_DIR$/packages/markdown/__perfs__/media.perf.js" />
+        <option value="$PROJECT_DIR$/packages/server/__perfs__/static-files.perf.js" />
+        <option value="$PROJECT_DIR$/packages/server/__perfs__/static-files.perf.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/plugin/optimize-image.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/plugin/compress-assets.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/plugin/compress-assets.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/plugin/optimize-image.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/build-config.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/index.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/build-config.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/index.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/__tests__/optimize-image.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/__tests__/optimize-image.spec.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/index.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/index.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/__tests__/compress-asset.spec.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/__tests__/compress-asset.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/plugin/service-worker.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/plugin/service-worker.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/__tests__/service-worker.spec.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/__tests__/service-worker.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/index.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/index.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/bin/blog-devtool.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/bin/blog-devtool.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/bin/blog-server.js" />
+        <option value="$PROJECT_DIR$/packages/server/bin/blog-server.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/command/statistics.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/command/statistics.js" />
+        <option value="$PROJECT_DIR$/packages/markdown/lib/ugc.js" />
+        <option value="$PROJECT_DIR$/packages/markdown/lib/ugc.js.map" />
+        <option value="$PROJECT_DIR$/packages/markdown/__tests__/ugc.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/markdown/__tests__/ugc.spec.js" />
+        <option value="$PROJECT_DIR$/packages/markdown/__tests__/index.spec.js" />
+        <option value="$PROJECT_DIR$/packages/markdown/__tests__/index.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/__tests__/koa/send-range.spec.js" />
+        <option value="$PROJECT_DIR$/packages/server/__tests__/koa/sitemap.spec.js" />
+        <option value="$PROJECT_DIR$/packages/server/__tests__/koa/vue-ssr.spec.js" />
+        <option value="$PROJECT_DIR$/packages/server/__tests__/koa/send-range.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/__tests__/koa/sitemap.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/__tests__/koa/static-files.spec.js" />
+        <option value="$PROJECT_DIR$/packages/server/__tests__/koa/media.spec.js" />
+        <option value="$PROJECT_DIR$/packages/server/__tests__/koa/vue-ssr.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/__tests__/koa/media.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/__tests__/koa/static-files.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/plugin/ssr-manifest-ex.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/plugin/ssr-manifest-ex.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/fetch-helper.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/fetch-helper.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/create-server.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/create-server.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/__tests__/create-server.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/__tests__/create-server.spec.js" />
+        <option value="$PROJECT_DIR$/packages/server/__tests__/fetch-helper.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/__tests__/fetch-helper.spec.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/sentry.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/sentry.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/__tests__/koa/feed.spec.js" />
+        <option value="$PROJECT_DIR$/packages/server/__tests__/koa/feed.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/command/upload-source.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/command/upload-source.js.map" />
+        <option value="$PROJECT_DIR$/packages/markdown/lib/collapsible.js" />
+        <option value="$PROJECT_DIR$/packages/markdown/lib/collapsible.js.map" />
+        <option value="$PROJECT_DIR$/packages/markdown/__tests__/collapsible.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/markdown/__tests__/collapsible.spec.js" />
+        <option value="$PROJECT_DIR$/packages/server/__tests__/koa/sentry.spec.js" />
+        <option value="$PROJECT_DIR$/packages/server/__tests__/koa/sentry.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/manual-chunks.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/manual-chunks.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/plugin/html-string.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/plugin/html-string.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/__tests__/html-string.spec.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/__tests__/html-string.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/__tests__/manual-chunks.spec.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/__tests__/manual-chunks.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/diagnostics.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/diagnostics.js" />
+        <option value="$PROJECT_DIR$/packages/server/__tests__/koa/diagnostics.spec.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/__tests__/koa/diagnostics.spec.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/plugin/inline-global-css.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/plugin/inline-global-css.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/fetch-helper.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/functions.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/index.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/functions.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/index.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/create-server.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/create-server.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/blog.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/AppBuilder.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/Launcher.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/config.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/fetch-helper.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/AppBuilder.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/Launcher.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/config.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/blog.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/plugin/ssr-manifest-ex.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/plugin/inline-global-css.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/plugin/optimize-image.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/plugin/compress-assets.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/plugin/html-string.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/plugin/inline-global-css.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/plugin/html-string.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/plugin/service-worker.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/plugin/service-worker.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/plugin/ssr-manifest-ex.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/plugin/optimize-image.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/plugin/compress-assets.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/common.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/VariantService.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/VariantService.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/DispatchService.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/index.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/FileStore.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/errors.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/index.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/LocalFileStore.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/errors.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/CachedService.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/DispatchService.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/common.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/MediaService.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/LocalFileStore.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/MediaService.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/CachedService.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/FileStore.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/image/RasterOptimizer.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/image/encoder.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/image/preset-processor.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/image/preset-processor.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/image/SVGOptimizer.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/image/param-processor.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/image/param-processor.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/image/encoder.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/image/RasterOptimizer.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/image/SVGOptimizer.js" />
+        <option value="$PROJECT_DIR$/packages/server/__perfs__/static-files.perf.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/__perfs__/static-files.perf.js" />
+        <option value="$PROJECT_DIR$/packages/markdown/__perfs__/media.perf.js.map" />
+        <option value="$PROJECT_DIR$/packages/markdown/__perfs__/media.perf.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/static-files.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/send-range.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/sentry.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/feed.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/diagnostics.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/sitemap.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/media.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/media.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/vue-ssr.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/sitemap.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/diagnostics.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/sentry.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/static-files.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/vue-ssr.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/feed.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/koa/send-range.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/build-config.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/manual-chunks.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/index.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/manual-chunks.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/index.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/build-config.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/main.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/main.js.map" />
+        <option value="$PROJECT_DIR$/packages/server/lib/command/run.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/command/run.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/command/build.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/command/build.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/command/serve.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/command/upload-source.js" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/command/upload-source.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/command/serve.js.map" />
+        <option value="$PROJECT_DIR$/packages/markdown/lib/ugc.js" />
+        <option value="$PROJECT_DIR$/packages/markdown/lib/ugc.js.map" />
+        <option value="$PROJECT_DIR$/packages/markdown/lib/index.js" />
+        <option value="$PROJECT_DIR$/packages/markdown/lib/index.js.map" />
+        <option value="$PROJECT_DIR$/packages/markdown/lib/collapsible.js.map" />
+        <option value="$PROJECT_DIR$/packages/markdown/lib/collapsible.js" />
+        <option value="$PROJECT_DIR$/packages/markdown/lib/media.js.map" />
+        <option value="$PROJECT_DIR$/packages/markdown/lib/media.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/command/build-cache.js" />
+        <option value="$PROJECT_DIR$/packages/media/lib/command/build-cache.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/command/statistics.js.map" />
+        <option value="$PROJECT_DIR$/packages/media/lib/command/statistics.js" />
+        <option value="$PROJECT_DIR$/packages/markdown/lib/index.d.ts" />
+        <option value="$PROJECT_DIR$/packages/markdown/lib/media.d.ts" />
+        <option value="$PROJECT_DIR$/packages/markdown/lib/ugc.d.ts" />
+        <option value="$PROJECT_DIR$/packages/markdown/lib/collapsible.d.ts" />
+        <option value="$PROJECT_DIR$/packages/media/lib/CachedService.d.ts" />
+        <option value="$PROJECT_DIR$/packages/media/lib/LocalFileStore.d.ts" />
+        <option value="$PROJECT_DIR$/packages/media/lib/common.d.ts" />
+        <option value="$PROJECT_DIR$/packages/media/lib/errors.d.ts" />
+        <option value="$PROJECT_DIR$/packages/media/lib/index.d.ts" />
+        <option value="$PROJECT_DIR$/packages/media/lib/FileStore.d.ts" />
+        <option value="$PROJECT_DIR$/packages/media/lib/DispatchService.d.ts" />
+        <option value="$PROJECT_DIR$/packages/media/lib/VariantService.d.ts" />
+        <option value="$PROJECT_DIR$/packages/media/lib/MediaService.d.ts" />
+        <option value="$PROJECT_DIR$/packages/media/lib/image/param-processor.d.ts" />
+        <option value="$PROJECT_DIR$/packages/media/lib/image/preset-processor.d.ts" />
+        <option value="$PROJECT_DIR$/packages/media/lib/image/RasterOptimizer.d.ts" />
+        <option value="$PROJECT_DIR$/packages/media/lib/image/encoder.d.ts" />
+        <option value="$PROJECT_DIR$/packages/media/lib/image/SVGOptimizer.d.ts" />
+        <option value="$PROJECT_DIR$/packages/media/lib/command/build-cache.d.ts" />
+        <option value="$PROJECT_DIR$/packages/media/lib/command/statistics.d.ts" />
+        <option value="$PROJECT_DIR$/packages/server/lib/functions.js" />
+        <option value="$PROJECT_DIR$/packages/server/lib/functions.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/plugin/html-string.js.map" />
+        <option value="$PROJECT_DIR$/packages/devtool/lib/plugin/html-string.js" />
+      </list>
+    </option>
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.ini" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+        <option value="Space.CommitStatus" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="61841b70-f71b-4e77-8b31-159762981200">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="HEAD" />
+                      </list>
+                    </value>
+                  </entry>
+                  <entry key="roots">
+                    <value>
+                      <list>
+                        <option value="$PROJECT_DIR$" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+              <option name="SHOW_ONLY_AFFECTED_CHANGES" value="true" />
+            </State>
+          </value>
+        </entry>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="CUSTOM_BOOLEAN_PROPERTIES">
+                <map>
+                  <entry key="Show.Git.Branches" value="false" />
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
+    <MESSAGE value="markdown: introduce CollectLinks plugin" />
+    <MESSAGE value="merge small chunks into entry chunk" />
+    <MESSAGE value="split out manualChunks implement" />
+    <MESSAGE value="cleanup code" />
+    <MESSAGE value="improve performance of `getChunksDFS`" />
+    <MESSAGE value="remove classname of SVG" />
+    <MESSAGE value="introduce `htmlStringPlugin`" />
+    <MESSAGE value="miscellaneous" />
+    <MESSAGE value="add tests for HTML string plugin" />
+    <MESSAGE value="avoid Rollup empty chunk warning by suppress `rollupOptions.onwarn`" />
+    <MESSAGE value="introduce diagnostics API" />
+    <MESSAGE value="update snapshots" />
+    <MESSAGE value="regenerate lockfile" />
+    <MESSAGE value="Disable HTML minification until htmlnano releasees a new version" />
+    <MESSAGE value="markdown: refactor collapsible rule" />
+    <MESSAGE value="finalize uploaded source maps" />
+    <MESSAGE value="change moduleResolution to &quot;bundler&quot;" />
+    <MESSAGE value="replace deepmerge with Vite builtin `mergeConfig`" />
+    <MESSAGE value="fix deprecated warnings" />
+    <MESSAGE value="polish" />
+    <MESSAGE value="bump version" />
+    <MESSAGE value="update deps, require Node 20" />
+    <MESSAGE value="remove htmlnano" />
+    <MESSAGE value="update deps" />
+    <MESSAGE value="fix missing coverage provider in vitest config" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix missing coverage provider in vitest config" />
+    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint type="javascript">
+          <url>file://$PROJECT_DIR$/node_modules/.pnpm/vite@3.2.1/node_modules/vite/dist/node/chunks/dep-d29b4e33.js</url>
+          <line>35809</line>
+          <option name="timeStamp" value="34" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/packages/devtool/node_modules/htmlnano/lib/htmlnano.js</url>
+          <line>109</line>
+          <option name="timeStamp" value="36" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/packages/devtool/node_modules/htmlnano/lib/htmlnano.js</url>
+          <line>103</line>
+          <option name="timeStamp" value="38" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/packages/server/lib/create-server.ts</url>
+          <line>30</line>
+          <option name="timeStamp" value="39" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="JavaScriptTestRunnerJest">
+        <watch expression="mime.contentType(&quot;.av1&quot;)" language="TypeScript" />
+      </configuration>
+      <configuration name="JavaScriptTestRunnerVitest">
+        <watch expression="rs.exec(code)" language="TypeScript" />
+      </configuration>
+      <configuration name="NodeJSConfigurationType">
+        <watch expression="ctx.app" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/WebServer$All_Tests.info" NAME="All Tests Coverage Results" MODIFIED="1642860780537" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="JestJavaScriptTestRunnerCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/WebServer$VariantService_spec_ts.info" NAME="VariantService.spec.ts Coverage Results" MODIFIED="1636358107467" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="JestJavaScriptTestRunnerCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+  </component>
+</project>

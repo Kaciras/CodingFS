@@ -9,6 +9,12 @@ namespace CodingFS.Workspaces;
 
 public class IDEAWorkspace : Workspace
 {
+	internal static readonly XmlReaderSettings xmlSettings = new()
+	{
+		IgnoreComments = true,
+		IgnoreWhitespace = true,
+	};
+
 	readonly JetBrainsDetector detector;
 	readonly string root;
 	readonly PathDict ignored;
@@ -19,11 +25,11 @@ public class IDEAWorkspace : Workspace
 		this.root = root;
 		ignored = new PathDict(root);
 
-		foreach (var item in ResolveModules())
+		foreach (var item in ResolveWorkspace())
 		{
 			ignored.AddIgnore(item);
 		}
-		foreach (var item in ResolveWorkspace())
+		foreach (var item in ResolveModules())
 		{
 			ignored.AddIgnore(item);
 		}
@@ -31,6 +37,16 @@ public class IDEAWorkspace : Workspace
 		{
 			ignored.AddIgnore(item);
 		}
+	}
+
+	/// <summary>
+	/// This constructor is only used for test/benchmark.
+	/// </summary>
+	internal IDEAWorkspace(string root, JetBrainsDetector detector)
+	{
+		this.detector = detector;
+		this.root = root;
+		ignored = new PathDict(root);
 	}
 
 	public RecognizeType Recognize(string path)
@@ -51,17 +67,31 @@ public class IDEAWorkspace : Workspace
 	/// <summary>
 	/// Find excluded file patterns from ".idea/workspace.xml".
 	/// </summary>
-	private IEnumerable<string> ResolveWorkspace()
+	internal IEnumerable<string> ResolveWorkspace()
 	{
 		var xmlFile = Path.Join(root, ".idea/workspace.xml");
-		var doc = new XmlDocument();
-		doc.Load(xmlFile);
+		using var reader = XmlReader.Create(xmlFile, xmlSettings);
 
-		var tsIgnores = doc.SelectNodes(
-			"//option[@name='exactExcludedFiles']/list//option");
-
-		return tsIgnores.Cast<XmlNode>()
-			.Select(node => ToRelative(node.Attributes["value"]!.Value));
+		var state = 0;
+		while (reader.Read())
+		{
+			if (state == 2)
+			{
+				if (reader.NodeType == XmlNodeType.EndElement)
+				{
+					yield break;
+				}
+				yield return ToRelative(reader.GetAttribute("value")!);
+			}
+			else if (state == 1 && reader.Name == "list")
+			{
+				state = 2;
+			}
+			else if (reader.GetAttribute("name") == "exactExcludedFiles")
+			{
+				state = 1;
+			}
+		}
 	}
 
 	/// <summary>
@@ -156,7 +186,7 @@ public class IDEAWorkspace : Workspace
 		}
 	}
 
-	private string ToRelative(string value)
+	internal string ToRelative(string value)
 	{
 		value = value.Replace("$PROJECT_DIR$", root);
 
