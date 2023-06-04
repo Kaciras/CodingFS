@@ -1,0 +1,763 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="5e6e083d-fff3-4673-9570-783abdc7758f" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/list/default.txt" beforeDir="false" afterPath="$PROJECT_DIR$/list/default.txt" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+        <option value="TypeScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="PUSH_TAGS">
+      <GitPushTagMode>
+        <option name="argument" value="--tags" />
+        <option name="title" value="All" />
+      </GitPushTagMode>
+    </option>
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="typescript" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="MIXED" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedIndex" value="2" />
+  </component>
+  <component name="ProjectId" id="1sKzt4iKRPslLKPv703SkNlZylA" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="false" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;javascript.nodejs.core.library.configured.version&quot;: &quot;20.2.0&quot;,
+    &quot;javascript.nodejs.core.library.typings.version&quot;: &quot;20.2.0&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Profiles/Kaciras.dic&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs.jest.jest_package&quot;: &quot;D:/Coding/JavaScript/pac-maker/node_modules/jest&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;pnpm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.ide.settings.spelling&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;D:\\Coding\\JavaScript\\pac-maker\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="ReaderModeSettings">
+    <option name="enabled" value="false" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Coding\JavaScript\pac-maker" />
+      <recent name="D:\Coding\JavaScript\pac-maker\__tests__\fixtures" />
+      <recent name="D:\Coding\JavaScript\pac-maker\lib" />
+      <recent name="D:\Coding\JavaScript\pac-maker\.github\workflows" />
+      <recent name="D:\Coding\JavaScript\pac-maker\__tests__" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Coding\JavaScript\pac-maker\__tests__\fixtures" />
+      <recent name="D:\Coding\JavaScript\pac-maker\__tests__\matches" />
+      <recent name="D:\Coding\JavaScript\pac-maker\__tests__\command" />
+      <recent name="D:\Coding\JavaScript\pac-maker\template" />
+      <recent name="D:\Coding\JavaScript\pac-maker\lib\command" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Node.js.debug.js">
+    <configuration name="All Tests" type="JavaScriptTestRunnerJest" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <node-options value="--experimental-vm-modules" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$" />
+      <envs />
+      <scope-kind value="ALL" />
+      <method v="2" />
+    </configuration>
+    <configuration name="HostnameListLoader" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <node-options value="--experimental-vm-modules --expose_gc" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$" />
+      <jest-options value="--silent" />
+      <envs />
+      <scope-kind value="SUITE" />
+      <test-file value="$PROJECT_DIR$/__tests__/generator.spec.ts" />
+      <test-names>
+        <test-name value="HostnameListLoader" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="JavaScriptTestRunnerJest">
+      <node-interpreter value="project" />
+      <node-options value="--experimental-vm-modules --expose_gc" />
+      <jest-options value="--silent" />
+      <envs />
+      <scope-kind value="ALL" />
+      <method v="2" />
+    </configuration>
+    <configuration name="should check the proxy string" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <node-options value="--experimental-vm-modules --expose_gc" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$" />
+      <jest-options value="--silent" />
+      <envs />
+      <scope-kind value="TEST" />
+      <test-file value="$PROJECT_DIR$/__tests__/verify.spec.ts" />
+      <test-names>
+        <test-name value="should check the proxy string" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="should expire cached agents" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <node-options value="--experimental-vm-modules --expose_gc" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$" />
+      <jest-options value="--silent" />
+      <envs />
+      <scope-kind value="TEST" />
+      <test-file value="$PROJECT_DIR$/__tests__/proxy.spec.ts" />
+      <test-names>
+        <test-name value="should expire cached agents" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="should support batch verify" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <node-options value="--experimental-vm-modules --expose_gc" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$" />
+      <jest-options value="--silent" />
+      <envs />
+      <scope-kind value="TEST" />
+      <test-file value="$PROJECT_DIR$/__tests__/verify.spec.ts" />
+      <test-names>
+        <test-name value="should support batch verify" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="analyze" type="NodeJSConfigurationType" application-parameters="analyze --config=blacklist.config.js" path-to-js-file="bin/pac-maker.js" working-dir="$PROJECT_DIR$">
+      <method v="2" />
+    </configuration>
+    <configuration name="bench" type="NodeJSConfigurationType" application-parameters="bench dist/blacklist.pac dist/whitelist.pac --loadIter=10" path-to-js-file="bin/pac-maker.js" working-dir="$PROJECT_DIR$">
+      <method v="2" />
+    </configuration>
+    <configuration name="debug.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/debug.js" working-dir="$PROJECT_DIR$">
+      <method v="2" />
+    </configuration>
+    <configuration name="generate-black" type="NodeJSConfigurationType" application-parameters="generate --config=blacklist.config.js" path-to-js-file="bin/pac-maker.js" working-dir="$PROJECT_DIR$">
+      <method v="2" />
+    </configuration>
+    <configuration name="generate-white" type="NodeJSConfigurationType" application-parameters="generate --config=whitelist.config.js" path-to-js-file="bin/pac-maker.js" working-dir="$PROJECT_DIR$">
+      <method v="2" />
+    </configuration>
+    <configuration name="serve" type="NodeJSConfigurationType" application-parameters="serve" path-to-js-file="bin/pac-maker.js" working-dir="$PROJECT_DIR$">
+      <method v="2" />
+    </configuration>
+    <configuration name="test" type="js.build_tools.npm" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="test" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs>
+        <env name="NODE_OPTIONS" value="--experimental-vm-modules" />
+      </envs>
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Jest.All Tests" />
+      <item itemvalue="Jest.should check the proxy string" />
+      <item itemvalue="Jest.HostnameListLoader" />
+      <item itemvalue="Jest.should expire cached agents" />
+      <item itemvalue="Jest.should support batch verify" />
+      <item itemvalue="Node.js.generate-black" />
+      <item itemvalue="Node.js.generate-white" />
+      <item itemvalue="Node.js.analyze" />
+      <item itemvalue="Node.js.bench" />
+      <item itemvalue="Node.js.serve" />
+      <item itemvalue="Node.js.debug.js" />
+      <item itemvalue="npm.test" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Node.js.debug.js" />
+        <item itemvalue="Jest.should check the proxy string" />
+        <item itemvalue="Jest.should support batch verify" />
+        <item itemvalue="Jest.should expire cached agents" />
+        <item itemvalue="Jest.HostnameListLoader" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="1" Folder0="D:\Profiles" CustomDictionaries="1" CustomDictionary0="D:\Profiles\Kaciras.dic" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5e6e083d-fff3-4673-9570-783abdc7758f" name="Default Changelist" comment="" />
+      <created>1620636280498</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1620636280498</updated>
+      <workItem from="1685072791919" duration="11241000" />
+      <workItem from="1685096835031" duration="4005000" />
+      <workItem from="1685197800704" duration="1112000" />
+      <workItem from="1685283925218" duration="612000" />
+      <workItem from="1685362950510" duration="10060000" />
+      <workItem from="1685408411113" duration="5396000" />
+      <workItem from="1685528833069" duration="64000" />
+      <workItem from="1685633921362" duration="44000" />
+      <workItem from="1685692791686" duration="325000" />
+      <workItem from="1685712977078" duration="1156000" />
+    </task>
+    <task id="LOCAL-00321" summary="report coverage">
+      <created>1674710449351</created>
+      <option name="number" value="00321" />
+      <option name="presentableId" value="LOCAL-00321" />
+      <option name="project" value="LOCAL" />
+      <updated>1674710449351</updated>
+    </task>
+    <task id="LOCAL-00322" summary="fix CI">
+      <created>1674711104646</created>
+      <option name="number" value="00322" />
+      <option name="presentableId" value="LOCAL-00322" />
+      <option name="project" value="LOCAL" />
+      <updated>1674711104646</updated>
+    </task>
+    <task id="LOCAL-00323" summary="update PACs">
+      <created>1675086956242</created>
+      <option name="number" value="00323" />
+      <option name="presentableId" value="LOCAL-00323" />
+      <option name="project" value="LOCAL" />
+      <updated>1675086956242</updated>
+    </task>
+    <task id="LOCAL-00324" summary="calculate different hostnames from generated code.">
+      <created>1675135025991</created>
+      <option name="number" value="00324" />
+      <option name="presentableId" value="LOCAL-00324" />
+      <option name="project" value="LOCAL" />
+      <updated>1675135025991</updated>
+    </task>
+    <task id="LOCAL-00325" summary="remove unnecessary await">
+      <created>1675135188034</created>
+      <option name="number" value="00325" />
+      <option name="presentableId" value="LOCAL-00325" />
+      <option name="project" value="LOCAL" />
+      <updated>1675135188034</updated>
+    </task>
+    <task id="LOCAL-00326" summary="bump version">
+      <created>1675150178949</created>
+      <option name="number" value="00326" />
+      <option name="presentableId" value="LOCAL-00326" />
+      <option name="project" value="LOCAL" />
+      <updated>1675150178949</updated>
+    </task>
+    <task id="LOCAL-00327" summary="update deps">
+      <created>1675419600039</created>
+      <option name="number" value="00327" />
+      <option name="presentableId" value="LOCAL-00327" />
+      <option name="project" value="LOCAL" />
+      <updated>1675419600039</updated>
+    </task>
+    <task id="LOCAL-00328" summary="fix types">
+      <created>1675420021954</created>
+      <option name="number" value="00328" />
+      <option name="presentableId" value="LOCAL-00328" />
+      <option name="project" value="LOCAL" />
+      <updated>1675420021954</updated>
+    </task>
+    <task id="LOCAL-00329" summary="add tests for `bench.ts`">
+      <created>1675835053495</created>
+      <option name="number" value="00329" />
+      <option name="presentableId" value="LOCAL-00329" />
+      <option name="project" value="LOCAL" />
+      <updated>1675835053495</updated>
+    </task>
+    <task id="LOCAL-00330" summary="fix `--expose-gc` is not allowed in NODE_OPTIONS">
+      <created>1675838913571</created>
+      <option name="number" value="00330" />
+      <option name="presentableId" value="LOCAL-00330" />
+      <option name="project" value="LOCAL" />
+      <updated>1675838913571</updated>
+    </task>
+    <task id="LOCAL-00331" summary="why my tests failed on CI">
+      <created>1675839422030</created>
+      <option name="number" value="00331" />
+      <option name="presentableId" value="LOCAL-00331" />
+      <option name="project" value="LOCAL" />
+      <updated>1675839422030</updated>
+    </task>
+    <task id="LOCAL-00332" summary="fix CI">
+      <created>1675839818079</created>
+      <option name="number" value="00332" />
+      <option name="presentableId" value="LOCAL-00332" />
+      <option name="project" value="LOCAL" />
+      <updated>1675839818079</updated>
+    </task>
+    <task id="LOCAL-00333" summary="update deps">
+      <created>1675995038957</created>
+      <option name="number" value="00333" />
+      <option name="presentableId" value="LOCAL-00333" />
+      <option name="project" value="LOCAL" />
+      <updated>1675995038957</updated>
+    </task>
+    <task id="LOCAL-00334" summary="update deps">
+      <created>1676600872998</created>
+      <option name="number" value="00334" />
+      <option name="presentableId" value="LOCAL-00334" />
+      <option name="project" value="LOCAL" />
+      <updated>1676600872998</updated>
+    </task>
+    <task id="LOCAL-00335" summary="polish">
+      <created>1676877361569</created>
+      <option name="number" value="00335" />
+      <option name="presentableId" value="LOCAL-00335" />
+      <option name="project" value="LOCAL" />
+      <updated>1676877361569</updated>
+    </task>
+    <task id="LOCAL-00336" summary="update PACs">
+      <created>1677154432615</created>
+      <option name="number" value="00336" />
+      <option name="presentableId" value="LOCAL-00336" />
+      <option name="project" value="LOCAL" />
+      <updated>1677154432615</updated>
+    </task>
+    <task id="LOCAL-00337" summary="update deps">
+      <created>1677225571408</created>
+      <option name="number" value="00337" />
+      <option name="presentableId" value="LOCAL-00337" />
+      <option name="project" value="LOCAL" />
+      <updated>1677225571408</updated>
+    </task>
+    <task id="LOCAL-00338" summary="update deps">
+      <created>1677806063369</created>
+      <option name="number" value="00338" />
+      <option name="presentableId" value="LOCAL-00338" />
+      <option name="project" value="LOCAL" />
+      <updated>1677806063369</updated>
+    </task>
+    <task id="LOCAL-00339" summary="update deps">
+      <created>1678413270788</created>
+      <option name="number" value="00339" />
+      <option name="presentableId" value="LOCAL-00339" />
+      <option name="project" value="LOCAL" />
+      <updated>1678413270789</updated>
+    </task>
+    <task id="LOCAL-00340" summary="update deps">
+      <created>1679102189956</created>
+      <option name="number" value="00340" />
+      <option name="presentableId" value="LOCAL-00340" />
+      <option name="project" value="LOCAL" />
+      <updated>1679102189956</updated>
+    </task>
+    <task id="LOCAL-00341" summary="generate PACs">
+      <created>1679102636793</created>
+      <option name="number" value="00341" />
+      <option name="presentableId" value="LOCAL-00341" />
+      <option name="project" value="LOCAL" />
+      <updated>1679102636793</updated>
+    </task>
+    <task id="LOCAL-00342" summary="update deps">
+      <created>1679796076837</created>
+      <option name="number" value="00342" />
+      <option name="presentableId" value="LOCAL-00342" />
+      <option name="project" value="LOCAL" />
+      <updated>1679796076837</updated>
+    </task>
+    <task id="LOCAL-00343" summary="fix tests">
+      <created>1679825905179</created>
+      <option name="number" value="00343" />
+      <option name="presentableId" value="LOCAL-00343" />
+      <option name="project" value="LOCAL" />
+      <updated>1679825905179</updated>
+    </task>
+    <task id="LOCAL-00344" summary="oops">
+      <created>1679826027255</created>
+      <option name="number" value="00344" />
+      <option name="presentableId" value="LOCAL-00344" />
+      <option name="project" value="LOCAL" />
+      <updated>1679826027255</updated>
+    </task>
+    <task id="LOCAL-00345" summary="update deps">
+      <created>1680574462173</created>
+      <option name="number" value="00345" />
+      <option name="presentableId" value="LOCAL-00345" />
+      <option name="project" value="LOCAL" />
+      <updated>1680574462173</updated>
+    </task>
+    <task id="LOCAL-00346" summary="update deps">
+      <created>1681458436959</created>
+      <option name="number" value="00346" />
+      <option name="presentableId" value="LOCAL-00346" />
+      <option name="project" value="LOCAL" />
+      <updated>1681458436959</updated>
+    </task>
+    <task id="LOCAL-00347" summary="update PACs">
+      <created>1681458478640</created>
+      <option name="number" value="00347" />
+      <option name="presentableId" value="LOCAL-00347" />
+      <option name="project" value="LOCAL" />
+      <updated>1681458478647</updated>
+    </task>
+    <task id="LOCAL-00348" summary="update deps">
+      <created>1682128302986</created>
+      <option name="number" value="00348" />
+      <option name="presentableId" value="LOCAL-00348" />
+      <option name="project" value="LOCAL" />
+      <updated>1682128302986</updated>
+    </task>
+    <task id="LOCAL-00349" summary="update deps">
+      <created>1682824644347</created>
+      <option name="number" value="00349" />
+      <option name="presentableId" value="LOCAL-00349" />
+      <option name="project" value="LOCAL" />
+      <updated>1682824644347</updated>
+    </task>
+    <task id="LOCAL-00350" summary="update deps">
+      <created>1683613959760</created>
+      <option name="number" value="00350" />
+      <option name="presentableId" value="LOCAL-00350" />
+      <option name="project" value="LOCAL" />
+      <updated>1683613959760</updated>
+    </task>
+    <task id="LOCAL-00351" summary="update deps">
+      <created>1684203493570</created>
+      <option name="number" value="00351" />
+      <option name="presentableId" value="LOCAL-00351" />
+      <option name="project" value="LOCAL" />
+      <updated>1684203493571</updated>
+    </task>
+    <task id="LOCAL-00352" summary="introduce `verify`">
+      <created>1684851119219</created>
+      <option name="number" value="00352" />
+      <option name="presentableId" value="LOCAL-00352" />
+      <option name="project" value="LOCAL" />
+      <updated>1684851119219</updated>
+    </task>
+    <task id="LOCAL-00353" summary="update deps">
+      <created>1684910644383</created>
+      <option name="number" value="00353" />
+      <option name="presentableId" value="LOCAL-00353" />
+      <option name="project" value="LOCAL" />
+      <updated>1684910644383</updated>
+    </task>
+    <task id="LOCAL-00354" summary="`verify`: check DNS &amp; HTTP">
+      <created>1684923616197</created>
+      <option name="number" value="00354" />
+      <option name="presentableId" value="LOCAL-00354" />
+      <option name="project" value="LOCAL" />
+      <updated>1684923616199</updated>
+    </task>
+    <task id="LOCAL-00355" summary="refactor `verify` function to a class">
+      <created>1684983176154</created>
+      <option name="number" value="00355" />
+      <option name="presentableId" value="LOCAL-00355" />
+      <option name="project" value="LOCAL" />
+      <updated>1684983176154</updated>
+    </task>
+    <task id="LOCAL-00356" summary="polish">
+      <created>1684985089586</created>
+      <option name="number" value="00356" />
+      <option name="presentableId" value="LOCAL-00356" />
+      <option name="project" value="LOCAL" />
+      <updated>1684985089586</updated>
+    </task>
+    <task id="LOCAL-00357" summary="refactor: use HTTP for blocking test">
+      <created>1685000644602</created>
+      <option name="number" value="00357" />
+      <option name="presentableId" value="LOCAL-00357" />
+      <option name="project" value="LOCAL" />
+      <updated>1685000644602</updated>
+    </task>
+    <task id="LOCAL-00358" summary="more options in `HostBlockVerifier` constructor">
+      <created>1685007884330</created>
+      <option name="number" value="00358" />
+      <option name="presentableId" value="LOCAL-00358" />
+      <option name="project" value="LOCAL" />
+      <updated>1685007884330</updated>
+    </task>
+    <task id="LOCAL-00359" summary="Ensure connection closed after request">
+      <created>1685008653267</created>
+      <option name="number" value="00359" />
+      <option name="presentableId" value="LOCAL-00359" />
+      <option name="project" value="LOCAL" />
+      <updated>1685008653267</updated>
+    </task>
+    <task id="LOCAL-00360" summary="add tests for `verify`">
+      <created>1685096010101</created>
+      <option name="number" value="00360" />
+      <option name="presentableId" value="LOCAL-00360" />
+      <option name="project" value="LOCAL" />
+      <updated>1685096010101</updated>
+    </task>
+    <task id="LOCAL-00361" summary="update PACs">
+      <created>1685096047197</created>
+      <option name="number" value="00361" />
+      <option name="presentableId" value="LOCAL-00361" />
+      <option name="project" value="LOCAL" />
+      <updated>1685096047197</updated>
+    </task>
+    <task id="LOCAL-00362" summary="fix tests">
+      <created>1685100899641</created>
+      <option name="number" value="00362" />
+      <option name="presentableId" value="LOCAL-00362" />
+      <option name="project" value="LOCAL" />
+      <updated>1685100899641</updated>
+    </task>
+    <task id="LOCAL-00363" summary="more tests">
+      <created>1685371394607</created>
+      <option name="number" value="00363" />
+      <option name="presentableId" value="LOCAL-00363" />
+      <option name="project" value="LOCAL" />
+      <updated>1685371394607</updated>
+    </task>
+    <task id="LOCAL-00364" summary="simplify `BlockType` enum">
+      <created>1685372030448</created>
+      <option name="number" value="00364" />
+      <option name="presentableId" value="LOCAL-00364" />
+      <option name="project" value="LOCAL" />
+      <updated>1685372030448</updated>
+    </task>
+    <task id="LOCAL-00365" summary="document HostBlockVerifier">
+      <created>1685415140296</created>
+      <option name="number" value="00365" />
+      <option name="presentableId" value="LOCAL-00365" />
+      <option name="project" value="LOCAL" />
+      <updated>1685415140296</updated>
+    </task>
+    <task id="LOCAL-00366" summary="check the proxy string in HostBlockVerifier constructor">
+      <created>1685415613137</created>
+      <option name="number" value="00366" />
+      <option name="presentableId" value="LOCAL-00366" />
+      <option name="project" value="LOCAL" />
+      <updated>1685415613137</updated>
+    </task>
+    <task id="LOCAL-00367" summary="increase default timeout of HostBlockVerifier">
+      <created>1685416044039</created>
+      <option name="number" value="00367" />
+      <option name="presentableId" value="LOCAL-00367" />
+      <option name="project" value="LOCAL" />
+      <updated>1685416044039</updated>
+    </task>
+    <task id="LOCAL-00368" summary="bump version">
+      <created>1685416056976</created>
+      <option name="number" value="00368" />
+      <option name="presentableId" value="LOCAL-00368" />
+      <option name="project" value="LOCAL" />
+      <updated>1685416056976</updated>
+    </task>
+    <task id="LOCAL-00369" summary="update deps">
+      <created>1685693110058</created>
+      <option name="number" value="00369" />
+      <option name="presentableId" value="LOCAL-00369" />
+      <option name="project" value="LOCAL" />
+      <updated>1685693110058</updated>
+    </task>
+    <option name="localTasksCounter" value="370" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+    <option name="exactExcludedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/__tests__/share.js.map" />
+        <option value="$PROJECT_DIR$/lib/command/generate.js.map" />
+        <option value="$PROJECT_DIR$/__tests__/share.js" />
+        <option value="$PROJECT_DIR$/lib/command/generate.js" />
+        <option value="$PROJECT_DIR$/__tests__/share.d.ts" />
+        <option value="$PROJECT_DIR$/__tests__/proxy.spec.js.map" />
+        <option value="$PROJECT_DIR$/lib/loader.js.map" />
+        <option value="$PROJECT_DIR$/lib/command/bench.js" />
+        <option value="$PROJECT_DIR$/__tests__/source.spec.d.ts" />
+        <option value="$PROJECT_DIR$/__tests__/command/generate.spec.d.ts" />
+        <option value="$PROJECT_DIR$/__tests__/proxy.spec.d.ts" />
+        <option value="$PROJECT_DIR$/__tests__/generator.spec.d.ts" />
+        <option value="$PROJECT_DIR$/__tests__/setup-jest.d.ts" />
+        <option value="$PROJECT_DIR$/__tests__/loader.spec.d.ts" />
+        <option value="$PROJECT_DIR$/lib/command/analyze.js" />
+        <option value="$PROJECT_DIR$/__tests__/setup-jest.js" />
+        <option value="$PROJECT_DIR$/lib/command/analyze.js.map" />
+        <option value="$PROJECT_DIR$/__tests__/generator.spec.js" />
+        <option value="$PROJECT_DIR$/lib/generator.js.map" />
+        <option value="$PROJECT_DIR$/lib/proxy.js" />
+        <option value="$PROJECT_DIR$/__tests__/loader.spec.js.map" />
+        <option value="$PROJECT_DIR$/__tests__/generator.spec.js.map" />
+        <option value="$PROJECT_DIR$/lib/source.js.map" />
+        <option value="$PROJECT_DIR$/__tests__/loader.spec.js" />
+        <option value="$PROJECT_DIR$/lib/source.js" />
+        <option value="$PROJECT_DIR$/lib/browser.js" />
+        <option value="$PROJECT_DIR$/bin/pac-maker.js.map" />
+        <option value="$PROJECT_DIR$/bin/pac-maker.d.ts" />
+        <option value="$PROJECT_DIR$/__tests__/command/generate.spec.js.map" />
+        <option value="$PROJECT_DIR$/lib/config.js" />
+        <option value="$PROJECT_DIR$/lib/utils.js.map" />
+        <option value="$PROJECT_DIR$/lib/command/bench.d.ts" />
+        <option value="$PROJECT_DIR$/lib/command/serve.js" />
+        <option value="$PROJECT_DIR$/lib/command/analyze.d.ts" />
+        <option value="$PROJECT_DIR$/lib/utils.js" />
+        <option value="$PROJECT_DIR$/lib/command/generate.d.ts" />
+        <option value="$PROJECT_DIR$/__tests__/command/serve.spec.js.map" />
+        <option value="$PROJECT_DIR$/lib/command/serve.d.ts" />
+        <option value="$PROJECT_DIR$/__tests__/command/serve.spec.js" />
+        <option value="$PROJECT_DIR$/lib/utils.d.ts" />
+        <option value="$PROJECT_DIR$/__tests__/proxy.spec.js" />
+        <option value="$PROJECT_DIR$/lib/index.d.ts" />
+        <option value="$PROJECT_DIR$/__tests__/command/generate.spec.js" />
+        <option value="$PROJECT_DIR$/lib/browser.d.ts" />
+        <option value="$PROJECT_DIR$/lib/command/serve.js.map" />
+        <option value="$PROJECT_DIR$/lib/generator.d.ts" />
+        <option value="$PROJECT_DIR$/__tests__/source.spec.js" />
+        <option value="$PROJECT_DIR$/lib/browser.js.map" />
+        <option value="$PROJECT_DIR$/lib/loader.d.ts" />
+        <option value="$PROJECT_DIR$/lib/config.js.map" />
+        <option value="$PROJECT_DIR$/lib/proxy.d.ts" />
+        <option value="$PROJECT_DIR$/lib/index.js" />
+        <option value="$PROJECT_DIR$/lib/config.d.ts" />
+        <option value="$PROJECT_DIR$/lib/loader.js" />
+        <option value="$PROJECT_DIR$/lib/index.js.map" />
+        <option value="$PROJECT_DIR$/__tests__/command/serve.spec.d.ts" />
+        <option value="$PROJECT_DIR$/lib/source.d.ts" />
+        <option value="$PROJECT_DIR$/__tests__/source.spec.js.map" />
+        <option value="$PROJECT_DIR$/lib/command/bench.js.map" />
+        <option value="$PROJECT_DIR$/lib/proxy.js.map" />
+        <option value="$PROJECT_DIR$/lib/generator.js" />
+        <option value="$PROJECT_DIR$/bin/pac-maker.js" />
+        <option value="$PROJECT_DIR$/__tests__/setup-jest.js.map" />
+        <option value="$PROJECT_DIR$/__tests__/bin/pac-maker.spec.js" />
+        <option value="$PROJECT_DIR$/__tests__/bin/pac-maker.spec.d.ts" />
+        <option value="$PROJECT_DIR$/__tests__/bin/pac-maker.spec.js.map" />
+        <option value="$PROJECT_DIR$/lib/context.js.map" />
+        <option value="$PROJECT_DIR$/lib/context.d.ts" />
+        <option value="$PROJECT_DIR$/lib/context.js" />
+        <option value="$PROJECT_DIR$/__tests__/config.spec.js" />
+        <option value="$PROJECT_DIR$/__tests__/config.spec.d.ts" />
+        <option value="$PROJECT_DIR$/__tests__/config.spec.js.map" />
+        <option value="$PROJECT_DIR$/__tests__/context.spec.js.map" />
+        <option value="$PROJECT_DIR$/__tests__/context.spec.d.ts" />
+        <option value="$PROJECT_DIR$/__tests__/context.spec.js" />
+        <option value="$PROJECT_DIR$/__tests__/command/analyze.spec.d.ts" />
+        <option value="$PROJECT_DIR$/__tests__/command/analyze.spec.js" />
+        <option value="$PROJECT_DIR$/__tests__/command/analyze.spec.js.map" />
+        <option value="$PROJECT_DIR$/__tests__/command/bench.spec.d.ts" />
+        <option value="$PROJECT_DIR$/__tests__/command/bench.spec.js" />
+        <option value="$PROJECT_DIR$/__tests__/command/bench.spec.js.map" />
+        <option value="$PROJECT_DIR$/lib/verify.js.map" />
+        <option value="$PROJECT_DIR$/lib/verify.js" />
+        <option value="$PROJECT_DIR$/lib/verify.d.ts" />
+        <option value="$PROJECT_DIR$/__tests__/verify.spec.js" />
+        <option value="$PROJECT_DIR$/__tests__/verify.spec.js.map" />
+        <option value="$PROJECT_DIR$/__tests__/verify.spec.d.ts" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+        <option value="Space.CommitStatus" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="3fa41ddc-0dd4-4f06-8d92-54df8c196a0e">
+          <value>
+            <State />
+          </value>
+        </entry>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ID_WIDTH">
+                <map>
+                  <entry key="Table.Default.Author.ColumnIdWidth" value="54" />
+                  <entry key="Table.Default.Date.ColumnIdWidth" value="104" />
+                </map>
+              </option>
+              <option name="CUSTOM_BOOLEAN_PROPERTIES">
+                <map>
+                  <entry key="Show.Git.Branches" value="false" />
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
+    <MESSAGE value="remove unnecessary await" />
+    <MESSAGE value="fix types" />
+    <MESSAGE value="add tests for `bench.ts`" />
+    <MESSAGE value="fix `--expose-gc` is not allowed in NODE_OPTIONS" />
+    <MESSAGE value="why my tests failed on CI" />
+    <MESSAGE value="fix CI" />
+    <MESSAGE value="generate PACs" />
+    <MESSAGE value="oops" />
+    <MESSAGE value="introduce `verify`" />
+    <MESSAGE value="`verify`: check DNS &amp; HTTP" />
+    <MESSAGE value="refactor `verify` function to a class" />
+    <MESSAGE value="polish" />
+    <MESSAGE value="refactor: use HTTP for blocking test" />
+    <MESSAGE value="more options in `HostBlockVerifier` constructor" />
+    <MESSAGE value="Ensure connection closed after request" />
+    <MESSAGE value="add tests for `verify`" />
+    <MESSAGE value="update PACs" />
+    <MESSAGE value="fix tests" />
+    <MESSAGE value="more tests" />
+    <MESSAGE value="simplify `BlockType` enum" />
+    <MESSAGE value="document HostBlockVerifier" />
+    <MESSAGE value="check the proxy string in HostBlockVerifier constructor" />
+    <MESSAGE value="increase default timeout of HostBlockVerifier" />
+    <MESSAGE value="bump version" />
+    <MESSAGE value="update deps" />
+    <option name="LAST_COMMIT_MESSAGE" value="update deps" />
+    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/pac_maker$should_works.info" NAME="should works Coverage Results" MODIFIED="1675826540434" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="JestJavaScriptTestRunnerCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/pac_maker$should_support_TLS_over_socks.info" NAME="should support TLS over socks Coverage Results" MODIFIED="1653743166090" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="JestJavaScriptTestRunnerCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/pac_maker$All_Tests.info" NAME="All Tests Coverage Results" MODIFIED="1685364728457" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="JestJavaScriptTestRunnerCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/pac_maker$proxy_spec_ts.info" NAME="proxy.spec.ts Coverage Results" MODIFIED="1653469899367" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="JestJavaScriptTestRunnerCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/pac_maker$source_spec_ts.info" NAME="source.spec.ts Coverage Results" MODIFIED="1670216621212" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="JestJavaScriptTestRunnerCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+  </component>
+</project>
