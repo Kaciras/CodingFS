@@ -1,0 +1,8 @@
+{
+	"files.autoSave": "onWindowChange",
+	"editor.lineHeight": 22,
+	"files.exclude": {
+		"/.idea": true,
+		"/packages/.DS_Store": false
+	}
+}

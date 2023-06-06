@@ -3,9 +3,23 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Microsoft.Extensions.FileSystemGlobbing;
 
 namespace CodingFS.Workspaces;
+
+file class VSCodeSettings
+{
+	[JsonPropertyName("files.exclude")]
+	public Dictionary<string, bool> Exclude { get; set; }
+
+	public static VSCodeSettings Parse(string file)
+	{
+		return JsonSerializer.Deserialize<VSCodeSettings>(File.OpenRead(file))!;
+	}
+}
 
 internal class VSCodeWorkspace : Workspace
 {
@@ -19,9 +33,32 @@ internal class VSCodeWorkspace : Workspace
 
 	public string Folder { get; }
 
+	readonly Matcher excludes = new();
+
 	public VSCodeWorkspace(string folder)
 	{
 		Folder = folder;
+		try
+		{
+			var file = Path.Join(folder, ".vscode/settings.json");
+			var setting = VSCodeSettings.Parse(file);
+			foreach (var (k, v) in setting.Exclude)
+			{
+				var path = k.TrimStart('/');
+				if (v)
+				{
+					excludes.AddInclude(path);
+				}
+				else
+				{
+					excludes.AddExclude(path);
+				}
+			}
+		}
+		catch (FileNotFoundException)
+		{
+			// ignore
+		}
 	}
 
 	public RecognizeType Recognize(string file)
@@ -30,6 +67,10 @@ internal class VSCodeWorkspace : Workspace
 		if (relative == ".vscode")
 		{
 			return RecognizeType.Dependency;
+		}
+		else if (excludes.Match(relative).HasMatches)
+		{
+			return RecognizeType.Ignored;
 		}
 		else
 		{
