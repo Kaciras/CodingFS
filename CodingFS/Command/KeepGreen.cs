@@ -12,14 +12,14 @@ namespace CodingFS.Command;
 [Verb("keep-green", HelpText = "Keep dependencies update-to-date")]
 internal sealed class KeepGreen : CliCommand
 {
-	private RootFileClassifier filter;
+	private FileClassifier filter;
 
 	int OuterDepth = 3;
 	int InnerDepth = 3;
 
 	public void Execute()
 	{
-		filter = new RootFileClassifier(@"D:\Coding")
+		filter = new FileClassifier(@"D:\Coding")
 		{
 			OuterDepth = OuterDepth,
 			InnerDepth = InnerDepth,

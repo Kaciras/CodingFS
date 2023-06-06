@@ -12,7 +12,7 @@ namespace CodingFS.VFS;
 /// </summary>
 public class CodingFS : DokanOperationBase
 {
-	public Dictionary<string, RootFileClassifier> Map { get; } = new();
+	public Dictionary<string, FileClassifier> Map { get; } = new();
 
 	public FileType Type { get; set; }
 
@@ -48,7 +48,7 @@ public class CodingFS : DokanOperationBase
 		Length = (src as FileInfo)?.Length ?? 0
 	};
 
-	protected string MapPath(string value)
+	protected string GetPath(string value)
 	{
 		var split = value.Split(Path.DirectorySeparatorChar, 3);
 
@@ -86,7 +86,7 @@ public class CodingFS : DokanOperationBase
 				throw new FileNotFoundException("文件不在映射区", root);
 			}
 
-			fileName = MapPath(fileName);
+			fileName = GetPath(fileName);
 			var @fixed = scanner.GetWorkspaces(fileName);
 
 			files = new DirectoryInfo(fileName)
@@ -116,7 +116,7 @@ public class CodingFS : DokanOperationBase
 		else
 		{
 			// 哪个傻逼想出来的文件和目录分开的 API？
-			var rawPath = MapPath(fileName);
+			var rawPath = GetPath(fileName);
 			FileSystemInfo rawInfo = new FileInfo(rawPath);
 
 			if (rawInfo.Exists)
@@ -150,7 +150,7 @@ public class CodingFS : DokanOperationBase
 		if (info.Context == null)
 		{
 			// FileAccess 默认是 ReadWrite，会造成额外的锁定
-			using var stream = new FileStream(MapPath(fileName), FileMode.Open, AccessType.Read)
+			using var stream = new FileStream(GetPath(fileName), FileMode.Open, AccessType.Read)
 			{
 				Position = offset,
 			};

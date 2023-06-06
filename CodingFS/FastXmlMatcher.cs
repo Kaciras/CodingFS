@@ -2,6 +2,7 @@ using System.Xml;
 
 namespace CodingFS;
 
+// TODO: replace with extension methods?
 internal readonly ref struct FastXmlMatcher
 {
 	internal static readonly XmlReaderSettings xmlSettings = new()

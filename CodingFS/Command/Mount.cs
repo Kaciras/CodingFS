@@ -24,7 +24,7 @@ internal class Mount : CliCommand
 	public void Execute()
 	{
 		var vfs = new UnsafeCodingFS("CodingFS") { Type = Type };
-		vfs.Map["Coding"] = new RootFileClassifier(@"D:\Coding");
+		vfs.Map["Coding"] = new FileClassifier(@"D:\Coding");
 
 		var mountOptions = DokanOptions.WriteProtection;
 #if DEBUG

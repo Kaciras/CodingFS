@@ -29,7 +29,7 @@ internal partial class UnsafeCodingFS : CodingFS, IDokanOperationsUnsafe
 	{
 		if (info.Context == null)
 		{
-			using var stream = new FileStream(MapPath(fileName), FileMode.Open, AccessType.Read);
+			using var stream = new FileStream(GetPath(fileName), FileMode.Open, AccessType.Read);
 			DoRead(stream.SafeFileHandle, buffer, bufferLength, out bytesRead, offset);
 		}
 		else
@@ -53,7 +53,7 @@ internal partial class UnsafeCodingFS : CodingFS, IDokanOperationsUnsafe
 	{
 		if (info.Context == null)
 		{
-			using var stream = new FileStream(MapPath(fileName), FileMode.Open, AccessType.Write);
+			using var stream = new FileStream(GetPath(fileName), FileMode.Open, AccessType.Write);
 			DoWrite(stream.SafeFileHandle, buffer, bufferLength, out bytesWritten, offset);
 		}
 		else
