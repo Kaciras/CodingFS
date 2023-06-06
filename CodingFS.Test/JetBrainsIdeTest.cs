@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using CodingFS.Workspaces;
 using Xunit;
@@ -17,14 +18,25 @@ public class JetBrainsIdeTest
 	}
 
 	[Fact]
-	public void ResolveWorkspace()
+	public void LoadWorkspace()
 	{
-		var instance = new IDEAWorkspace("Resources", null);
-		var values = instance.ResolveWorkspace().ToArray();
+		var dict = new Dictionary<string, RecognizeType>();
+		var instance = new IDEAWorkspace(null!, "Resources", dict);
+		instance.LoadWorkspace();
 
-		Assert.Equal(87, values.Length);
-		Assert.Equal(@"__tests__\share.js.map", values[0]);
-		Assert.Equal(@"__tests__\proxy.spec.d.ts", values[10]);
-		Assert.Equal(@"__tests__\verify.spec.d.ts", values[^1]);
+		Assert.Equal(87, dict.Count);
+		Assert.Equal(RecognizeType.Ignored, dict[@"__tests__\share.js.map"]);
+		Assert.Equal(RecognizeType.Ignored, dict[@"__tests__\proxy.spec.d.ts"]);
+		Assert.Equal(RecognizeType.Ignored, dict[@"__tests__\verify.spec.d.ts"]);
+	}
+
+	[Fact]
+	public void LoadModules()
+	{
+		var dict = new Dictionary<string, RecognizeType>();
+		var instance = new IDEAWorkspace(null!, "Resources", dict);
+		instance.LoadModules();
+
+		Assert.Single(dict, KeyValuePair.Create("target", RecognizeType.Ignored));
 	}
 }

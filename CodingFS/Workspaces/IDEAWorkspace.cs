@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace CodingFS.Workspaces;
@@ -14,39 +12,31 @@ public class IDEAWorkspace : Workspace
 		IgnoreComments = true,
 		IgnoreWhitespace = true,
 	};
+	
 
 	readonly JetBrainsDetector detector;
 	readonly string root;
-	readonly PathDict ignored;
+	readonly Dictionary<string, RecognizeType> dict;
 
-	internal IDEAWorkspace(JetBrainsDetector detector, string root)
+	internal IDEAWorkspace(JetBrainsDetector detector, string root) 
+		: this(detector, root, new()) 
 	{
-		this.detector = detector;
-		this.root = root;
-		ignored = new PathDict(root);
-
-		foreach (var item in ResolveWorkspace())
-		{
-			ignored.AddIgnore(item);
-		}
-		foreach (var item in ResolveModules())
-		{
-			ignored.AddIgnore(item);
-		}
-		foreach (var item in ResolveExternalBuildSystem())
-		{
-			ignored.AddIgnore(item);
-		}
+		LoadWorkspace();
+		LoadModules();
+		ResolveExternalBuildSystem();
 	}
 
 	/// <summary>
 	/// This constructor is only used for test/benchmark.
 	/// </summary>
-	internal IDEAWorkspace(string root, JetBrainsDetector detector)
+	internal IDEAWorkspace(
+		JetBrainsDetector detector, 
+		string root, 
+		Dictionary<string, RecognizeType> dict)
 	{
-		this.detector = detector;
 		this.root = root;
-		ignored = new PathDict(root);
+		this.dict = dict;
+		this.detector = detector;
 	}
 
 	public RecognizeType Recognize(string path)
@@ -61,103 +51,76 @@ public class IDEAWorkspace : Workspace
 		{
 			return RecognizeType.Dependency;
 		}
-		return ignored.Recognize(relative);
+		return dict.GetValueOrDefault(relative);
 	}
 
 	/// <summary>
 	/// Find excluded file patterns from ".idea/workspace.xml".
 	/// </summary>
-	internal IEnumerable<string> ResolveWorkspace()
+	internal void LoadWorkspace()
 	{
 		var xmlFile = Path.Join(root, ".idea/workspace.xml");
-		using var reader = XmlReader.Create(xmlFile, xmlSettings);
+		using var matcher = new FastXmlMatcher(xmlFile);
 
-		var state = 0;
-		while (reader.Read())
+		matcher.MoveToAttribute("name", "exactExcludedFiles");
+		matcher.MoveToElement("list");
+
+		var depth = matcher.Reader.Depth + 1;
+		while (matcher.NextInLayer(depth))
 		{
-			if (state == 2)
-			{
-				if (reader.NodeType == XmlNodeType.EndElement)
-				{
-					yield break;
-				}
-				yield return ToRelative(reader.GetAttribute("value")!);
-			}
-			else if (state == 1 && reader.Name == "list")
-			{
-				state = 2;
-			}
-			else if (reader.GetAttribute("name") == "exactExcludedFiles")
-			{
-				state = 1;
-			}
+			var value = matcher.Reader.GetAttribute("value")!;
+			dict[ToRelative(value)] = RecognizeType.Ignored;
 		}
 	}
 
 	/// <summary>
 	/// 在.idea目录下可能存在一个modules.xml文件，里面记录了IML文件的位置。
 	/// </summary>
-	private IEnumerable<string> ResolveModules()
+	internal void LoadModules()
 	{
 		var xmlFile = Path.Join(root, ".idea/modules.xml");
 		if (!File.Exists(xmlFile))
 		{
 			var imlFile = Path.Join(root, Path.GetFileName(root) + ".iml");
-			return ParseModuleManager(imlFile, null);
+			ParseModuleManager(imlFile, null);
 		}
-
-		var doc = new XmlDocument();
-		doc.Load(xmlFile);
-
-		var modules = doc.SelectNodes("//module")!;
-		var flatten = Enumerable.Empty<string>();
-
-		foreach (XmlNode module in modules)
+		else
 		{
-			var imlFile = module.Attributes["filepath"].Value[14..];
-			imlFile = Path.Join(root, imlFile);
+			using var matcher = new FastXmlMatcher(xmlFile);
+			while (matcher.MoveToElement("module"))
+			{
+				var imlFile = matcher.Reader.GetAttribute("filepath");
+				imlFile = Path.Join(root, imlFile![14..]);
 
-			var parent = Path.GetDirectoryName(imlFile);
-			if (parent == ".idea" || imlFile.Contains('/'))
-			{
-				flatten = flatten.Concat(ParseModuleManager(imlFile, null));
-			}
-			else
-			{
-				flatten = flatten.Concat(ParseModuleManager(imlFile, parent));
+				var parent = Path.GetDirectoryName(imlFile);
+				if (parent == ".idea" || imlFile.Contains('/'))
+				{
+					ParseModuleManager(imlFile, null);
+				}
+				else
+				{
+					ParseModuleManager(imlFile, parent);
+				}
 			}
 		}
-
-		return flatten;
 	}
 
-	/// <summary>
-	/// 在IDEA用户配置目录的 system/external_build_system/modules 下还有iml文件。
-	/// </summary>
-	private IEnumerable<string> ResolveExternalBuildSystem()
+	internal void ResolveExternalBuildSystem()
 	{
-		// 计算项目在 external_build_system 里对应的文件夹，计算方法见：
-		// https://github.com/JetBrains/intellij-community/blob/734efbef5b75dfda517731ca39fb404404fbe182/platform/platform-api/src/com/intellij/openapi/project/ProjectUtil.kt#L146
-		var extModules = detector.EBSModuleFiles(root);
-		if (extModules == null)
+		var ext = detector.EBSModuleFiles(root);
+		if (ext != null)
 		{
-			return Enumerable.Empty<string>();
-		}
-
-		var flatten = Enumerable.Empty<string>();
-
-		foreach (var file in Directory.EnumerateFiles(extModules))
-		{
-			string? moduleDirectory = null;
-			var stem = Path.GetFileNameWithoutExtension(file);
-			if (Path.GetFileName(root) != stem)
+			foreach (var file in Directory.EnumerateFiles(ext))
 			{
-				moduleDirectory = stem;
+				string? moduleDirectory = null;
+				var stem = Path.GetFileNameWithoutExtension(file);
+				if (Path.GetFileName(root) != stem)
+				{
+					moduleDirectory = stem;
+				}
+				ParseModuleManager(file, moduleDirectory);
 			}
-			flatten = flatten.Concat(ParseModuleManager(file, moduleDirectory));
 		}
-
-		return flatten;
 	}
 
 	/// <summary>
@@ -165,24 +128,23 @@ public class IDEAWorkspace : Workspace
 	/// </summary>
 	/// <param name="imlFile"></param>
 	/// <param name="module"></param>
-	private IEnumerable<string> ParseModuleManager(string imlFile, string? module)
+	void ParseModuleManager(string imlFile, string? module)
 	{
 		if (!File.Exists(imlFile))
 		{
-			yield break;
+			return;
 		}
-		var doc = new XmlDocument();
-		doc.Load(imlFile);
-
-		foreach (XmlNode node in doc.SelectNodes("//excludeFolder")!)
+		using var matcher = new FastXmlMatcher(imlFile);
+		while (matcher.MoveToElement("excludeFolder"))
 		{
-			var folder = node.Attributes["url"].Value;
+			var folder = matcher.Reader.GetAttribute("url")!;
 			if (!folder.StartsWith("file://$MODULE_DIR$/"))
 			{
 				throw new Exception("断言失败");
 			}
 			folder = folder[20..];
-			yield return module == null ? folder : Path.Join(module, folder);
+			var path = module == null ? folder : Path.Join(module, folder);
+			dict[path] = RecognizeType.Ignored;
 		}
 	}
 

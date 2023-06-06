@@ -9,11 +9,11 @@ using CodingFS.Workspaces;
 namespace CodingFS.Benchmark;
 
 /// <summary>
-/// |         Method |       Mean |   Error |  StdDev |     Gen0 |    Gen1 | Allocated |
-/// |--------------- |-----------:|--------:|--------:|---------:|--------:|----------:|
-/// |   UseXmlReader |   506.3 us | 1.25 us | 1.17 us |  42.9688 |  4.8828 | 353.39 KB |
-/// | UseXmlDocument | 1,004.7 us | 4.38 us | 3.89 us | 103.5156 | 68.3594 |  855.9 KB |
-/// | UseXmlReaderSM |   503.0 us | 1.30 us | 1.15 us |  42.9688 |  4.8828 | 353.48 KB |
+/// |         Method |     Mean |   Error |  StdDev |     Gen0 |    Gen1 | Allocated |
+/// |--------------- |---------:|--------:|--------:|---------:|--------:|----------:|
+/// | UseXmlReaderSM | 502.6 us | 0.90 us | 0.70 us |  42.9688 |  6.8359 | 353.48 KB |
+/// |   UseXmlReader | 518.2 us | 1.58 us | 1.48 us |  42.9688 |  6.8359 | 353.41 KB |
+/// | UseXmlDocument | 990.3 us | 6.62 us | 6.19 us | 103.5156 | 68.3594 | 855.79 KB |
 /// </summary>
 [MemoryDiagnoser]
 public class IdeaXMLPerf
@@ -21,9 +21,16 @@ public class IdeaXMLPerf
 	const string ideaRoot = "Resources";
 	const string workspaceXml = $"{ideaRoot}/.idea/workspace.xml";
 
-	readonly IDEAWorkspace ws = new(ideaRoot, null!);
+	readonly Dictionary<string, RecognizeType> dict = new();
 
-	IEnumerable<string> OldImpl()
+	readonly IDEAWorkspace ws;
+
+	public IdeaXMLPerf()
+	{
+		ws = new(null!, ideaRoot, dict);
+	}
+
+	void OldXmlDocumentImpl()
 	{
 		var document = new XmlDocument();
 		document.Load(workspaceXml);
@@ -31,12 +38,14 @@ public class IdeaXMLPerf
 		var tsIgnores = document.SelectNodes(
 			"//option[@name='exactExcludedFiles']/list//option");
 
-		return tsIgnores.Cast<XmlNode>()
-			.Select(node => node.Attributes["value"]!.Value)
-			.Select(ws.ToRelative);
+		foreach (XmlNode node in tsIgnores!)
+		{
+			var path = node.Attributes!["value"]!.Value;
+			dict[ws.ToRelative(path)] = RecognizeType.Ignored;
+		}
 	}
 
-	IEnumerable<string> NewImpl()
+	void XmlReaderImpl()
 	{
 		using var reader = XmlReader.Create(workspaceXml, IDEAWorkspace.xmlSettings);
 
@@ -57,41 +66,43 @@ public class IdeaXMLPerf
 
 			while (reader.Read() && reader.NodeType != XmlNodeType.EndElement)
 			{
-				var value = reader.GetAttribute("value");
-				yield return ws.ToRelative(value);
+				var path = reader.GetAttribute("value")!;
+				dict[ws.ToRelative(path)] = RecognizeType.Ignored;
 			}
-			yield break;
+			return;
 		}
 	}
 
 	[GlobalSetup]
 	public void CheckEquality()
 	{
-		var a = ws.ResolveWorkspace().ToArray();
-		var b = NewImpl().ToArray();
-		var c = OldImpl().ToArray();
+		var a = UseXmlReaderSM().Keys.ToArray();
+		var b = UseXmlReader().Keys.ToArray();
+		var c = UseXmlDocument().Keys.ToArray();
 
+		if (a.Length == 0)
+		{
+			throw new Exception("Result is empty");
+		}
 		if (!a.SequenceEqual(b) || !a.SequenceEqual(c))
 		{
 			throw new Exception("Results not equal");
 		}
 	}
 
-	[Benchmark]
-	public string UseXmlReader()
+	Dictionary<string, RecognizeType> Run(Action action)
 	{
-		return NewImpl().Last();
+		dict.Clear();
+		action();
+		return dict;
 	}
 
 	[Benchmark]
-	public string UseXmlDocument()
-	{
-		return OldImpl().Last();
-	}
+	public Dictionary<string, RecognizeType> UseXmlReaderSM() => Run(ws.LoadWorkspace);
 
 	[Benchmark]
-	public string UseXmlReaderSM()
-	{
-		return ws.ResolveWorkspace().Last();
-	}
+	public Dictionary<string, RecognizeType> UseXmlReader() => Run(XmlReaderImpl);
+
+	[Benchmark]
+	public Dictionary<string, RecognizeType> UseXmlDocument() => Run(OldXmlDocumentImpl);
 }

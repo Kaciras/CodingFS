@@ -43,6 +43,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Resources\.idea\test.iml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\.idea\modules.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

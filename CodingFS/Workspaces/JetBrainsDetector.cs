@@ -33,6 +33,11 @@ public sealed partial class JetBrainsDetector
 		}
 	}
 
+	/// <summary>
+	/// 在IDEA用户配置目录的 system/external_build_system/modules 下还有iml文件。计算方法见：
+	/// <br/>
+	/// https://github.com/JetBrains/intellij-community/blob/734efbef5b75dfda517731ca39fb404404fbe182/platform/platform-api/src/com/intellij/openapi/project/ProjectUtil.kt#L146
+	/// </summary>
 	public string? EBSModuleFiles(string path)
 	{
 		if (localConfig == null) return null;
