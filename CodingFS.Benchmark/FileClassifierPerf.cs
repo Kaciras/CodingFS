@@ -1,15 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using BenchmarkDotNet.Attributes;
 
 namespace CodingFS.Benchmark;
 
 /// <summary>
-/// |        Method |       Mean |   Error |  StdDev |   Gen0 | Allocated |
-/// |-------------- |-----------:|--------:|--------:|-------:|----------:|
-/// | V1_StringPath | 1,494.4 ns | 5.82 ns | 4.86 ns | 0.4292 |   3.51 KB |
-/// |   GetFileType |   505.1 ns | 5.58 ns | 5.22 ns | 0.2871 |   2.35 KB |
+/// |        Method |       Mean |    Error |   StdDev | Ratio |   Gen0 | Allocated | Alloc Ratio |
+/// |-------------- |-----------:|---------:|---------:|------:|-------:|----------:|------------:|
+/// | V1_StringPath | 2,581.6 ns | 18.09 ns | 16.92 ns |  1.00 | 0.7744 |   6.34 KB |        1.00 |
+/// |   GetFileType |   812.7 ns | 12.01 ns | 11.23 ns |  0.31 | 0.5169 |   4.23 KB |        0.67 |
 /// </summary>
 [MemoryDiagnoser]
 public class FileClassifierPerf
@@ -25,7 +23,7 @@ public class FileClassifierPerf
 	readonly FileClassifierV1 filter = new("/foo", new WorkspaceFactory[] { Fac1 }, Array.Empty<Workspace>());
 	readonly FileClassifier filter2 = new("/foo", new WorkspaceFactory[] { Fac1 }, Array.Empty<Workspace>());
 
-	[Benchmark]
+	[Benchmark(Baseline = true)]
 	public FileType V1_StringPath()
 	{
 		return filter.GetWorkspaces(DIR).GetFileType(PATH);

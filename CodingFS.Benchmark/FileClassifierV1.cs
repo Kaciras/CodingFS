@@ -1,10 +1,8 @@
 using System;
-using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using CodingFS.Workspaces;
 
 namespace CodingFS;
 
@@ -69,27 +67,6 @@ internal sealed class FileClassifierV1
 			throw new Exception("Path outside the scanner");
 		}
 		return relative.Split(Path.DirectorySeparatorChar);
-	}
-
-	public void Invalid(string directory)
-	{
-		var parts = SplitPath(directory);
-
-		var node = cacheRoot;
-		for (int i = 0; i < parts.Length - 1; i++)
-		{
-			var part = parts[i];
-			if (node.TryGet(part, out var child))
-			{
-				node = child;
-			}
-			else
-			{
-				return;
-			}
-		}
-
-		node.Remove(parts[^1]);
 	}
 
 	public WorkspacesInfo GetWorkspaces(string directory)

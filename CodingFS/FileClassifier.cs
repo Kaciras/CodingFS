@@ -52,6 +52,11 @@ file struct TrieNode<T>
 /// </summary>
 public sealed class FileClassifier
 {
+	/// <summary>
+	/// Maximum supported components length in file path.
+	/// </summary>
+	public const int MAX_COMPONENT = 255;
+
 	public static readonly WorkspaceFactory[] FACTORIES =
 	{
 		new JetBrainsDetector().Detect,
@@ -125,22 +130,23 @@ public sealed class FileClassifier
 
 	public WorkspacesInfo GetWorkspaces(string directory)
 	{
-		var memory = directory.AsMemory()[(Root.Length + 1)..];
+		var splitor = new PathComponentSpliter(directory);
+		splitor.Relative(Root);
+		splitor.NormalizeSepUnsafe();
 
 		var node = cacheRoot;
-		var part = NextPart(memory, 0);
-		var offset = 0;
 		var workspaces = new List<Workspace>(node.Value);
-
-		while (!part.IsEmpty)
+		
+		while (splitor.HasNext)
 		{
+			var part = splitor.SplitNext();
 			if (node.TryGet(part, out var child))
 			{
 				node = child;
 			}
 			else
 			{
-				var tempDir = Path.Join(Root, memory.Span[..offset]);
+				var tempDir = new string(splitor.Left.Span);
 				var matches = new List<Workspace>();
 				var ctx = new DetectContxt(workspaces, tempDir, matches);
 
@@ -153,7 +159,6 @@ public sealed class FileClassifier
 			}
 
 			workspaces.AddRange(node.Value);
-			part = NextPart(memory, offset += part.Length + 1);
 		}
 
 		return new WorkspacesInfo(directory, workspaces, node.Value); 
