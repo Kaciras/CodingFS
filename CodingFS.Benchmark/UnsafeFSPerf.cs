@@ -29,7 +29,7 @@ file sealed class UnsafeImpl : UnsafeRedirectFS
 /// |  ReadUnsafe |  7.692 ms | 0.0711 ms | 0.0665 ms |
 /// | ReadDefault | 10.674 ms | 0.2061 ms | 0.1928 ms |
 /// </summary>
-public class FSUnsafePerf
+public class UnsafeFSPerf
 {
 	Dokan dokan;
 	DokanInstance unsafeFS;

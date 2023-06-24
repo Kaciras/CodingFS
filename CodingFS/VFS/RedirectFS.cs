@@ -250,7 +250,7 @@ public abstract partial class RedirectFS : IDokanOperations
 		}
 		else
 		{
-			var stream = info.Context as FileStream;
+			var stream = (FileStream)info.Context;
 			lock (stream) // Protect from overlapped read
 			{
 				stream.Position = offset;
@@ -283,7 +283,7 @@ public abstract partial class RedirectFS : IDokanOperations
 		}
 		else
 		{
-			var stream = info.Context as FileStream;
+			var stream = (FileStream)info.Context;
 			lock (stream) // Protect from overlapped write
 			{
 				if (append)
@@ -372,6 +372,35 @@ public abstract partial class RedirectFS : IDokanOperations
 		// Return DokanResult.NotImplemented in FindFilesWithPattern to make FindFiles called
 		files = FindFilesHelper(fileName, "*");
 		return DokanResult.Success;
+	}
+
+	public virtual NtStatus FindStreams(
+		string fileName,
+		out IList<FileInformation> streams,
+		IDokanFileInfo info)
+	{
+		streams = Array.Empty<FileInformation>();
+		return DokanResult.NotImplemented;
+	}
+
+	public virtual IList<FileInformation> FindFilesHelper(
+		string fileName,
+		string searchPattern)
+	{
+		return new DirectoryInfo(GetPath(fileName))
+			.EnumerateFileSystemInfos()
+			.Where(finfo => DokanHelper.DokanIsNameInExpression(searchPattern, finfo.Name, true))
+			.Select(MapInfo).ToArray();
+	}
+
+	public virtual NtStatus FindFilesWithPattern(
+		string fileName,
+		string searchPattern,
+		out IList<FileInformation> files,
+		IDokanFileInfo info)
+	{
+		files = Array.Empty<FileInformation>();
+		return DokanResult.NotImplemented;
 	}
 
 	public virtual NtStatus SetFileAttributes(string fileName, FileAttributes attributes, IDokanFileInfo info)
@@ -609,35 +638,6 @@ public abstract partial class RedirectFS : IDokanOperations
 
 	public virtual NtStatus Unmounted(IDokanFileInfo info)
 	{
-		return DokanResult.Success;
-	}
-
-	public virtual NtStatus FindStreams(
-		string fileName,
-		out IList<FileInformation> streams,
-		IDokanFileInfo info)
-	{
-		streams = Array.Empty<FileInformation>();
-		return DokanResult.NotImplemented;
-	}
-
-	public virtual IList<FileInformation> FindFilesHelper(
-		string fileName,
-		string searchPattern)
-	{
-		return new DirectoryInfo(GetPath(fileName))
-			.EnumerateFileSystemInfos()
-			.Where(finfo => DokanHelper.DokanIsNameInExpression(searchPattern, finfo.Name, true))
-			.Select(MapInfo).ToArray();
-	}
-
-	public virtual NtStatus FindFilesWithPattern(
-		string fileName,
-		string searchPattern,
-		out IList<FileInformation> files,
-		IDokanFileInfo info)
-	{
-		files = FindFilesHelper(fileName, searchPattern);
 		return DokanResult.Success;
 	}
 

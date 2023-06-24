@@ -20,8 +20,8 @@ public class FileClassifierPerf
 
 	}
 
-	readonly FileClassifierV1 filter = new("/foo", new WorkspaceFactory[] { Fac1 }, Array.Empty<Workspace>());
-	readonly FileClassifier filter2 = new("/foo", new WorkspaceFactory[] { Fac1 }, Array.Empty<Workspace>());
+	readonly FileClassifierV1 filter = new("/foo", Array.Empty<Workspace>(), new WorkspaceFactory[] { Fac1 });
+	readonly FileClassifier filter2 = new("/foo", Array.Empty<Workspace>(), new WorkspaceFactory[] { Fac1 });
 
 	[Benchmark(Baseline = true)]
 	public FileType V1_StringPath()

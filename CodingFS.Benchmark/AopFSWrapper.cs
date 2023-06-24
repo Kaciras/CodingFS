@@ -26,7 +26,7 @@ public class AopFSWrapper : DispatchProxy
 		catch (TargetInvocationException e)
 		when (method.ReturnType == typeof(NtStatus))
 		{
-			return StaticFSWrapper.HandleException(e.InnerException!);
+			return ExceptionWrapper.HandleException(e.InnerException!);
 		}
 	}
 

@@ -23,7 +23,7 @@ internal class Mount : CliCommand
 
 	public void Execute()
 	{
-		var vfs = new UnsafeCodingFS("CodingFS") { Type = Type };
+		var vfs = new FilteredFS("CodingFS") { Type = Type };
 		vfs.Map["Coding"] = new FileClassifier(@"D:\Coding");
 
 		var mountOptions = DokanOptions.WriteProtection;
@@ -42,7 +42,7 @@ internal class Mount : CliCommand
 				options.MountPoint = $"{Point}:\\";
 				options.Options = mountOptions;
 			})
-			.Build(new StaticFSWrapper(vfs));
+			.Build(new ExceptionWrapper(vfs));
 
 		new ManualResetEvent(false).WaitOne();
 	}

@@ -27,7 +27,7 @@ file struct PathTrieNode<T>
 		return children.TryGetValue(part, out child!);
 	}
 
-	public void Remove(string part)
+	public readonly void Remove(string part)
 	{
 		children?.Remove(part);
 	}
@@ -50,9 +50,9 @@ internal sealed class FileClassifierV1
 	private readonly WorkspaceFactory[] factories;
 	private readonly PathTrieNode<Workspace[]> cacheRoot;
 
-	public FileClassifierV1(string root): this(root, FileClassifier.FACTORIES, FileClassifier.GLOBALS) {}
+	public FileClassifierV1(string root): this(root, FileClassifier.GLOBALS, FileClassifier.FACTORIES) {}
 
-	public FileClassifierV1(string root, WorkspaceFactory[] factories, Workspace[] globals)
+	public FileClassifierV1(string root, Workspace[] globals, WorkspaceFactory[] factories)
 	{
 		Root = root;
 		this.factories = factories;
@@ -62,11 +62,9 @@ internal sealed class FileClassifierV1
 	string[] SplitPath(string path)
 	{
 		var relative = Path.GetRelativePath(Root, path);
-		if (relative == null)
-		{
-			throw new Exception("Path outside the scanner");
-		}
-		return relative.Split(Path.DirectorySeparatorChar);
+		return relative == null 
+			? throw new Exception("Path outside the scanner")
+			: relative.Split(Path.DirectorySeparatorChar);
 	}
 
 	public WorkspacesInfo GetWorkspaces(string directory)

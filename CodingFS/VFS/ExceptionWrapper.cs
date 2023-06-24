@@ -10,11 +10,11 @@ namespace CodingFS.VFS;
 /// <summary>
 /// 这个类的作用跟 AopFSProxy 一样，区别是静态实现了全部方法的异常处理。
 /// </summary>
-public sealed class StaticFSWrapper : IDokanOperations
+public sealed class ExceptionWrapper : IDokanOperations
 {
 	public IDokanOperations Native { get; }
 
-	public StaticFSWrapper(IDokanOperations native)
+	public ExceptionWrapper(IDokanOperations native)
 	{
 		Native = native;
 	}
