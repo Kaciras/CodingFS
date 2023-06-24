@@ -7,19 +7,12 @@ namespace CodingFS.Workspaces;
 
 public class IDEAWorkspace : Workspace
 {
-	internal static readonly XmlReaderSettings xmlSettings = new()
-	{
-		IgnoreComments = true,
-		IgnoreWhitespace = true,
-	};
-	
-
+	readonly Dictionary<string, RecognizeType> dict;
 	readonly JetBrainsDetector detector;
 	readonly string root;
-	readonly Dictionary<string, RecognizeType> dict;
 
-	internal IDEAWorkspace(JetBrainsDetector detector, string root) 
-		: this(detector, root, new()) 
+	public IDEAWorkspace(JetBrainsDetector detector, string root) 
+		: this(new(), root, detector) 
 	{
 		LoadWorkspace();
 		LoadModules();
@@ -30,12 +23,12 @@ public class IDEAWorkspace : Workspace
 	/// This constructor is only used for test/benchmark.
 	/// </summary>
 	internal IDEAWorkspace(
-		JetBrainsDetector detector, 
+		Dictionary<string, RecognizeType> dict,
 		string root, 
-		Dictionary<string, RecognizeType> dict)
+		JetBrainsDetector detector)
 	{
-		this.root = root;
 		this.dict = dict;
+		this.root = root;
 		this.detector = detector;
 	}
 
@@ -60,15 +53,15 @@ public class IDEAWorkspace : Workspace
 	internal void LoadWorkspace()
 	{
 		var xmlFile = Path.Join(root, ".idea/workspace.xml");
-		using var matcher = new FastXmlMatcher(xmlFile);
+		using var reader = XmlReaderEx.ForFile(xmlFile);
 
-		matcher.MoveToAttribute("name", "exactExcludedFiles");
-		matcher.MoveToElement("list");
+		reader.GoToAttribute("name", "exactExcludedFiles");
+		reader.GoToElement("list");
 
-		var depth = matcher.Reader.Depth + 1;
-		while (matcher.NextInLayer(depth))
+		var depth = reader.Depth + 1;
+		while (reader.NextInLayer(depth))
 		{
-			var value = matcher.Reader.GetAttribute("value")!;
+			var value = reader.GetAttribute("value")!;
 			dict[ToRelative(value)] = RecognizeType.Ignored;
 		}
 	}
@@ -86,10 +79,10 @@ public class IDEAWorkspace : Workspace
 		}
 		else
 		{
-			using var matcher = new FastXmlMatcher(xmlFile);
-			while (matcher.MoveToElement("module"))
+			using var matcher = XmlReaderEx.ForFile(xmlFile);
+			while (matcher.GoToElement("module"))
 			{
-				var imlFile = matcher.Reader.GetAttribute("filepath");
+				var imlFile = matcher.GetAttribute("filepath");
 				imlFile = Path.Join(root, imlFile![14..]);
 
 				var parent = Path.GetDirectoryName(imlFile);
@@ -134,10 +127,10 @@ public class IDEAWorkspace : Workspace
 		{
 			return;
 		}
-		using var matcher = new FastXmlMatcher(imlFile);
-		while (matcher.MoveToElement("excludeFolder"))
+		using var matcher = XmlReaderEx.ForFile(imlFile);
+		while (matcher.GoToElement("excludeFolder"))
 		{
-			var folder = matcher.Reader.GetAttribute("url")!;
+			var folder = matcher.GetAttribute("url")!;
 			if (!folder.StartsWith("file://$MODULE_DIR$/"))
 			{
 				throw new Exception("断言失败");

@@ -11,7 +11,7 @@ namespace CodingFS.Benchmark;
 /// <summary>
 /// |         Method |     Mean |   Error |  StdDev |     Gen0 |    Gen1 | Allocated |
 /// |--------------- |---------:|--------:|--------:|---------:|--------:|----------:|
-/// | UseXmlReaderSM | 502.6 us | 0.90 us | 0.70 us |  42.9688 |  6.8359 | 353.48 KB |
+/// | UseXmlReaderEx | 502.6 us | 0.90 us | 0.70 us |  42.9688 |  6.8359 | 353.48 KB |
 /// |   UseXmlReader | 518.2 us | 1.58 us | 1.48 us |  42.9688 |  6.8359 | 353.41 KB |
 /// | UseXmlDocument | 990.3 us | 6.62 us | 6.19 us | 103.5156 | 68.3594 | 855.79 KB |
 /// </summary>
@@ -27,7 +27,7 @@ public class IdeaXMLPerf
 
 	public IdeaXMLPerf()
 	{
-		ws = new(null!, ideaRoot, dict);
+		ws = new(dict, ideaRoot, null!);
 	}
 
 	void OldXmlDocumentImpl()
@@ -45,10 +45,9 @@ public class IdeaXMLPerf
 		}
 	}
 
-	void XmlReaderImpl()
+	void XmlReaderWithoutEx()
 	{
-		using var reader = XmlReader.Create(workspaceXml, IDEAWorkspace.xmlSettings);
-
+		using var reader = XmlReaderEx.ForFile(workspaceXml);
 		while (reader.Read())
 		{
 			if (!reader.IsStartElement())
@@ -76,7 +75,7 @@ public class IdeaXMLPerf
 	[GlobalSetup]
 	public void CheckEquality()
 	{
-		var a = UseXmlReaderSM().Keys.ToArray();
+		var a = UseXmlReaderEx().Keys.ToArray();
 		var b = UseXmlReader().Keys.ToArray();
 		var c = UseXmlDocument().Keys.ToArray();
 
@@ -98,10 +97,10 @@ public class IdeaXMLPerf
 	}
 
 	[Benchmark]
-	public Dictionary<string, RecognizeType> UseXmlReaderSM() => Run(ws.LoadWorkspace);
+	public Dictionary<string, RecognizeType> UseXmlReaderEx() => Run(ws.LoadWorkspace);
 
 	[Benchmark]
-	public Dictionary<string, RecognizeType> UseXmlReader() => Run(XmlReaderImpl);
+	public Dictionary<string, RecognizeType> UseXmlReader() => Run(XmlReaderWithoutEx);
 
 	[Benchmark]
 	public Dictionary<string, RecognizeType> UseXmlDocument() => Run(OldXmlDocumentImpl);

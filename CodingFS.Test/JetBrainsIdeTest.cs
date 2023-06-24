@@ -5,7 +5,7 @@ using Xunit;
 
 namespace CodingFS.Test;
 
-public class JetBrainsIdeTest
+public class JetBrainsIDETest
 {
 	[Theory]
 	[InlineData("😗🍏🍎🚗", -734144743)]
@@ -21,7 +21,7 @@ public class JetBrainsIdeTest
 	public void LoadWorkspace()
 	{
 		var dict = new Dictionary<string, RecognizeType>();
-		var instance = new IDEAWorkspace(null!, "Resources", dict);
+		var instance = new IDEAWorkspace(dict,  "Resources", null!);
 		instance.LoadWorkspace();
 
 		Assert.Equal(87, dict.Count);
@@ -34,7 +34,7 @@ public class JetBrainsIdeTest
 	public void LoadModules()
 	{
 		var dict = new Dictionary<string, RecognizeType>();
-		var instance = new IDEAWorkspace(null!, "Resources", dict);
+		var instance = new IDEAWorkspace(dict, "Resources", null!);
 		instance.LoadModules();
 
 		Assert.Single(dict, KeyValuePair.Create("target", RecognizeType.Ignored));
