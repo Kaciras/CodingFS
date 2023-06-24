@@ -4,7 +4,7 @@ using System.IO;
 using System.Security.AccessControl;
 using DokanNet;
 
-namespace CodingFS.VFS;
+namespace CodingFS.Benchmark.Legacy;
 
 /// <summary>
 /// Provide a default implement of IDokanOperations. 

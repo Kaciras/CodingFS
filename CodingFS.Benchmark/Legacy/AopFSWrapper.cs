@@ -2,7 +2,7 @@ using System.Reflection;
 using CodingFS.VFS;
 using DokanNet;
 
-namespace CodingFS.Benchmark;
+namespace CodingFS.Benchmark.Legacy;
 
 /// <summary>
 /// 包装一个 IDonakOperations 对象，将一些常见的异常转换为 NtStatus 返回。

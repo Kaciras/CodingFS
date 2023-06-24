@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 
-namespace CodingFS;
+namespace CodingFS.Benchmark.Legacy;
 
 file struct PathTrieNode<T>
 {
@@ -50,7 +50,7 @@ internal sealed class FileClassifierV1
 	private readonly WorkspaceFactory[] factories;
 	private readonly PathTrieNode<Workspace[]> cacheRoot;
 
-	public FileClassifierV1(string root): this(root, FileClassifier.GLOBALS, FileClassifier.FACTORIES) {}
+	public FileClassifierV1(string root) : this(root, FileClassifier.GLOBALS, FileClassifier.FACTORIES) { }
 
 	public FileClassifierV1(string root, Workspace[] globals, WorkspaceFactory[] factories)
 	{
@@ -62,7 +62,7 @@ internal sealed class FileClassifierV1
 	string[] SplitPath(string path)
 	{
 		var relative = Path.GetRelativePath(Root, path);
-		return relative == null 
+		return relative == null
 			? throw new Exception("Path outside the scanner")
 			: relative.Split(Path.DirectorySeparatorChar);
 	}
@@ -98,6 +98,6 @@ internal sealed class FileClassifierV1
 			workspaces.AddRange(node.Value);
 		}
 
-		return new WorkspacesInfo(directory, workspaces, node.Value); 
+		return new WorkspacesInfo(directory, workspaces, node.Value);
 	}
 }

@@ -1,5 +1,6 @@
 using System.IO;
 using BenchmarkDotNet.Attributes;
+using CodingFS.Benchmark.Legacy;
 using CodingFS.VFS;
 using DokanNet;
 
