@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace CodingFS.Benchmark.Legacy;
 
-file struct PathTrieNode<T>
+file sealed class PathTrieNode<T>
 {
 	private IDictionary<string, PathTrieNode<T>>? children;
 
@@ -27,7 +27,7 @@ file struct PathTrieNode<T>
 		return children.TryGetValue(part, out child!);
 	}
 
-	public readonly void Remove(string part)
+	public void Remove(string part)
 	{
 		children?.Remove(part);
 	}
