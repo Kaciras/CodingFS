@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace CodingFS;
@@ -6,6 +7,9 @@ namespace CodingFS;
 // Only support POSIX and DOS paths.
 internal ref struct PathComponentSpliter
 {
+	// Alias with short name.
+	static readonly char Sep = Path.DirectorySeparatorChar;
+
 	readonly int root = -1;
 	readonly ReadOnlyMemory<char> path;
 
@@ -24,29 +28,26 @@ internal ref struct PathComponentSpliter
 		this.path = path.AsMemory();
 	}
 
-	public readonly void NormalizeSepUnsafe()
-	{
-		var span = MemoryMarshal.AsMemory(path).Span;
-		for (int i = 0; i < span.Length; i++)
-		{
-			if (span[i] == '\\') span[i] = '/';
-		}
-	}
-
 	public void Relative(ReadOnlySpan<char> root)
 	{
 		if (root.IsEmpty) return;
-		if (root[^1] == '/') root = root[..^1];
+
+		if (root[^1] == Sep)
+		{
+			root = root[..^1];
+		}
 
 		var length = root.Length;
 		var span = path.Span;
 
-		if (span.Length > root.Length &&
-			span[..length].SequenceEqual(root) &&
-			span[length] == '/')
+		if (span.StartsWith(root))
 		{
-			index = length;
-			return;
+			if (span.Length == root.Length ||
+				span[length] == Sep)
+			{
+				index = length;
+				return;
+			}
 		}
 		throw new ArgumentException($"{path} is not relative to {root}");
 	}
@@ -62,7 +63,7 @@ internal ref struct PathComponentSpliter
 		}
 
 		var slice = path[(index + 1)..];
-		var i = slice.Span.IndexOf('/');
+		var i = slice.Span.IndexOf(Sep);
 
 		if (i == -1)
 		{

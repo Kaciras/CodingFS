@@ -30,6 +30,7 @@ public class PathHelpersTest
 	[InlineData("/a/bar/c", "/a", "/a/bar")]
 	[InlineData("a/bar/c", "a", "a/bar")]
 	[InlineData("A:/bar/c", "A:/", "A:/bar")]
+	[InlineData("D:/Coding", "D:/Coding", "D:/Coding")]
 	[Theory]
 	public void Relative(string path, string root, string next)
 	{
@@ -38,17 +39,15 @@ public class PathHelpersTest
 		s.Relative(root);
 		Assert.Equal(root, new string(s.Left.Span));
 
-		s.SplitNext();
+		if (s.HasNext)
+		{
+			s.SplitNext();
+		}
+		
 		Assert.Equal(next, new string(s.Left.Span));
 	}
 
-	[Fact]
-	public void NormalizeSepUnsafe()
-	{
-		var s = new PathComponentSpliter(@"C:\windows/a\bar\c");
-		s.NormalizeSepUnsafe();
-		Assert.Equal("C:/windows/a/bar/c", new string(s.Right.Span));
-	}
+	
 
 	[Fact]
 	public void SS()
