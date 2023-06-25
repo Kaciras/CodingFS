@@ -39,7 +39,7 @@ file struct TrieNode<T>
 
 	public TrieNode<T> Put(ReadOnlyMemory<char> part, T value)
 	{
-		children ??= new();
+		children ??= new(Utils.memComparator);
 		return children[part] = new TrieNode<T>(value);
 	}
 }
