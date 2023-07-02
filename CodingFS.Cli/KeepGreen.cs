@@ -10,7 +10,7 @@ using LibGit2Sharp;
 namespace CodingFS.Cli;
 
 [Verb("keep-green", HelpText = "Keep dependencies update-to-date")]
-internal sealed class KeepGreen : CliCommand
+internal sealed class KeepGreen : Command
 {
 	private FileClassifier filter;
 

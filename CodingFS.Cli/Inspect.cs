@@ -7,7 +7,7 @@ using CommandLine;
 namespace CodingFS.Cli;
 
 [Verb("inspect", HelpText = "在控制台打印出各种分类的文件")]
-internal sealed class Inspect : CliCommand
+internal sealed class Inspect : Command
 {
 	[Option('t', "type", HelpText = "过滤文件")]
 	public FileType Type { get; set; }

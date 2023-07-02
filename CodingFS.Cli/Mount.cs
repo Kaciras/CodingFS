@@ -13,7 +13,7 @@ using DokanNet.Logging;
 namespace CodingFS.Cli;
 
 [Verb("mount", HelpText = "挂载为虚拟磁盘，仅包含指定类型的文件")]
-internal class Mount : CliCommand
+internal class Mount : Command
 {
 	[Option('p', "point", Default = "x", HelpText = "指定盘符")]
 	public string Point { get; set; } = "x";

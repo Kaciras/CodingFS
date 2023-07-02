@@ -85,7 +85,7 @@ public class IdeaXMLPerf
 		}
 		if (!a.SequenceEqual(b) || !a.SequenceEqual(c))
 		{
-			throw new Exception("Results not equal");
+			throw new Exception("Results are not equal");
 		}
 	}
 

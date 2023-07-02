@@ -7,10 +7,6 @@ using AccessType = System.IO.FileAccess;
 
 namespace CodingFS.VFS;
 
-/// <summary>
-/// This file system is designed as read-only, since writing to files may cause
-/// unexcepted overwrite to filtered files.
-/// </summary>
 public class FilteredFS : UnsafeRedirectFS
 {
 	public Dictionary<string, FileClassifier> Map { get; } = new();

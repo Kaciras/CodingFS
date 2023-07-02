@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CodingFS.Cli;
 
-public interface CliCommand
+public interface Command
 {
 	void Execute();
 }

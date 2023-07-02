@@ -37,6 +37,7 @@ public class JetBrainsIDETest
 		var instance = new IDEAWorkspace(dict, "Resources", null!);
 		instance.LoadModules();
 
-		Assert.Single(dict, KeyValuePair.Create("target", RecognizeType.Ignored));
+		Assert.Single(dict);
+		Assert.Equal(RecognizeType.Ignored, dict["target"]);
 	}
 }

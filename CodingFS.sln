@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodingFS.Benchmark", "Codin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodingFS.Test", "CodingFS.Test\CodingFS.Test.csproj", "{2B01CF31-C759-49AD-B765-B38274D8A95E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cli", "Cli\Cli.csproj", "{1E1D48D3-8397-44C8-B77F-AED458BF0EDA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodingFS.Cli", "CodingFS.Cli\CodingFS.Cli.csproj", "{1E1D48D3-8397-44C8-B77F-AED458BF0EDA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
