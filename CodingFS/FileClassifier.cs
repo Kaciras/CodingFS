@@ -1,15 +1,12 @@
 using System;
-using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Linq;
 using CodingFS.Workspaces;
 
 namespace CodingFS;
 
-// TODO: 改成更省内存的数据结构
-file struct TrieNode<T>
+file class TrieNode<T>
 {
 	Dictionary<ReadOnlyMemory<char>, TrieNode<T>>? children;
 
@@ -20,7 +17,7 @@ file struct TrieNode<T>
 		Value = value;
 	}
 
-	public readonly bool TryGet(
+	public bool TryGet(
 		ReadOnlyMemory<char> part,
 		[MaybeNullWhen(false)] out TrieNode<T> child)
 	{
@@ -32,7 +29,7 @@ file struct TrieNode<T>
 		return children.TryGetValue(part, out child!);
 	}
 
-	public readonly void Remove(ReadOnlyMemory<char> part)
+	public void Remove(ReadOnlyMemory<char> part)
 	{
 		children?.Remove(part);
 	}
@@ -85,33 +82,24 @@ public sealed class FileClassifier
 	private readonly WorkspaceFactory[] factories;
 	private readonly TrieNode<Workspace[]> cacheRoot;
 
-	public FileClassifier(string root): this(root, FACTORIES, GLOBALS) {}
+	public FileClassifier(string root): this(root, GLOBALS, FACTORIES) {}
 
-	public FileClassifier(string root, WorkspaceFactory[] factories, Workspace[] globals)
+	public FileClassifier(string root, Workspace[] globals, WorkspaceFactory[] factories)
 	{
 		Root = root;
 		this.factories = factories;
 		cacheRoot = new TrieNode<Workspace[]>(globals);
 	}
 
-	static ReadOnlyMemory<char> NextPart(ReadOnlyMemory<char> path, int offset)
-	{
-		if (offset >= path.Length)
-		{
-			return ReadOnlyMemory<char>.Empty;
-		}
-		var i = path.Span[offset..].IndexOfAny('/', '\\');
-		return path[offset..(i == -1 ? Index.End : offset + i)];
-	}
-
 	public void Invalid(string directory)
 	{
-		var memory = directory.AsMemory();
-		var part = NextPart(memory, 0);
-		var next = NextPart(memory, part.Length);
+		var splitor = new PathComponentSpliter(directory);
+		splitor.Relative(Root);
 
 		var node = cacheRoot;
-		while (!next.IsEmpty)
+		var part = Root.AsMemory();
+
+		for (; ; )
 		{
 			if (node.TryGet(part, out var child))
 			{
@@ -121,8 +109,11 @@ public sealed class FileClassifier
 			{
 				return;
 			}
-			part = next;
-			next = NextPart(memory, part.Length);
+			if (!splitor.HasNext)
+			{
+				break;
+			}
+			part = splitor.SplitNext();
 		}
 
 		node.Remove(part);
@@ -132,23 +123,22 @@ public sealed class FileClassifier
 	{
 		var splitor = new PathComponentSpliter(directory);
 		splitor.Relative(Root);
-		splitor.NormalizeSepUnsafe();
 
 		var node = cacheRoot;
 		var workspaces = new List<Workspace>(node.Value);
-		
-		while (splitor.HasNext)
+		var part = Root.AsMemory();
+
+		for (; ; )
 		{
-			var part = splitor.SplitNext();
 			if (node.TryGet(part, out var child))
 			{
 				node = child;
 			}
 			else
 			{
-				var tempDir = new string(splitor.Left.Span);
+				var path = new string(splitor.Left.Span);
 				var matches = new List<Workspace>();
-				var ctx = new DetectContxt(workspaces, tempDir, matches);
+				var ctx = new DetectContxt(workspaces, path, matches);
 
 				foreach (var factory in factories)
 				{
@@ -157,8 +147,13 @@ public sealed class FileClassifier
 
 				node = node.Put(part, matches.ToArray());
 			}
-
 			workspaces.AddRange(node.Value);
+
+			if (!splitor.HasNext)
+			{
+				break;
+			}
+			part = splitor.SplitNext();
 		}
 
 		return new WorkspacesInfo(directory, workspaces, node.Value); 
