@@ -10,7 +10,7 @@ using CommandLine;
 using DokanNet;
 using DokanNet.Logging;
 
-namespace CodingFS.Command;
+namespace CodingFS.Cli;
 
 [Verb("mount", HelpText = "挂载为虚拟磁盘，仅包含指定类型的文件")]
 internal class Mount : CliCommand

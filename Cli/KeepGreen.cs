@@ -7,7 +7,7 @@ using CodingFS.Workspaces;
 using CommandLine;
 using LibGit2Sharp;
 
-namespace CodingFS.Command;
+namespace CodingFS.Cli;
 
 [Verb("keep-green", HelpText = "Keep dependencies update-to-date")]
 internal sealed class KeepGreen : CliCommand

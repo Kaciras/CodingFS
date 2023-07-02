@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CodingFS.Command;
+namespace CodingFS.Cli;
 
 public interface CliCommand
 {

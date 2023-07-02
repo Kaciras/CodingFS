@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using CommandLine;
 
-namespace CodingFS.Command;
+namespace CodingFS.Cli;
 
 [Verb("inspect", HelpText = "在控制台打印出各种分类的文件")]
 internal sealed class Inspect : CliCommand
