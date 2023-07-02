@@ -1,15 +1,10 @@
 using System;
-using System.IO;
-using System.Runtime.InteropServices;
 
 namespace CodingFS;
 
 // Only support POSIX and DOS paths.
 internal ref struct PathComponentSpliter
 {
-	// Alias with short name.
-	static readonly char Sep = Path.DirectorySeparatorChar;
-
 	readonly int root = -1;
 	readonly ReadOnlyMemory<char> path;
 
@@ -32,7 +27,7 @@ internal ref struct PathComponentSpliter
 	{
 		if (root.IsEmpty) return;
 
-		if (root[^1] == Sep)
+		if (root[^1] == '\\' || root[^1] == '/')
 		{
 			root = root[..^1];
 		}
@@ -43,7 +38,7 @@ internal ref struct PathComponentSpliter
 		if (span.StartsWith(root))
 		{
 			if (span.Length == root.Length ||
-				span[length] == Sep)
+				span[length] == '\\' || span[length] == '/')
 			{
 				index = length;
 				return;
@@ -63,7 +58,7 @@ internal ref struct PathComponentSpliter
 		}
 
 		var slice = path[(index + 1)..];
-		var i = slice.Span.IndexOf(Sep);
+		var i = slice.Span.IndexOfAny('\\', '/');
 
 		if (i == -1)
 		{
