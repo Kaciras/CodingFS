@@ -23,26 +23,22 @@ internal class Mount : Command
 
 	public void Execute()
 	{
-		var vfs = new FilteredDokan("CodingFS") { Type = Type };
-		vfs.Map["Coding"] = new CodingPathFilter(@"D:\Coding");
+		var map = new Dictionary<string, CodingPathFilter>()
+		{
+			["Coding"] = new CodingPathFilter(@"D:\Coding")
+		};
 
-		var mountOptions = DokanOptions.WriteProtection;
+		using var _ = new VirtualFS(map, new()
+		{
 #if DEBUG
-		using var dokanLogger = new ConsoleLogger("[Dokan] ");
-		mountOptions |= DokanOptions.DebugMode | DokanOptions.StderrOutput;
+			Debug = true,
 #else
-		var dokanLogger = new NullLogger();
-		Console.WriteLine($@"CodingFS mounted at x:\");
+			Debug = false,
 #endif
-
-		using var dokan = new Dokan(dokanLogger);
-		using var instance = new DokanInstanceBuilder(dokan)
-			.ConfigureOptions(options =>
-			{
-				options.MountPoint = $"{Point}:\\";
-				options.Options = mountOptions;
-			})
-			.Build(new ExceptionWrapper(vfs));
+			Readonly = true,
+			Type = Type,
+			MountPoint = @$"{Point}:\",
+		});
 
 		new ManualResetEvent(false).WaitOne();
 	}

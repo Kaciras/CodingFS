@@ -7,7 +7,7 @@ namespace CodingFS.FUSE;
 
 public class FilteredDokan : UnsafeRedirectDokan
 {
-	public Dictionary<string, CodingPathFilter> Map { get; } = new();
+	public Dictionary<string, CodingPathFilter> Map { get; set; }
 
 	public FileType Type { get; set; }
 
