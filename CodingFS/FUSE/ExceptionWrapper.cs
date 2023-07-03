@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using DokanNet;
 
-namespace CodingFS.VFS;
+namespace CodingFS.FUSE;
 
 /// <summary>
 /// 这个类的作用跟 AopFSProxy 一样，区别是静态实现了全部方法的异常处理。

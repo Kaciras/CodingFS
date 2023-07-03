@@ -6,7 +6,7 @@ using DokanNet.Logging;
 
 namespace CodingFS.Benchmark;
 
-file sealed class SafeImpl : RedirectFS
+file sealed class SafeImpl : RedirectDokan
 {
 	protected override string GetPath(string fileName)
 	{
@@ -14,7 +14,7 @@ file sealed class SafeImpl : RedirectFS
 	}
 }
 
-file sealed class UnsafeImpl : UnsafeRedirectFS
+file sealed class UnsafeImpl : UnsafeRedirectDokan
 {
 	protected override string GetPath(string fileName)
 	{

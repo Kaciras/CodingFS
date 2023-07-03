@@ -1,5 +1,5 @@
 using System.Reflection;
-using CodingFS.VFS;
+using CodingFS.FUSE;
 using DokanNet;
 
 namespace CodingFS.Benchmark.Legacy;

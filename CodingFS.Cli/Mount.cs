@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using CodingFS.VFS;
+using CodingFS.FUSE;
 using CommandLine.Text;
 using CommandLine;
 using DokanNet;
@@ -23,8 +23,8 @@ internal class Mount : Command
 
 	public void Execute()
 	{
-		var vfs = new FilteredFS("CodingFS") { Type = Type };
-		vfs.Map["Coding"] = new FileClassifier(@"D:\Coding");
+		var vfs = new FilteredDokan("CodingFS") { Type = Type };
+		vfs.Map["Coding"] = new CodingPathFilter(@"D:\Coding");
 
 		var mountOptions = DokanOptions.WriteProtection;
 #if DEBUG

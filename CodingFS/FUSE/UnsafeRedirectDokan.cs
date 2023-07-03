@@ -6,9 +6,9 @@ using DokanNet;
 using Microsoft.Win32.SafeHandles;
 using AccessType = System.IO.FileAccess;
 
-namespace CodingFS.Benchmark;
+namespace CodingFS.FUSE;
 
-public abstract partial class UnsafeRedirectFS : RedirectFS, IDokanOperationsUnsafe
+public abstract partial class UnsafeRedirectDokan : RedirectDokan, IDokanOperationsUnsafe
 {
 	public virtual NtStatus ReadFile(
 		string fileName,

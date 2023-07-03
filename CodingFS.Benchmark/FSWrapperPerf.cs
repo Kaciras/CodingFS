@@ -1,7 +1,7 @@
 using System.IO;
 using BenchmarkDotNet.Attributes;
 using CodingFS.Benchmark.Legacy;
-using CodingFS.VFS;
+using CodingFS.FUSE;
 using DokanNet;
 
 // 测试结果表明，动态代理在不出现异常的情况下比静态慢 23 倍，出现异常的情况下慢 3 倍。

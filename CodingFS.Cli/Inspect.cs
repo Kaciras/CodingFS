@@ -19,7 +19,7 @@ internal sealed class Inspect : Command
 
 	private void Execute(string root)
 	{
-		var classifier = new FileClassifier(root);
+		var classifier = new CodingPathFilter(root);
 
 		var groups = classifier.Walk(root, Type)
 			.GroupBy(v => v.Item2, v => v.Item1)

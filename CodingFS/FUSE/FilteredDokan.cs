@@ -1,15 +1,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using CodingFS.Benchmark;
 using DokanNet;
-using AccessType = System.IO.FileAccess;
 
-namespace CodingFS.VFS;
+namespace CodingFS.FUSE;
 
-public class FilteredFS : UnsafeRedirectFS
+public class FilteredDokan : UnsafeRedirectDokan
 {
-	public Dictionary<string, FileClassifier> Map { get; } = new();
+	public Dictionary<string, CodingPathFilter> Map { get; } = new();
 
 	public FileType Type { get; set; }
 
@@ -19,7 +17,7 @@ public class FilteredFS : UnsafeRedirectFS
 	/// Create a new CodingFS with name, the name will displayed as volume label.
 	/// </summary>
 	/// <param name="name"></param>
-	public FilteredFS(string name) { Name = name; }
+	public FilteredDokan(string name) { Name = name; }
 
 	protected override string GetPath(string value)
 	{

@@ -30,14 +30,14 @@ using Microsoft.Win32.SafeHandles;
 using AccessType = System.IO.FileAccess;
 using FileAccess = DokanNet.FileAccess;
 
-namespace CodingFS.Benchmark;
+namespace CodingFS.FUSE;
 
 #pragma warning disable CA1416 // Unsupported operations will not be called.
 
 /// <summary>
 /// Copied from https://github.com/dokan-dev/dokan-dotnet/blob/master/sample/DokanNetMirror/Mirror.cs
 /// </summary>
-public abstract partial class RedirectFS : IDokanOperations
+public abstract partial class RedirectDokan : IDokanOperations
 {
 	const FileAccess DataAccess = FileAccess.Execute | FileAccess.GenericExecute
 								| FileAccess.GenericWrite | FileAccess.GenericRead

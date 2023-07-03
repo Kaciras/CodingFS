@@ -8,7 +8,7 @@ internal class Program
 {
 	static void Main(string[] args)
 	{
-		Parser.Default.ParseArguments<KeepGreen, Mount, Inspect>(args)
+		Parser.Default.ParseArguments<Mount, Inspect>(args)
 			.WithParsed<Command>(command => command.Execute());
 	}
 }
