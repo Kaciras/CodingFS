@@ -3,14 +3,14 @@ using System;
 namespace CodingFS;
 
 // Only support POSIX and DOS paths.
-internal ref struct PathComponentSpliter
+internal ref struct PathSpliter
 {
 	readonly int root = -1;
 	readonly ReadOnlyMemory<char> path;
 
 	int index = -1;
 
-	public PathComponentSpliter(string path)
+	public PathSpliter(string path)
 	{
 		if (path.Length > 0 && path[0] == '/')
 		{

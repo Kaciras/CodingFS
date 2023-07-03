@@ -9,14 +9,31 @@ namespace CodingFS;
 
 public struct VirtualFSOptions
 {
-	public string Name;
-
-	public bool Readonly;
-
-	public bool Debug;
-
+	/// <summary>
+	/// Which type of files should listed in the file system.
+	/// Default is FileType.Source.
+	/// </summary>
 	public FileType Type;
 
+	/// <summary>
+	/// Volume label in Windows.
+	/// </summary>
+	public string? Name;
+
+	/// <summary>
+	/// Mount the file system as read-only.
+	/// </summary>
+	public bool Readonly;
+
+	/// <summary>
+	/// Output debug messages in console.
+	/// </summary>
+	public bool Debug;
+
+	/// <summary>
+	/// The mount point of the file system.
+	/// If is null, VirtualFS will auto decision on mount.
+	/// </summary>
 	public string? MountPoint;
 }
 
@@ -38,7 +55,7 @@ public sealed class VirtualFS : IDisposable
 
 	void InitDokan(Dictionary<string, CodingPathFilter> map, in VirtualFSOptions o)
 	{
-		var vfs = new FilteredDokan(o.Name)
+		var vfs = new FilteredDokan(o.Name ?? "CodingFS")
 		{
 			Map = map,
 			Type = o.Type,
@@ -62,7 +79,7 @@ public sealed class VirtualFS : IDisposable
 			dokanLogger = new NullLogger();
 		}
 
-		var mountPoint = o.MountPoint;
+		var mountPoint = o.MountPoint ?? "";
 		var dokan = new Dokan(dokanLogger);
 		var builder = new DokanInstanceBuilder(dokan)
 			.ConfigureOptions(options =>
@@ -75,5 +92,8 @@ public sealed class VirtualFS : IDisposable
 		disposables.Add(builder.Build(new ExceptionWrapper(vfs)));
 	}
 
+	/// <summary>
+	/// Dispose this object will also unmount the file system.
+	/// </summary>
 	public void Dispose() => disposables.ForEach(x => x.Dispose());
 }

@@ -8,7 +8,8 @@ using DokanNet;
 namespace CodingFS.FUSE;
 
 /// <summary>
-/// 这个类的作用跟 AopFSProxy 一样，区别是静态实现了全部方法的异常处理。
+/// Attempt to convert IO exception thrown in IDokanOperations to NtStatus,
+/// or re-throw it if cannot convert.
 /// </summary>
 public sealed class ExceptionWrapper : IDokanOperations
 {
@@ -18,12 +19,7 @@ public sealed class ExceptionWrapper : IDokanOperations
 	{
 		Native = native;
 	}
-
-	/// <summary>
-	/// 把一些 IO 异常转换为对应的 NtStatus,如果不能转换则原样抛出。
-	/// </summary>
-	/// <param name="e">异常</param>
-	/// <returns>对应的 NtStatus</returns>
+	
 	internal static NtStatus HandleException(Exception e)
 	{
 		switch (e)

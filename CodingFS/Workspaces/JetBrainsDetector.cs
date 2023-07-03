@@ -11,9 +11,9 @@ public sealed partial class JetBrainsDetector
 	[GeneratedRegex("^.+IntelliJIdea(20[0-9.]+)$")]
 	private static partial Regex JBConfigRE();
 
+	// Config directory of the latest version of IntelliJIdea.
 	private string? localConfig;
 
-	// 查找最新版的配置目录，JB 的产品在更新了次版本号之后会创建一个新的配置文件夹
 	public JetBrainsDetector()
 	{
 		var home = Environment.GetFolderPath(SpecialFolder.LocalApplicationData);
@@ -34,20 +34,19 @@ public sealed partial class JetBrainsDetector
 	}
 
 	/// <summary>
-	/// 在IDEA用户配置目录的 system/external_build_system/modules 下还有iml文件。计算方法见：
+	/// There iml files in [localConfig]/projects/[NAME]/external_build_system/modules.
 	/// <br/>
+	/// How to get the [NAME] of the project：
 	/// https://github.com/JetBrains/intellij-community/blob/734efbef5b75dfda517731ca39fb404404fbe182/platform/platform-api/src/com/intellij/openapi/project/ProjectUtil.kt#L146
 	/// </summary>
 	public string? EBSModuleFiles(string path)
 	{
 		if (localConfig == null) return null;
 
-		var cache = JavaStringHashcode(path.Replace('\\', '/')).ToString("x2");
+		var cache = Utils.JavaStringHashcode(path.Replace('\\', '/')).ToString("x2");
 		cache = Path.GetFileName(path) + "." + cache;
 		var modules = Path.Join(localConfig, "projects", cache, "external_build_system/modules");
 
 		return Directory.Exists(modules) ? modules : null;
 	}
-
-	internal static int JavaStringHashcode(string str) => str.Aggregate(0, (h, c) => 31 * h + c);
 }

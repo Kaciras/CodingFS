@@ -26,27 +26,9 @@ public sealed class WorkspacesInfo
 
 	public FileType GetFileType(string path)
 	{
-		var flags = Workspaces.Aggregate(RecognizeType.NotCare, (v, c) => v | c.Recognize(path));
-		return GetFileType(flags);
-	}
-
-	/// <summary>
-	/// Judging the file type by the classification result of workspaces.
-	/// </summary>
-	static FileType GetFileType(RecognizeType flags)
-	{
-		if (flags.HasFlag(RecognizeType.Dependency))
-		{
-			return FileType.Dependency;
-		}
-		else if (flags.HasFlag(RecognizeType.Ignored))
-		{
-			return FileType.Generated;
-		}
-		else
-		{
-			return FileType.SourceFile;
-		}
+		return Workspaces
+			.Aggregate(RecognizeType.NotCare, (v, c) => v | c.Recognize(path))
+			.ToFileType();
 	}
 
 	public IEnumerable<FileSystemInfo> ListFiles(FileType type)

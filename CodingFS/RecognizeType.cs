@@ -6,17 +6,17 @@ namespace CodingFS;
 public enum RecognizeType
 {
 	/// <summary>
-	/// 不关心（或无法识别）的文件。
+	/// Not Dependency nor Ignored.
 	/// </summary>
 	NotCare = 0,
 
 	/// <summary>
-	/// 被忽略的文件，如构建产物等。
+	/// Temp file, build output...
 	/// </summary>
 	Ignored = 1,
 
 	/// <summary>
-	/// 依赖文件，多为 IDE 配置和第三方的文件。
+	/// 3rd party file, config file...
 	/// </summary>
 	Dependency = 2,
 }

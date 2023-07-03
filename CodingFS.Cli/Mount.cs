@@ -19,7 +19,7 @@ internal class Mount : Command
 	public string Point { get; set; } = "x";
 
 	[Option('t', "type", HelpText = "要包含的文件类型")]
-	public FileType Type { get; set; } = FileType.SourceFile;
+	public FileType Type { get; set; } = FileType.Source;
 
 	public void Execute()
 	{

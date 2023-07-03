@@ -15,7 +15,7 @@ public class PathHelpersTest
 	[Theory]
 	public void Split(string path, string[] components)
 	{
-		var s = new PathComponentSpliter(path);
+		var s = new PathSpliter(path);
 
 		var list = new List<string>();
 		while (s.HasNext)
@@ -34,7 +34,7 @@ public class PathHelpersTest
 	[Theory]
 	public void Relative(string path, string root, string next)
 	{
-		var s = new PathComponentSpliter(path);
+		var s = new PathSpliter(path);
 
 		s.Relative(root);
 		Assert.Equal(root, new string(s.Left.Span));

@@ -50,7 +50,7 @@ internal sealed class FileClassifierV1
 	private readonly WorkspaceFactory[] factories;
 	private readonly PathTrieNode<Workspace[]> cacheRoot;
 
-	public FileClassifierV1(string root) : this(root, FileClassifier.GLOBALS, FileClassifier.FACTORIES) { }
+	public FileClassifierV1(string root) : this(root, CodingPathFilter.GLOBALS, CodingPathFilter.FACTORIES) { }
 
 	public FileClassifierV1(string root, Workspace[] globals, WorkspaceFactory[] factories)
 	{

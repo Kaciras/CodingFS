@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -11,22 +10,31 @@ using System.Runtime.InteropServices;
 
 namespace CodingFS;
 
-sealed class MemComparator : IEqualityComparer<ReadOnlyMemory<char>>
+static class Utils
 {
-	public bool Equals(ReadOnlyMemory<char> x, ReadOnlyMemory<char> y)
-	{
-		return x.Span.SequenceEqual(y.Span);
-	}
+	/// <summary>
+	/// Check ReadOnlyMemory&lt;char&gt; equality by their content.
+	/// </summary>
+	public static readonly CharMemComparator memComparator = new();
 
-	public int GetHashCode([DisallowNull] ReadOnlyMemory<char> obj)
+	/// <summary>
+	/// Judging the file type by the classification result of workspaces.
+	/// </summary>
+	public static FileType ToFileType(this RecognizeType flags)
 	{
-		return Utils.JavaStringHashcode(obj.Span);
+		if (flags == RecognizeType.NotCare)
+		{
+			return FileType.Source;
+		}
+		if ((flags & RecognizeType.Dependency) == 0)
+		{
+			return FileType.Generated;
+		}
+		else
+		{
+			return FileType.Dependency;
+		}
 	}
-}
-
-internal static class Utils
-{
-	public static readonly MemComparator memComparator = new();
 
 	public static int JavaStringHashcode(ReadOnlySpan<char> str)
 	{
@@ -54,4 +62,14 @@ internal static class Utils
 			}
 		}
 	}
+}
+
+sealed class CharMemComparator : IEqualityComparer<ReadOnlyMemory<char>>
+{
+	public bool Equals(ReadOnlyMemory<char> x, ReadOnlyMemory<char> y)
+	{
+		return x.Span.SequenceEqual(y.Span);
+	}
+
+	public int GetHashCode(ReadOnlyMemory<char> x) => Utils.JavaStringHashcode(x.Span);
 }
