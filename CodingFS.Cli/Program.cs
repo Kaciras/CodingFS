@@ -1,14 +1,9 @@
+using CodingFS.Cli;
 using CommandLine;
-using System.Drawing;
-using System.Windows.Input;
+using System.Runtime.CompilerServices;
 
-namespace CodingFS.Cli;
+[module: SkipLocalsInit]
 
-internal class Program
-{
-	static void Main(string[] args)
-	{
-		Parser.Default.ParseArguments<Mount, Inspect>(args)
-			.WithParsed<Command>(command => command.Execute());
-	}
-}
+Parser.Default
+	.ParseArguments<MountCommand, ListCommand>(args)
+	.WithParsed<Command>(command => command.Execute());

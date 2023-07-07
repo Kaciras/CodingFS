@@ -1,19 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using CodingFS.FUSE;
-using CommandLine.Text;
 using CommandLine;
-using DokanNet;
-using DokanNet.Logging;
 
 namespace CodingFS.Cli;
 
 [Verb("mount", HelpText = "挂载为虚拟磁盘，仅包含指定类型的文件")]
-internal class Mount : Command
+sealed class MountCommand : Command
 {
 	[Option('p', "point", Default = "x", HelpText = "指定盘符")]
 	public string Point { get; set; } = "x";
