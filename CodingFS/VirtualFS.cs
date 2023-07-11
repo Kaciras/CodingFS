@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Runtime.CompilerServices;
 using CodingFS.FUSE;
 using DokanNet;
@@ -16,17 +17,17 @@ public struct VirtualFSOptions
 	public FileType Type;
 
 	/// <summary>
-	/// Volume label in Windows.
+	/// Volume label in Windows, default is "CodingFS".
 	/// </summary>
 	public string? Name;
 
 	/// <summary>
-	/// Mount the file system as read-only.
+	/// Mount the file system as read-only, default false.
 	/// </summary>
 	public bool Readonly;
 
 	/// <summary>
-	/// Output debug messages in console.
+	/// Print debug messages in console, default false.
 	/// </summary>
 	public bool Debug;
 
@@ -51,7 +52,14 @@ public sealed class VirtualFS : IDisposable
 		{
 			throw new PlatformNotSupportedException();
 		}
+
+		disposables.Reverse(); // Dispose order is the reverse of init order.
 	}
+
+	/// <summary>
+	/// Dispose this object will unmount the file system.
+	/// </summary>
+	public void Dispose() => disposables.ForEach(x => x.Dispose());
 
 	void InitDokan(Dictionary<string, CodingPathFilter> map, in VirtualFSOptions o)
 	{
@@ -87,13 +95,8 @@ public sealed class VirtualFS : IDisposable
 				options.MountPoint = mountPoint;
 				options.Options = mountOptions;
 			});
-
+		
 		disposables.Add(dokan);
 		disposables.Add(builder.Build(new ExceptionWrapper(vfs)));
 	}
-
-	/// <summary>
-	/// Dispose this object will also unmount the file system.
-	/// </summary>
-	public void Dispose() => disposables.ForEach(x => x.Dispose());
 }
