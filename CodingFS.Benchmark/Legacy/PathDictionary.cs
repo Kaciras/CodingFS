@@ -4,7 +4,7 @@ using System.IO;
 
 namespace CodingFS.Benchmark.Legacy;
 
-public sealed class PathDictionary : Workspace
+public sealed class PathDictionary
 {
 	private readonly string directory;
 	private readonly IDictionary<FilePath, RecognizeType> map;

@@ -24,7 +24,7 @@ public class FileClassifierPerf
 	static void Fac1(DetectContxt ctx)	{}
 
 	readonly FileClassifierV1 filter = new("/foo", Array.Empty<Workspace>(), new WorkspaceFactory[] { Fac1 });
-	readonly FileClassifier filter2 = new("/foo", Array.Empty<Workspace>(), new WorkspaceFactory[] { Fac1 });
+	readonly CodingPathFilter filter2 = new("/foo", Array.Empty<Workspace>(), new WorkspaceFactory[] { Fac1 });
 
 	[Benchmark(Baseline = true)]
 	public FileType V1_StringPath()

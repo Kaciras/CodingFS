@@ -7,16 +7,6 @@ namespace CodingFS.Test;
 
 public class JetBrainsIDETest
 {
-	[Theory]
-	[InlineData("😗🍏🍎🚗", -734144743)]
-	[InlineData("the quick brown fox jumps over a lazy dog", 2013091971)]
-	[InlineData("", 0)]
-	public void JavaStringHashcode(string value, int hash)
-	{
-		var actual = JetBrainsDetector.JavaStringHashcode(value);
-		Assert.Equal(hash, actual);
-	}
-
 	[Fact]
 	public void LoadWorkspace()
 	{

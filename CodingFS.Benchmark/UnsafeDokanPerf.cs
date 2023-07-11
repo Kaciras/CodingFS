@@ -1,6 +1,7 @@
 using System.IO;
 using System.Threading;
 using BenchmarkDotNet.Attributes;
+using CodingFS.FUSE;
 using DokanNet;
 using DokanNet.Logging;
 

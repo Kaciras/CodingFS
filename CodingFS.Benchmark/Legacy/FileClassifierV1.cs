@@ -63,7 +63,7 @@ internal sealed class FileClassifierV1
 	{
 		var relative = Path.GetRelativePath(Root, path);
 		return relative == null
-			? throw new Exception("Path outside the scanner")
+			? throw new Exception("Directory outside the scanner")
 			: relative.Split(Path.DirectorySeparatorChar);
 	}
 
