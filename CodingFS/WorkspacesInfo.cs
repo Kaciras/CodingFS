@@ -10,11 +10,11 @@ public sealed class WorkspacesInfo
 
 	public IReadOnlyList<Workspace> Current { get; }
 
-	private readonly string path;
+	public string Directory { get; }
 
 	internal WorkspacesInfo(string path, IReadOnlyList<Workspace> workspaces, IReadOnlyList<Workspace> current)
 	{
-		this.path = path;
+		Directory = path;
 		Workspaces = workspaces;
 		Current = current;
 	}
@@ -26,14 +26,15 @@ public sealed class WorkspacesInfo
 
 	public FileType GetFileType(string path)
 	{
+		var relative = Path.GetRelativePath(Directory, path);
 		return Workspaces
-			.Aggregate(RecognizeType.NotCare, (v, c) => v | c.Recognize(path))
+			.Aggregate(RecognizeType.NotCare, (v, c) => v | c.Recognize(relative))
 			.ToFileType();
 	}
 
 	public IEnumerable<FileSystemInfo> ListFiles(FileType type)
 	{
-		return new DirectoryInfo(path)
+		return new DirectoryInfo(Directory)
 			.EnumerateFileSystemInfos()
 			.Where(info => GetFileType(info.FullName).HasFlag(type));
 	}

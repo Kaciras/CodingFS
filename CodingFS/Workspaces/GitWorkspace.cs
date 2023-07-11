@@ -28,9 +28,9 @@ public sealed class GitWorkspace : Workspace
 		Repository = new Repository(path);
 	}
 
-	public RecognizeType Recognize(string file)
+	public RecognizeType Recognize(string path)
 	{
-		return Ignore && Repository.Ignore.IsPathIgnored(file) 
+		return Ignore && Repository.Ignore.IsPathIgnored(path) 
 			? RecognizeType.Ignored : RecognizeType.NotCare;
 	}
 }

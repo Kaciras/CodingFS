@@ -15,5 +15,5 @@ public class MavenWorkspace : Workspace
 		}
 	}
 
-	public RecognizeType Recognize(string file) => RecognizeType.NotCare;
+	public RecognizeType Recognize(string path) => RecognizeType.NotCare;
 }

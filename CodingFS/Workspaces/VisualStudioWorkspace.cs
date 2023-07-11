@@ -28,9 +28,9 @@ public class VisualStudioWorkspace : Workspace
 		this.projects = projects;
 	}
 
-	public RecognizeType Recognize(string file)
+	public RecognizeType Recognize(string path)
 	{
-		switch (Path.GetRelativePath(Folder, file))
+		switch (path)
 		{
 			case "TestResults":
 			case "Debug":
@@ -115,9 +115,9 @@ public class MSBuildProject : Workspace
 		};
 	}
 
-	public RecognizeType Recognize(string file)
+	public RecognizeType Recognize(string path)
 	{
-		return SDK.Contains(Path.GetRelativePath(Folder, file)) 
+		return SDK.Contains(path) 
 			? RecognizeType.Ignored : RecognizeType.NotCare;
 	}
 }

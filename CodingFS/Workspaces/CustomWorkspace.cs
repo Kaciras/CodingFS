@@ -11,12 +11,12 @@ public sealed class CustomWorkspace : Workspace
 {
 	public WorkspaceKind Kind => WorkspaceKind.PM;
 
-	public RecognizeType Recognize(string file)
+	public RecognizeType Recognize(string path)
 	{
-		switch (file)
+		switch (path)
 		{
-			case @"D:\Coding\ThirdParty":
-			case @"D:\Coding\Blog\data":
+			case @"ThirdParty":
+			case @"Blog\data":
 				return RecognizeType.Dependency;
 			default:
 				return RecognizeType.NotCare;

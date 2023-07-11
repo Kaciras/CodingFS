@@ -59,9 +59,8 @@ internal class VSCodeWorkspace : Workspace
 		}
 	}
 
-	public RecognizeType Recognize(string file)
+	public RecognizeType Recognize(string relative)
 	{
-		var relative = Path.GetRelativePath(Folder, file);
 		if (relative == ".vscode")
 		{
 			return RecognizeType.Dependency;

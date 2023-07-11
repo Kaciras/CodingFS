@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,7 +24,8 @@ public class NpmWorkspace : Workspace
 
 	public RecognizeType Recognize(string path)
 	{
-		if (Path.GetFileName(path) == "node_modules")
+		var name = Path.GetFileName(path.AsSpan());
+		if (name.SequenceEqual("node_modules"))
 		{
 			return RecognizeType.Dependency;
 		}

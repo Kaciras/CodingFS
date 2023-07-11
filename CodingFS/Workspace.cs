@@ -14,7 +14,7 @@ public interface Workspace
 
 	WorkspaceKind Kind { get; }
 
-	RecognizeType Recognize(string file);
+	RecognizeType Recognize(string relativePath);
 }
 
 public readonly struct DetectContxt

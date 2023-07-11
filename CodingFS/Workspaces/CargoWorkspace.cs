@@ -4,8 +4,6 @@ namespace CodingFS.Workspaces;
 
 public sealed class CargoWorkspace : Workspace
 {
-	public WorkspaceKind Kind => WorkspaceKind.PM;
-
 	public static void Match(DetectContxt ctx)
 	{
 		var toml = Path.Join(ctx.Path, "cargo.toml");
@@ -15,5 +13,7 @@ public sealed class CargoWorkspace : Workspace
 		}
 	}
 
-	public RecognizeType Recognize(string file) => RecognizeType.NotCare;
+	public WorkspaceKind Kind => WorkspaceKind.PM;
+
+	public RecognizeType Recognize(string path) => RecognizeType.NotCare;
 }

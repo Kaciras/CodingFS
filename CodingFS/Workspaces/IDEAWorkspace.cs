@@ -36,10 +36,8 @@ public class IDEAWorkspace : Workspace
 		this.detector = detector;
 	}
 
-	public RecognizeType Recognize(string path)
+	public RecognizeType Recognize(string relative)
 	{
-		var relative = Path.GetRelativePath(root, path);
-
 		if (relative == ".idea")
 		{
 			return RecognizeType.Dependency;
@@ -150,7 +148,7 @@ public class IDEAWorkspace : Workspace
 		value = value.Replace("$PROJECT_DIR$", root);
 
 		// 绝对路径也有可能是项目下的文件
-		// Path.GetRelativePath 对于非子路径不报错，而是原样返回
+		// Directory.GetRelativePath 对于非子路径不报错，而是原样返回
 		return Path.GetRelativePath(root, value);
 	}
 }
