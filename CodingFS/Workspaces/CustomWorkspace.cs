@@ -9,6 +9,8 @@ namespace CodingFS.Workspaces;
 /// </summary>
 public sealed class CustomWorkspace : Workspace
 {
+	public WorkspaceKind Kind => WorkspaceKind.PM;
+
 	public RecognizeType Recognize(string file)
 	{
 		switch (file)

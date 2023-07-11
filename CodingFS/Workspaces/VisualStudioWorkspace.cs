@@ -6,11 +6,21 @@ using Microsoft.Build.Construction;
 
 namespace CodingFS.Workspaces;
 
+/// <summary>
+/// Support detect project that uses VisualStudio and MSBuild, it also detects NuGet.
+/// <br/>
+/// Where NuGet records dependencies:
+/// https://fossa.com/blog/managing-dependencies-net-csproj-packagesconfig
+/// </summary>
 public class VisualStudioWorkspace : Workspace
 {
+	public WorkspaceKind Kind => WorkspaceKind.IDE;
+
 	public string Folder { get; }
 
-	internal readonly Dictionary<string, string> projects;
+	readonly Dictionary<string, string> projects;
+
+	bool legacyNuGet;
 
 	public VisualStudioWorkspace(string folder, Dictionary<string, string> projects)
 	{
@@ -27,43 +37,55 @@ public class VisualStudioWorkspace : Workspace
 			case "Release":
 				return RecognizeType.Ignored;
 			case ".vs":
-			case "packages":
+			case "packages" when legacyNuGet:
 				return RecognizeType.Dependency;
 			default:
 				return RecognizeType.NotCare;
 		}
 	}
 
+	static VisualStudioWorkspace ParseSln(string dir, string file)
+	{
+		var projects = new Dictionary<string, string>();
+		var solution = SolutionFile.Parse(file);
+
+		foreach (var project in solution.ProjectsInOrder)
+		{
+			var type = Path.GetExtension(project.RelativePath);
+			var folder = Path.GetDirectoryName(project.AbsolutePath)!;
+
+			projects[folder] = project.AbsolutePath;
+		}
+
+		return new VisualStudioWorkspace(dir, projects);
+	}
+
 	public static void Match(DetectContxt ctx)
 	{
-		var vsSln = ctx.Parent.OfType<VisualStudioWorkspace>().FirstOrDefault();
+		var (path, parent) = ctx;
+		var vsSln = parent.OfType<VisualStudioWorkspace>().FirstOrDefault();
 
 		if (vsSln == null)
 		{
-			var slnFile = Directory.EnumerateFiles(ctx.Path)
+			var slnFile = Directory.EnumerateFiles(path)
 				.FirstOrDefault(i => i.EndsWith(".sln"));
 
 			if (slnFile != null)
 			{
-				var projects = new Dictionary<string, string>();
-				var solution = SolutionFile.Parse(slnFile);
-
-				foreach (var project in solution.ProjectsInOrder)
-				{
-					var type = Path.GetExtension(project.RelativePath);
-					var folder = Path.GetDirectoryName(project.AbsolutePath)!;
-
-					projects[folder] = project.AbsolutePath;
-				}
-
-				vsSln = new VisualStudioWorkspace(ctx.Path, projects);
+				vsSln = ParseSln(path, slnFile);
 				ctx.AddWorkspace(vsSln);
 			}
 		}
 
-		if (vsSln != null && vsSln.projects.TryGetValue(ctx.Path, out var file))
+		if (vsSln != null && vsSln.projects.TryGetValue(path, out var file))
 		{
-			ctx.AddWorkspace(new MSBuildProject(ctx.Path, file));
+			var project = new MSBuildProject(vsSln, path, file);
+			ctx.AddWorkspace(project);
+
+			if (project.SDK == MSBuildProject.SDK_CSHARP)
+			{
+				vsSln.legacyNuGet = vsSln.legacyNuGet || Path.Exists(path);
+			}
 		}
 	}
 }
@@ -73,12 +95,17 @@ public class MSBuildProject : Workspace
 	public static readonly string[] SDK_CSHARP = { "obj" , "bin" };
 	public static readonly string[] SDK_CPP = { "Debug", "Release", "x64", "win32" };
 
+	public WorkspaceKind Kind => WorkspaceKind.IDE;
+
+	public VisualStudioWorkspace Solution { get; }
+
 	public string Folder { get; }
 
 	public string[] SDK { get; }
 
-	public MSBuildProject(string folder, string file)
+	public MSBuildProject(VisualStudioWorkspace solution, string folder, string file)
 	{
+		Solution = solution;
 		Folder = folder;
 		SDK = Path.GetExtension(file) switch
 		{

@@ -15,6 +15,8 @@ public sealed class GitWorkspace : Workspace
 		}
 	}
 
+	public WorkspaceKind Kind => WorkspaceKind.VCS;
+
 	// Native handles in Repository implements destruction function,
 	// so just let GC to dispose them.
 	public Repository Repository { get; }

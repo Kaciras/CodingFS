@@ -5,6 +5,8 @@ namespace CodingFS.Workspaces;
 
 public class MavenWorkspace : Workspace
 {
+	public WorkspaceKind Kind => WorkspaceKind.PM;
+
 	public static void Match(DetectContxt ctx)
 	{
 		if (File.Exists(Path.Join(ctx.Path, "pox.xml")))

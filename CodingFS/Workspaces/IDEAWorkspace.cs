@@ -1,12 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Xml;
 
 namespace CodingFS.Workspaces;
 
 public class IDEAWorkspace : Workspace
 {
+	public WorkspaceKind Kind => WorkspaceKind.IDE;
+
 	readonly Dictionary<string, RecognizeType> dict;
 	readonly JetBrainsDetector detector;
 	readonly string root;

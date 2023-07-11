@@ -2,8 +2,10 @@ using System.IO;
 
 namespace CodingFS.Workspaces;
 
-public class CargoWorkspace : Workspace
+public sealed class CargoWorkspace : Workspace
 {
+	public WorkspaceKind Kind => WorkspaceKind.PM;
+
 	public static void Match(DetectContxt ctx)
 	{
 		var toml = Path.Join(ctx.Path, "cargo.toml");

@@ -1,9 +1,19 @@
+using System;
 using System.Collections.Generic;
 
 namespace CodingFS;
 
+public enum WorkspaceKind : byte { Other, PM, IDE, VCS }
+
 public interface Workspace
 {
+	ReadOnlySpan<char> Name
+	{
+		get => GetType().Name.AsSpan().TrimEnd("Workspace");
+	}
+
+	WorkspaceKind Kind { get; }
+
 	RecognizeType Recognize(string file);
 }
 
@@ -22,6 +32,14 @@ public readonly struct DetectContxt
 		Parent = parent;
 		Path = path;
 		Matches = matches;
+	}
+
+	public void Deconstruct(
+		out string path,
+		out IReadOnlyList<Workspace> parent)
+	{
+		path = Path;
+		parent = Parent;
 	}
 
 	public void AddWorkspace(Workspace value) => Matches.Add(value);

@@ -6,6 +6,8 @@ namespace CodingFS.Workspaces;
 
 public class NpmWorkspace : Workspace
 {
+	public WorkspaceKind Kind => WorkspaceKind.PM;
+
 	public NpmWorkspace? Parent { get; }
 
 	public string Directory { get; }
