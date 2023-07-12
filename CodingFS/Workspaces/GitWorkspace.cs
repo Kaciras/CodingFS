@@ -30,6 +30,10 @@ public sealed class GitWorkspace : Workspace
 
 	public RecognizeType Recognize(string path)
 	{
+		if (path == ".git")
+		{
+			return RecognizeType.NotCare;
+		}
 		return Ignore && Repository.Ignore.IsPathIgnored(path) 
 			? RecognizeType.Ignored : RecognizeType.NotCare;
 	}
