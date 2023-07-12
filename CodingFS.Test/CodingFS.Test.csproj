@@ -11,9 +11,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Resources\.vscode\settings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <None Include="Resources\.vscode\vscode-empty.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\.vscode\vscode-exclude.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -58,10 +61,6 @@
     <None Include="Resources\.idea\workspace.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Resources\NewFolder\" />
   </ItemGroup>
 
 </Project>

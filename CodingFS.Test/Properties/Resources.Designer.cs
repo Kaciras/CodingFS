@@ -59,5 +59,25 @@ namespace CodingFS.Test.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] vscode_empty {
+            get {
+                object obj = ResourceManager.GetObject("vscode_empty", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] vscode_exclude {
+            get {
+                object obj = ResourceManager.GetObject("vscode_exclude", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }
