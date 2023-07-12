@@ -1,14 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CodingFS.Workspaces;
 using Xunit;
 
 namespace CodingFS.Test;
 
-public class UtilsTest
+public sealed class UtilsTest
 {
 	[Theory]
 	[InlineData("😗🍏🍎🚗", -734144743)]

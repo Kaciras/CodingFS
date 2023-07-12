@@ -5,7 +5,7 @@ using Xunit;
 
 namespace CodingFS.Test;
 
-public class PathHelpersTest
+public sealed class PathHelpersTest
 {
 	[InlineData("😗🍏🍎🚗", new string[] { "😗🍏🍎🚗" })]
 	[InlineData("", new string[] { "" })]

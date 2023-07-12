@@ -9,6 +9,4 @@ using System.Threading.Tasks;
 
 namespace CodingFS.Test;
 
-internal class Global
-{
-}
+static class Global {}
