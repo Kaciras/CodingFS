@@ -2,7 +2,7 @@ using System.Xml;
 
 namespace CodingFS;
 
-internal static class XmlReaderEx
+static class XmlReaderEx
 {
 	internal static readonly XmlReaderSettings settings = new()
 	{

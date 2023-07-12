@@ -12,7 +12,7 @@ public sealed class WorkspacesInfo
 
 	public string Directory { get; }
 
-	internal WorkspacesInfo(string path, IReadOnlyList<Workspace> workspaces, IReadOnlyList<Workspace> current)
+	internal WorkspacesInfo(string path, List<Workspace> workspaces, Workspace[] current)
 	{
 		Directory = path;
 		Workspaces = workspaces;

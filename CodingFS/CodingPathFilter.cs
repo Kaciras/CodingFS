@@ -44,10 +44,9 @@ file class TrieNode<T>
 /// <summary>
 /// 文件分类器，以给定的目录为上下文，对这之下的文件进行分类。
 /// 
-/// 【线程安全】
-/// 该类不是线程安全的，请勿并发调用。
+/// This class is not thread-safe.
 /// </summary>
-public sealed class FileClassifier
+public sealed class CodingPathFilter
 {
 	/// <summary>
 	/// Maximum supported components length in file path.
@@ -82,18 +81,18 @@ public sealed class FileClassifier
 	private readonly WorkspaceFactory[] factories;
 	private readonly TrieNode<Workspace[]> cacheRoot;
 
-	public FileClassifier(string root): this(root, GLOBALS, FACTORIES) {}
+	public CodingPathFilter(string root): this(root, GLOBALS, FACTORIES) {}
 
-	public FileClassifier(string root, Workspace[] globals, WorkspaceFactory[] factories)
+	public CodingPathFilter(string root, Workspace[] globals, WorkspaceFactory[] factories)
 	{
 		Root = root;
 		this.factories = factories;
 		cacheRoot = new TrieNode<Workspace[]>(globals);
 	}
 
-	public void Invalid(string directory)
+	public void HandleChange(string directory)
 	{
-		var splitor = new PathComponentSpliter(directory);
+		var splitor = new PathSpliter(directory);
 		splitor.Relative(Root);
 
 		var node = cacheRoot;
@@ -121,7 +120,7 @@ public sealed class FileClassifier
 
 	public WorkspacesInfo GetWorkspaces(string directory)
 	{
-		var splitor = new PathComponentSpliter(directory);
+		var splitor = new PathSpliter(directory);
 		splitor.Relative(Root);
 
 		var node = cacheRoot;

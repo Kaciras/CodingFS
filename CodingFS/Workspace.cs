@@ -22,7 +22,7 @@ public readonly struct DetectContxt
 	public readonly IReadOnlyList<Workspace> Parent;
 	public readonly string Path;
 
-	readonly List<Workspace> Matches;
+	readonly List<Workspace> matches;
 
 	public DetectContxt(
 		IReadOnlyList<Workspace> parent,
@@ -31,7 +31,7 @@ public readonly struct DetectContxt
 	{
 		Parent = parent;
 		Path = path;
-		Matches = matches;
+		this.matches = matches;
 	}
 
 	public void Deconstruct(
@@ -42,7 +42,7 @@ public readonly struct DetectContxt
 		parent = Parent;
 	}
 
-	public void AddWorkspace(Workspace value) => Matches.Add(value);
+	public void AddWorkspace(Workspace value) => matches.Add(value);
 }
 
 public delegate void WorkspaceFactory(DetectContxt ctx);

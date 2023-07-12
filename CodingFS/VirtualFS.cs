@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Runtime.CompilerServices;
 using CodingFS.FUSE;
 using DokanNet;
@@ -42,6 +41,9 @@ public sealed class VirtualFS : IDisposable
 {
 	readonly List<IDisposable> disposables = new();
 
+	/// <summary>
+	/// Create new instance of VirtualFS will mount the virtual drive.
+	/// </summary>
 	public VirtualFS(Dictionary<string, CodingPathFilter> map, in VirtualFSOptions options)
 	{
 		if (OperatingSystem.IsWindows())

@@ -10,13 +10,8 @@ namespace CodingFS.FUSE;
 
 public abstract partial class UnsafeRedirectDokan : RedirectDokan, IDokanOperationsUnsafe
 {
-	public virtual NtStatus ReadFile(
-		string fileName,
-		IntPtr buffer,
-		uint bufferLength,
-		out int bytesRead,
-		long offset,
-		IDokanFileInfo info)
+	public virtual NtStatus ReadFile(string fileName, IntPtr buffer, uint bufferLength,
+		out int bytesRead, long offset, IDokanFileInfo info)
 	{
 		if (info.Context == null)
 		{
@@ -34,13 +29,8 @@ public abstract partial class UnsafeRedirectDokan : RedirectDokan, IDokanOperati
 		return DokanResult.Success;
 	}
 
-	public virtual NtStatus WriteFile(
-		string fileName,
-		IntPtr buffer,
-		uint bufferLength,
-		out int bytesWritten,
-		long offset,
-		IDokanFileInfo info)
+	public virtual NtStatus WriteFile(string fileName, IntPtr buffer, uint bufferLength,
+		out int bytesWritten, long offset, IDokanFileInfo info)
 	{
 		if (info.Context == null)
 		{

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -6,14 +7,27 @@ using Microsoft.Extensions.FileSystemGlobbing;
 
 namespace CodingFS.Workspaces;
 
-file class VSCodeSettings
+file struct VSCodeSettings
 {
 	[JsonPropertyName("files.exclude")]
-	public Dictionary<string, bool> Exclude { get; set; }
+	public IDictionary<string, bool> Exclude { get; set; }
+
+	public VSCodeSettings()
+	{
+		Exclude = ImmutableDictionary<string, bool>.Empty;
+	}
 
 	public static VSCodeSettings Parse(string file)
 	{
-		return JsonSerializer.Deserialize<VSCodeSettings>(File.OpenRead(file))!;
+		try
+		{
+			using var stream = File.OpenRead(file);
+			return JsonSerializer.Deserialize<VSCodeSettings>(stream)!;
+		}
+		catch (FileNotFoundException)
+		{
+			return new VSCodeSettings();
+		}
 	}
 }
 
@@ -36,26 +50,20 @@ internal class VSCodeWorkspace : Workspace
 	public VSCodeWorkspace(string folder)
 	{
 		Folder = folder;
-		try
+		
+		var file = Path.Join(folder, ".vscode/settings.json");
+		var setting = VSCodeSettings.Parse(file);
+		foreach (var (k, v) in setting.Exclude)
 		{
-			var file = Path.Join(folder, ".vscode/settings.json");
-			var setting = VSCodeSettings.Parse(file);
-			foreach (var (k, v) in setting.Exclude)
+			var path = k.TrimStart('/');
+			if (v)
 			{
-				var path = k.TrimStart('/');
-				if (v)
-				{
-					excludes.AddInclude(path);
-				}
-				else
-				{
-					excludes.AddExclude(path);
-				}
+				excludes.AddInclude(path);
 			}
-		}
-		catch (FileNotFoundException)
-		{
-			// ignore
+			else
+			{
+				excludes.AddExclude(path);
+			}
 		}
 	}
 
