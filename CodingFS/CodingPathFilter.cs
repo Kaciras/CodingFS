@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using DokanNet;
 
 namespace CodingFS;
 
@@ -25,9 +27,12 @@ public sealed class CodingPathFilter : PathFilter
 		scanner.InvalidCache(file);
 	}
 
-	public IEnumerable<FileSystemInfo> ListFiles(string dir)
+	public IEnumerable<FileInformation> ListFiles(string dir)
 	{
 		dir = Path.Join(scanner.Root, dir);
-		return scanner.GetWorkspaces(dir).ListFiles(includes);
+		return scanner
+			.GetWorkspaces(dir)
+			.ListFiles(includes)
+			.Select(Utils.MapInfo);
 	}
 }

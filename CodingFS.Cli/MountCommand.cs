@@ -13,13 +13,9 @@ sealed class MountCommand : Command
 
 	public void Execute()
 	{
-		//var map = new Dictionary<string, CodingScanner>()
-		//{
-		//	["Coding"] = new CodingScanner(@"D:\Coding")
-		//};
-
 		var scanner = new CodingScanner(@"D:\Coding");
-		var filter = new CodingPathFilter(scanner, Type);
+		var filter = new MapPathFilter();
+		filter.Set(@"Coding", new CodingPathFilter(scanner, Type));
 
 		using var _ = new VirtualFS(filter, new()
 		{

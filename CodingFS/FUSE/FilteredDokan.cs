@@ -47,7 +47,7 @@ public sealed class FilteredDokan : UnsafeRedirectDokan
 			out IList<FileInformation> files,
 			IDokanFileInfo info)
 	{
-		files = filter.ListFiles(fileName).Select(MapInfo).ToArray();
+		files = filter.ListFiles(fileName).ToArray();
 		return DokanResult.Success;
 	}
 

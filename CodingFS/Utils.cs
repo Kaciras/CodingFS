@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using DokanNet;
 
 [assembly: InternalsVisibleTo("CodingFS.Test")]
 [assembly: InternalsVisibleTo("CodingFS.Benchmark")]
@@ -50,6 +51,15 @@ static class Utils
 	{
 		NormalizeSepUnsafe(path.AsMemory());
 	}
+	public static FileInformation MapInfo(FileSystemInfo src) => new()
+	{
+		Attributes = src.Attributes,
+		FileName = src.Name,
+		LastAccessTime = src.LastAccessTime,
+		CreationTime = src.CreationTime,
+		LastWriteTime = src.LastWriteTime,
+		Length = (src as FileInfo)?.Length ?? 0
+	};
 
 	public static void NormalizeSepUnsafe(ReadOnlyMemory<char> path)
 	{

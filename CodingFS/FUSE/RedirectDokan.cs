@@ -52,16 +52,6 @@ public abstract partial class RedirectDokan : IDokanOperations
 
 	protected abstract string GetPath(string fileName);
 
-	protected static FileInformation MapInfo(FileSystemInfo src) => new()
-	{
-		Attributes = src.Attributes,
-		FileName = src.Name,
-		LastAccessTime = src.LastAccessTime,
-		CreationTime = src.CreationTime,
-		LastWriteTime = src.LastWriteTime,
-		Length = (src as FileInfo)?.Length ?? 0
-	};
-
 	protected static int GetNumOfBytesToCopy(int bufferLength, long offset, IDokanFileInfo info, FileStream stream)
 	{
 		if (info.PagingIo)
@@ -349,14 +339,14 @@ public abstract partial class RedirectDokan : IDokanOperations
 
 			if (rawInfo.Exists)
 			{
-				fileInfo = MapInfo(rawInfo);
+				fileInfo = Utils.MapInfo(rawInfo);
 			}
 			else
 			{
 				rawInfo = new DirectoryInfo(rawPath);
 				if (rawInfo.Exists)
 				{
-					fileInfo = MapInfo(rawInfo);
+					fileInfo = Utils.MapInfo(rawInfo);
 				}
 				else
 				{
@@ -392,7 +382,7 @@ public abstract partial class RedirectDokan : IDokanOperations
 		return new DirectoryInfo(GetPath(fileName))
 			.EnumerateFileSystemInfos()
 			.Where(finfo => DokanHelper.DokanIsNameInExpression(searchPattern, finfo.Name, true))
-			.Select(MapInfo).ToArray();
+			.Select(Utils.MapInfo).ToArray();
 	}
 
 	public virtual NtStatus FindFilesWithPattern(

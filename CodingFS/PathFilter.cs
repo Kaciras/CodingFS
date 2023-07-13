@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using DokanNet;
 
 namespace CodingFS;
 
@@ -9,5 +10,5 @@ public interface PathFilter
 
 	string MapPath(string path);
 
-	IEnumerable<FileSystemInfo> ListFiles(string dir);
+	IEnumerable<FileInformation> ListFiles(string dir);
 }
