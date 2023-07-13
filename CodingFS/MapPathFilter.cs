@@ -2,15 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DokanNet;
 
 namespace CodingFS;
 
 public sealed class MapPathFilter : PathFilter
 {
+	static readonly string SEP = Path.DirectorySeparatorChar.ToString();
+
 	readonly Dictionary<string, PathFilter> filters = new();
+	readonly DateTime creation = DateTime.Now;
 
 	public void Set(string path, PathFilter filter)
 	{
@@ -33,14 +34,17 @@ public sealed class MapPathFilter : PathFilter
 
 	public IEnumerable<FileInformation> ListFiles(string dir)
 	{
-		if (dir.Length == 1 && dir[0] == Path.DirectorySeparatorChar)
+		if (dir != SEP)
 		{
-			return filters.Keys
-				.Select(x => new FileInformation { FileName = x, Attributes = FileAttributes.Directory });
+			dir = GetPath(dir, out var filter);
+			return filter.ListFiles(dir);
 		}
-
-		dir = GetPath(dir, out var filter);
-		return filter.ListFiles(dir);
+		return filters.Keys.Select(x => new FileInformation
+		{
+			CreationTime = creation,
+			FileName = x,
+			Attributes = FileAttributes.Directory,
+		});
 	}
 
 	public string MapPath(string path)

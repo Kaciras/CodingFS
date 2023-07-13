@@ -6,10 +6,10 @@ using CommandLine;
 
 namespace CodingFS.Cli;
 
-[Verb("list", HelpText = "在控制台打印出各种分类的文件")]
+[Verb("list", HelpText = "Get the file list of specific type.")]
 internal sealed class ListCommand : Command
 {
-	[Option('t', "type", HelpText = "过滤文件")]
+	[Option('t', "type", HelpText = "What types of files should be included")]
 	public FileType Type { get; set; }
 
 	public void Execute()

@@ -2,10 +2,10 @@ using CommandLine;
 
 namespace CodingFS.Cli;
 
-[Verb("mount", HelpText = "挂载为虚拟磁盘，仅包含指定类型的文件")]
+[Verb("mount", HelpText = "Map a directory to a virtual drive, containing only files of the specified type.")]
 sealed class MountCommand : Command
 {
-	[Option('p', "point", Default = "x", HelpText = "指定盘符")]
+	[Option('p', "point", Default = "x", HelpText = "The mount point.")]
 	public string Point { get; set; } = "x";
 
 	[Option('t', "type", HelpText = "Which type of files should listed in the file system.")]

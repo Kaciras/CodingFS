@@ -16,7 +16,7 @@ namespace CodingFS.Benchmark;
 /// |   CurrentImpl | 431.0 ns | 1.42 ns | 1.33 ns |  0.57 | 0.0238 |     200 B |        0.18 |
 /// </summary>
 [MemoryDiagnoser]
-public class FileClassifierPerf
+public class CodingScannerPerf
 {
 	const string DIR = "/foo/Projects/CSharp/CodingFS/CodingFS/bin/Debug/net7.0/runtimes/win-x64/native";
 	const string PATH = DIR + "/test.txt";

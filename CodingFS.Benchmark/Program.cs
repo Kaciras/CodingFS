@@ -4,6 +4,6 @@ using CodingFS.Benchmark;
 
 [module: SkipLocalsInit]
 
-BenchmarkRunner.Run<FileClassifierPerf>();
+BenchmarkRunner.Run<CodingScannerPerf>();
 
 //new PathDictionaryPerf().CheckEquality();

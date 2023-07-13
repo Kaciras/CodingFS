@@ -4,7 +4,7 @@ using Xunit;
 
 namespace CodingFS.Test;
 
-public sealed class FileClassifierTest
+public sealed class CodingScannerTest
 {
 	readonly List<string> checkedPaths = new();
 

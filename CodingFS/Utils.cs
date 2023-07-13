@@ -51,14 +51,18 @@ static class Utils
 	{
 		NormalizeSepUnsafe(path.AsMemory());
 	}
-	public static FileInformation MapInfo(FileSystemInfo src) => new()
+
+	/// <summary>
+	/// Convert FileSystemInfo to Dokan's FileInformation.
+	/// </summary>
+	public static FileInformation ConvertFSInfo(FileSystemInfo src) => new()
 	{
 		Attributes = src.Attributes,
 		FileName = src.Name,
 		LastAccessTime = src.LastAccessTime,
 		CreationTime = src.CreationTime,
 		LastWriteTime = src.LastWriteTime,
-		Length = (src as FileInfo)?.Length ?? 0
+		Length = src is FileInfo file ? file.Length : 0,
 	};
 
 	public static void NormalizeSepUnsafe(ReadOnlyMemory<char> path)

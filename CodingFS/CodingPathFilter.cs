@@ -33,6 +33,6 @@ public sealed class CodingPathFilter : PathFilter
 		return scanner
 			.GetWorkspaces(dir)
 			.ListFiles(includes)
-			.Select(Utils.MapInfo);
+			.Select(Utils.ConvertFSInfo);
 	}
 }

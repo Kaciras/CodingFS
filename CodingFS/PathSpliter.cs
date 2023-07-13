@@ -2,7 +2,9 @@ using System;
 
 namespace CodingFS;
 
-// Only support POSIX and DOS paths.
+/// <summary>
+/// Memory&lt;char&gt; based path splitor, only support POSIX and DOS paths.
+/// </summary>
 internal ref struct PathSpliter
 {
 	readonly int root = -1;

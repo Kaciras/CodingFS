@@ -42,9 +42,7 @@ file class TrieNode<T>
 }
 
 /// <summary>
-/// 文件分类器，以给定的目录为上下文，对这之下的文件进行分类。
-/// 
-/// This class is not thread-safe.
+/// Scan and cache workspaces of directories. This class is not thread-safe.
 /// </summary>
 public sealed class CodingScanner
 {

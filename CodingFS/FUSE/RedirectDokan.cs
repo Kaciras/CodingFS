@@ -339,14 +339,14 @@ public abstract partial class RedirectDokan : IDokanOperations
 
 			if (rawInfo.Exists)
 			{
-				fileInfo = Utils.MapInfo(rawInfo);
+				fileInfo = Utils.ConvertFSInfo(rawInfo);
 			}
 			else
 			{
 				rawInfo = new DirectoryInfo(rawPath);
 				if (rawInfo.Exists)
 				{
-					fileInfo = Utils.MapInfo(rawInfo);
+					fileInfo = Utils.ConvertFSInfo(rawInfo);
 				}
 				else
 				{
@@ -382,7 +382,7 @@ public abstract partial class RedirectDokan : IDokanOperations
 		return new DirectoryInfo(GetPath(fileName))
 			.EnumerateFileSystemInfos()
 			.Where(finfo => DokanHelper.DokanIsNameInExpression(searchPattern, finfo.Name, true))
-			.Select(Utils.MapInfo).ToArray();
+			.Select(Utils.ConvertFSInfo).ToArray();
 	}
 
 	public virtual NtStatus FindFilesWithPattern(
