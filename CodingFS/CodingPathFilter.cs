@@ -16,6 +16,9 @@ public sealed class CodingPathFilter : PathFilter
 		this.includes = includes;
 	}
 
+	public CodingPathFilter(string root, FileType includes) 
+		: this(new CodingScanner(root), includes) { }
+
 	public string MapPath(string path)
 	{
 		return Path.Join(scanner.Root, path);

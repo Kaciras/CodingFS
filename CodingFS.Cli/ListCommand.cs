@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using CommandLine;
 
 namespace CodingFS.Cli;
@@ -9,19 +6,17 @@ namespace CodingFS.Cli;
 [Verb("list", HelpText = "Get the file list of specific type.")]
 internal sealed class ListCommand : Command
 {
+	[Value(0, HelpText = "Directory to list, default is current directory.")]
+	public string Root { get; set; } = Environment.CurrentDirectory;
+
 	[Option('t', "type", HelpText = "What types of files should be included")]
 	public FileType Type { get; set; }
 
 	public void Execute()
 	{
-		Execute(@"D:\Coding");
-	}
+		var classifier = new CodingScanner(Root);
 
-	private void Execute(string root)
-	{
-		var classifier = new CodingScanner(root);
-
-		var groups = classifier.Walk(root, Type)
+		var groups = classifier.Walk(Root, Type)
 			.GroupBy(v => v.Item2, v => v.Item1)
 			.ToImmutableDictionary(i => i.Key);
 
