@@ -5,33 +5,24 @@ using DokanNet;
 
 namespace CodingFS.FUSE;
 
-public class FilteredDokan : UnsafeRedirectDokan
+public sealed class FilteredDokan : UnsafeRedirectDokan
 {
-	public Dictionary<string, CodingPathFilter> Map { get; set; }
-
-	public FileType Type { get; set; }
-
-	public string Name { get; }
+	readonly string name;
+	readonly PathFilter filter;
 
 	/// <summary>
 	/// Create a new CodingFS with name, the name will displayed as volume label.
 	/// </summary>
 	/// <param name="name"></param>
-	public FilteredDokan(string name) { Name = name; }
+	public FilteredDokan(string name, PathFilter filter)
+	{
+		this.name = name;
+		this.filter = filter;
+	}
 
 	protected override string GetPath(string value)
 	{
-		var split = value.Split(Path.DirectorySeparatorChar, 3);
-
-		if (Map.TryGetValue(split[1], out var scanner))
-		{
-			if (split.Length < 3)
-			{
-				return scanner.Root;
-			}
-			return Path.Join(scanner.Root, split[2]);
-		}
-		throw new FileNotFoundException("文件不在映射区", value);
+		return filter.MapPath(value);
 	}
 
 	public override NtStatus GetVolumeInformation(
@@ -41,7 +32,7 @@ public class FilteredDokan : UnsafeRedirectDokan
 		out uint maximumComponentLength,
 		IDokanFileInfo info)
 	{
-		volumeLabel = Name;
+		volumeLabel = name;
 		features = FileSystemFeatures.UnicodeOnDisk
 			| FileSystemFeatures.CaseSensitiveSearch
 			| FileSystemFeatures.PersistentAcls
@@ -51,8 +42,16 @@ public class FilteredDokan : UnsafeRedirectDokan
 		maximumComponentLength = 256;
 		return DokanResult.Success;
 	}
+	public override NtStatus FindFiles(
+			string fileName,
+			out IList<FileInformation> files,
+			IDokanFileInfo info)
+	{
+		files = filter.ListFiles(fileName).Select(MapInfo).ToArray();
+		return DokanResult.Success;
+	}
 
-	public override NtStatus CreateFile(string fileName, DokanNet.FileAccess access, 
+	public override NtStatus CreateFile(string fileName, DokanNet.FileAccess access,
 		FileShare share, FileMode mode, FileOptions options, FileAttributes attributes, IDokanFileInfo info)
 	{
 		if (fileName == @"\")
@@ -60,40 +59,5 @@ public class FilteredDokan : UnsafeRedirectDokan
 			return DokanResult.Success;
 		}
 		return base.CreateFile(fileName, access, share, mode, options, attributes, info);
-	}
-
-	// 【知识点】IEnumerable.ToArray 直接操作数组而不是 .ToList().ToArray()，所以比 ToList() 更快
-	// https://github.com/dotnet/corefx/blob/master/src/Common/src/System/Collections/Generic/EnumerableHelpers.cs
-
-	public override NtStatus FindFiles(
-		string fileName,
-		out IList<FileInformation> files,
-		IDokanFileInfo info)
-	{
-		if (fileName == @"\")
-		{
-			files = Map.Values
-				.Select(sc => MapInfo(new DirectoryInfo(sc.Root)))
-				.ToArray();
-		}
-		else
-		{
-			var root = fileName.Split(Path.DirectorySeparatorChar, 3)[1];
-
-			if (!Map.TryGetValue(root, out var scanner))
-			{
-				throw new FileNotFoundException("文件不在映射区", root);
-			}
-
-			fileName = GetPath(fileName);
-			var @fixed = scanner.GetWorkspaces(fileName);
-
-			files = new DirectoryInfo(fileName)
-				.EnumerateFileSystemInfos()
-				.Where(info => @fixed.GetFileType(info.FullName) == Type)
-				.Select(MapInfo).ToArray();
-		}
-
-		return DokanResult.Success;
 	}
 }

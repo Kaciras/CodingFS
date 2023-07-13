@@ -16,7 +16,7 @@ public sealed class FileClassifierTest
 	[Fact]
 	public void DetectWorkspaces()
 	{
-		var i = new CodingPathFilter("/foo", Array.Empty<Workspace>(), new WorkspaceFactory[] { RecordPath });
+		var i = new CodingScanner("/foo", Array.Empty<Workspace>(), new WorkspaceFactory[] { RecordPath });
 		i.GetWorkspaces("/foo/CSharp/CodingFS/CodingFS/bin/Debug/net7.0");
 
 		Assert.Equal(7, checkedPaths.Count);
@@ -32,7 +32,7 @@ public sealed class FileClassifierTest
 	[Fact]
 	public void Cache()
 	{
-		var i = new CodingPathFilter("/foo", Array.Empty<Workspace>(), new WorkspaceFactory[] { RecordPath });
+		var i = new CodingScanner("/foo", Array.Empty<Workspace>(), new WorkspaceFactory[] { RecordPath });
 		i.GetWorkspaces("/foo/bar");
 
 		checkedPaths.Clear();
@@ -45,7 +45,7 @@ public sealed class FileClassifierTest
 	[Fact]
 	public void Invalid()
 	{
-		var i = new CodingPathFilter("/foo", Array.Empty<Workspace>(), new WorkspaceFactory[] { RecordPath });
+		var i = new CodingScanner("/foo", Array.Empty<Workspace>(), new WorkspaceFactory[] { RecordPath });
 		i.GetWorkspaces("/foo/bar/baz");
 
 	}

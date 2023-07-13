@@ -8,17 +8,20 @@ sealed class MountCommand : Command
 	[Option('p', "point", Default = "x", HelpText = "指定盘符")]
 	public string Point { get; set; } = "x";
 
-	[Option('t', "type", HelpText = "要包含的文件类型")]
+	[Option('t', "type", HelpText = "Which type of files should listed in the file system.")]
 	public FileType Type { get; set; } = FileType.Source;
 
 	public void Execute()
 	{
-		var map = new Dictionary<string, CodingPathFilter>()
-		{
-			["Coding"] = new CodingPathFilter(@"D:\Coding")
-		};
+		//var map = new Dictionary<string, CodingScanner>()
+		//{
+		//	["Coding"] = new CodingScanner(@"D:\Coding")
+		//};
 
-		using var _ = new VirtualFS(map, new()
+		var scanner = new CodingScanner(@"D:\Coding");
+		var filter = new CodingPathFilter(scanner, Type);
+
+		using var _ = new VirtualFS(filter, new()
 		{
 #if DEBUG
 			Debug = true,
@@ -26,10 +29,10 @@ sealed class MountCommand : Command
 			Debug = false,
 #endif
 			Readonly = true,
-			Type = Type,
 			MountPoint = @$"{Point}:\",
 		});
 
-		new ManualResetEvent(false).WaitOne();
+		Console.WriteLine("Mounted, pass any key to unmount.");
+		Console.ReadKey(true);
 	}
 }

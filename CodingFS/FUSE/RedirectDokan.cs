@@ -48,6 +48,8 @@ public abstract partial class RedirectDokan : IDokanOperations
 
 	const long FREE_SPACE = 10 * 1024 * 1024 * 1024L;
 
+	protected string mountPoint = null!;
+
 	protected abstract string GetPath(string fileName);
 
 	protected static FileInformation MapInfo(FileSystemInfo src) => new()
@@ -633,6 +635,7 @@ public abstract partial class RedirectDokan : IDokanOperations
 
 	public virtual NtStatus Mounted(string mountPoint, IDokanFileInfo info)
 	{
+		this.mountPoint = mountPoint;
 		return DokanResult.Success;
 	}
 

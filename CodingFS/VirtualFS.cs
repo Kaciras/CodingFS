@@ -10,12 +10,6 @@ namespace CodingFS;
 public struct VirtualFSOptions
 {
 	/// <summary>
-	/// Which type of files should listed in the file system.
-	/// Default is FileType.Source.
-	/// </summary>
-	public FileType Type;
-
-	/// <summary>
 	/// Volume label in Windows, default is "CodingFS".
 	/// </summary>
 	public string? Name;
@@ -44,11 +38,11 @@ public sealed class VirtualFS : IDisposable
 	/// <summary>
 	/// Create new instance of VirtualFS will mount the virtual drive.
 	/// </summary>
-	public VirtualFS(Dictionary<string, CodingPathFilter> map, in VirtualFSOptions options)
+	public VirtualFS(PathFilter filter, in VirtualFSOptions options)
 	{
 		if (OperatingSystem.IsWindows())
 		{
-			InitDokan(map, options);
+			InitDokan(filter, options);
 		}
 		else
 		{
@@ -63,13 +57,9 @@ public sealed class VirtualFS : IDisposable
 	/// </summary>
 	public void Dispose() => disposables.ForEach(x => x.Dispose());
 
-	void InitDokan(Dictionary<string, CodingPathFilter> map, in VirtualFSOptions o)
+	void InitDokan(PathFilter filter, in VirtualFSOptions o)
 	{
-		var vfs = new FilteredDokan(o.Name ?? "CodingFS")
-		{
-			Map = map,
-			Type = o.Type,
-		};
+		var vfs = new FilteredDokan(o.Name ?? "CodingFS", filter);
 		DokanOptions mountOptions = default;
 		ILogger dokanLogger;
 

@@ -74,10 +74,7 @@ internal ref struct PathSpliter
 
 	public readonly ReadOnlyMemory<char> Left
 	{
-		get
-		{
-			return index == root ? path[..(root + 1)] : path[..index];
-		}
+		get => index == root ? path[..(root + 1)] : path[..index];
 	}
 
 	public readonly ReadOnlyMemory<char> Right => path[(index + 1)..];
