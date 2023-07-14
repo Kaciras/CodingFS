@@ -5,7 +5,7 @@ using Xunit;
 
 namespace CodingFS.Test;
 
-public sealed class PathHelpersTest
+public sealed class PathSpliterTest
 {
 	[InlineData("😗🍏🍎🚗", new string[] { "😗🍏🍎🚗" })]
 	[InlineData("", new string[] { "" })]
@@ -34,9 +34,7 @@ public sealed class PathHelpersTest
 	[Theory]
 	public void Relative(string path, string root, string next)
 	{
-		var s = new PathSpliter(path);
-
-		s.Relative(root);
+		var s = new PathSpliter(path, root);
 		Assert.Equal(root, new string(s.Left.Span));
 
 		if (s.HasNext)
@@ -46,8 +44,6 @@ public sealed class PathHelpersTest
 		
 		Assert.Equal(next, new string(s.Left.Span));
 	}
-
-	
 
 	[Fact]
 	public void SS()

@@ -31,11 +31,4 @@ public sealed class WorkspacesInfo
 			.Aggregate(RecognizeType.NotCare, (v, c) => v | c.Recognize(relative))
 			.ToFileType();
 	}
-
-	public IEnumerable<FileSystemInfo> ListFiles(FileType type)
-	{
-		return new DirectoryInfo(Directory)
-			.EnumerateFileSystemInfos()
-			.Where(info => GetFileType(info.FullName).HasFlag(type));
-	}
 }

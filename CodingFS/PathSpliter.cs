@@ -25,9 +25,9 @@ internal ref struct PathSpliter
 		this.path = path.AsMemory();
 	}
 
-	public void Relative(ReadOnlySpan<char> root)
+	public PathSpliter(string path, string root) : this(path)
 	{
-		if (root.IsEmpty) return;
+		if (root.Length == 0) return;
 
 		if (root[^1] == '\\' || root[^1] == '/')
 		{
@@ -35,7 +35,7 @@ internal ref struct PathSpliter
 		}
 
 		var length = root.Length;
-		var span = path.Span;
+		var span = path.AsSpan();
 
 		if (span.StartsWith(root))
 		{

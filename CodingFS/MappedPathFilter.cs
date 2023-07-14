@@ -6,7 +6,10 @@ using DokanNet;
 
 namespace CodingFS;
 
-public sealed class MapPathFilter : PathFilter
+/// <summary>
+/// A vitrual directory in file system, 
+/// </summary>
+public sealed class MappedPathFilter : PathFilter
 {
 	static readonly string SEP = Path.DirectorySeparatorChar.ToString();
 
@@ -28,41 +31,42 @@ public sealed class MapPathFilter : PathFilter
 
 	public void HandleChange(string file)
 	{
-		file = GetPath(file, out var filter);
-		filter.HandleChange(file);
+		Get(file, out var relative).HandleChange(relative);
 	}
 
 	public IEnumerable<FileInformation> ListFiles(string dir)
 	{
-		if (dir != SEP)
+		if (dir == SEP)
 		{
-			dir = GetPath(dir, out var filter);
-			return filter.ListFiles(dir);
+			return filters.Keys.Select(x => new FileInformation
+			{
+				CreationTime = creation,
+				FileName = x,
+				Attributes = FileAttributes.Directory,
+			});
 		}
-		return filters.Keys.Select(x => new FileInformation
-		{
-			CreationTime = creation,
-			FileName = x,
-			Attributes = FileAttributes.Directory,
-		});
+		return Get(dir, out var relative).ListFiles(relative);
 	}
 
 	public string MapPath(string path)
 	{
-		path = GetPath(path, out var filter);
-		return filter.MapPath(path);
+		return Get(path, out var relative).MapPath(relative);
 	}
 
-	string GetPath(string value, out PathFilter filter)
+	PathFilter Get(string value, out string relative)
 	{
 		var split = value.Split(Path.DirectorySeparatorChar, 3);
-		if (filters.TryGetValue(split[1], out filter!))
+		if (filters.TryGetValue(split[1], out var filter))
 		{
 			if (split.Length < 3)
 			{
-				return "";
+				relative = "";
 			}
-			return split[2];
+			else
+			{
+				relative = split[2];
+			}
+			return filter;
 		}
 		throw new FileNotFoundException("Path is not in the map", value);
 	}

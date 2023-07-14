@@ -16,7 +16,7 @@ public sealed class CodingPathFilter : PathFilter
 		this.includes = includes;
 	}
 
-	public CodingPathFilter(string root, FileType includes) 
+	public CodingPathFilter(string root, FileType includes)
 		: this(new CodingScanner(root), includes) { }
 
 	public string MapPath(string path)
@@ -33,9 +33,11 @@ public sealed class CodingPathFilter : PathFilter
 	public IEnumerable<FileInformation> ListFiles(string dir)
 	{
 		dir = Path.Join(scanner.Root, dir);
-		return scanner
-			.GetWorkspaces(dir)
-			.ListFiles(includes)
+		var ws = scanner.GetWorkspaces(dir);
+
+		return new DirectoryInfo(dir)
+			.EnumerateFileSystemInfos()
+			.Where(info => ws.GetFileType(info.FullName).HasFlag(includes))
 			.Select(Utils.ConvertFSInfo);
 	}
 }

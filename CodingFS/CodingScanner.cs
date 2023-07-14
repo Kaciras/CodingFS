@@ -90,8 +90,7 @@ public sealed class CodingScanner
 
 	public void InvalidCache(string directory)
 	{
-		var splitor = new PathSpliter(directory);
-		splitor.Relative(Root);
+		var splitor = new PathSpliter(directory, Root);
 
 		var node = cacheRoot;
 		var part = Root.AsMemory();
@@ -118,8 +117,7 @@ public sealed class CodingScanner
 
 	public WorkspacesInfo GetWorkspaces(string directory)
 	{
-		var splitor = new PathSpliter(directory);
-		splitor.Relative(Root);
+		var splitor = new PathSpliter(directory, Root);
 
 		var node = cacheRoot;
 		var workspaces = new List<Workspace>(node.Value);

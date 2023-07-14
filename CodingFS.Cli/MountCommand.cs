@@ -32,7 +32,7 @@ sealed class MountCommand : Command
 
 	public void Execute()
 	{
-		var filter = new MapPathFilter();
+		var filter = new MappedPathFilter();
 		var top = Path.GetFileName(Root);
 		filter.Set(top, new CodingPathFilter(Root, Type));
 
