@@ -14,12 +14,29 @@ sealed class MountCommand : Command
 	[Option('t', "type", HelpText = "Which type of files should listed in the file system.")]
 	public FileType Type { get; set; } = FileType.Source;
 
+	readonly ManualResetEvent blockMainThreadEvent = new(false);
+	
+	IDisposable virtualFS = null!;
+
+	void OnExit(object? _, EventArgs e)
+	{
+		virtualFS.Dispose();
+	}
+
+	void OnCtrlC(object? _, ConsoleCancelEventArgs e)
+	{
+		virtualFS.Dispose();
+		e.Cancel = true;
+		blockMainThreadEvent.Set();
+	}
+
 	public void Execute()
 	{
 		var filter = new MapPathFilter();
-		filter.Set(Path.GetFileName(Root), new CodingPathFilter(Root, Type));
+		var top = Path.GetFileName(Root);
+		filter.Set(top, new CodingPathFilter(Root, Type));
 
-		using var _ = new VirtualFS(filter, new()
+		virtualFS = new VirtualFS(filter, new()
 		{
 #if DEBUG
 			Debug = true,
@@ -30,7 +47,8 @@ sealed class MountCommand : Command
 			MountPoint = Point,
 		});
 
-		Console.WriteLine("Mounted, pass any key to unmount.");
-		Console.ReadKey(true);
+		Console.CancelKeyPress += OnCtrlC;
+		AppDomain.CurrentDomain.ProcessExit += OnExit;
+		blockMainThreadEvent.WaitOne();
 	}
 }
