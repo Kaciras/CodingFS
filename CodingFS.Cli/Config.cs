@@ -31,8 +31,8 @@ public sealed class Config
 			custom.Dict[module] = RecognizeType.Ignored;
 		}
 
-		var globals = new Workspace[] {
-			custom,
+		var globals = new Workspace[] { 
+			custom, 
 			CodingScanner.GLOBALS[0]
 		};
 		return new CodingScanner(Root, globals, CodingScanner.DETECTORS)

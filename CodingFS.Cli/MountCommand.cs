@@ -1,4 +1,3 @@
-using CodingFS.Workspaces;
 using CommandLine;
 
 namespace CodingFS.Cli;

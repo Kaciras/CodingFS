@@ -19,4 +19,10 @@
     <ProjectReference Include="..\CodingFS\CodingFS.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="config.user.toml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

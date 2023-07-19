@@ -2,15 +2,11 @@
   "profiles": {
     "Mount": {
       "commandName": "Project",
-      "commandLineArgs": "mount"
+      "commandLineArgs": "mount config.user.toml"
     },
     "Inspect": {
       "commandName": "Project",
       "commandLineArgs": "inspect"
-    },
-    "KeepGreen": {
-      "commandName": "Project",
-      "commandLineArgs": "keep-green"
     }
   }
 }

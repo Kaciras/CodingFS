@@ -12,6 +12,11 @@ public interface Command
 		{
 			return new Config();
 		}
-		return Toml.ToModel<Config>(File.ReadAllText(file));
+		var options = new TomlModelOptions()
+		{
+			ConvertPropertyName = x => x,
+		};
+		var text = File.ReadAllText(file);
+		return Toml.ToModel<Config>(text, file, options);
 	}
 }
