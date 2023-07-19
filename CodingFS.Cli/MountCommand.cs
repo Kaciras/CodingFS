@@ -32,9 +32,11 @@ sealed class MountCommand : Command
 
 	public void Execute()
 	{
+		var scanner = new CodingScanner(Root);
+
 		var filter = new MappedPathFilter();
 		var top = Path.GetFileName(Root);
-		filter.Set(top, new CodingPathFilter(Root, Type));
+		filter.Set(top, new CodingPathFilter(scanner, Type));
 
 		virtualFS = new VirtualFS(filter, new()
 		{

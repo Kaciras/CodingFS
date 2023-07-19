@@ -1,25 +1,34 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace CodingFS.Workspaces;
 
 /// <summary>
-/// 我自己的工作区有个 ThirdParty 目录放着clone的第三方项目，就识别为依赖吧。
+/// A simple workspace that you can manually associate type to some files.
 /// </summary>
 public sealed class CustomWorkspace : Workspace
 {
-	public WorkspaceKind Kind => WorkspaceKind.PM;
+	public Dictionary<string, RecognizeType> Dict { get; }
 
-	public RecognizeType Recognize(string path)
+	public ReadOnlySpan<char> Name => name;
+
+	public WorkspaceKind Kind { get; }
+
+	readonly string name;
+
+	public CustomWorkspace() : this("Custom", WorkspaceKind.Other) {}
+
+	public CustomWorkspace(string name, WorkspaceKind kind) : this(name, kind, new()) {}
+
+	public CustomWorkspace(
+		string name,
+		WorkspaceKind kind, 
+		Dictionary<string, RecognizeType> dict)
 	{
-		switch (path)
-		{
-			case @"ThirdParty":
-			case @"Blog\data":
-				return RecognizeType.Dependency;
-			default:
-				return RecognizeType.NotCare;
-		}
+		this.name = name;
+		Kind = kind;
+		Dict = dict;
 	}
+
+	public RecognizeType Recognize(string path) => Dict.GetValueOrDefault(path);
 }

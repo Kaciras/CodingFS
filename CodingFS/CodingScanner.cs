@@ -47,6 +47,11 @@ file class TrieNode<T>
 public sealed class CodingScanner
 {
 	/// <summary>
+	/// Directory concains VCS repository or IDE config is a project root.
+	/// </summary>
+	const WorkspaceKind PROJECT = WorkspaceKind.IDE | WorkspaceKind.VCS;
+
+	/// <summary>
 	/// Maximum supported components length in file path.
 	/// </summary>
 	public const int MAX_COMPONENT = 255;
@@ -64,20 +69,23 @@ public sealed class CodingScanner
 
 	public static readonly Workspace[] GLOBALS =
 	{
-		new CustomWorkspace(),
 		new CommonWorkspace(),
 	};
 
-	// ===============================================================
+	/// <summary>
+	/// Maximum search depth from the Root to project.
+	/// </summary>
+	public int ProjectDepth { get; set; } = int.MaxValue;
 
-	public int OuterDepth { get; set; } = int.MaxValue;
-
-	public int InnerDepth { get; set; } = int.MaxValue;
+	/// <summary>
+	/// Maximum search depth from project to sub module.
+	/// </summary>
+	public int ModuleDepth { get; set; } = int.MaxValue;
 
 	public string Root { get; }
 
-	private readonly Detector[] detectors;
-	private readonly TrieNode<Workspace[]> cacheRoot;
+	readonly Detector[] detectors;
+	readonly TrieNode<Workspace[]> cacheRoot;
 
 	public CodingScanner(string root): this(root, GLOBALS, DETECTORS) {}
 
@@ -156,7 +164,6 @@ public sealed class CodingScanner
 
 	public IEnumerable<(string, FileType)> Walk(string root, FileType includes)
 	{
-		// EnumerateFiles 和 EnumerateDirectories 都是在这基础上过滤的。
 		foreach (var file in Directory.EnumerateFileSystemEntries(root))
 		{
 			var folder = Path.GetDirectoryName(file)!;
