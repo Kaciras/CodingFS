@@ -47,12 +47,12 @@ internal sealed class FileClassifierV1
 
 	public string Root { get; }
 
-	private readonly WorkspaceFactory[] factories;
+	private readonly Detector[] factories;
 	private readonly PathTrieNode<Workspace[]> cacheRoot;
 
-	public FileClassifierV1(string root) : this(root, CodingScanner.GLOBALS, CodingScanner.FACTORIES) { }
+	public FileClassifierV1(string root) : this(root, CodingScanner.GLOBALS, CodingScanner.DETECTORS) { }
 
-	public FileClassifierV1(string root, Workspace[] globals, WorkspaceFactory[] factories)
+	public FileClassifierV1(string root, Workspace[] globals, Detector[] factories)
 	{
 		Root = root;
 		this.factories = factories;

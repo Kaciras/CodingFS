@@ -51,7 +51,7 @@ public sealed class CodingScanner
 	/// </summary>
 	public const int MAX_COMPONENT = 255;
 
-	public static readonly WorkspaceFactory[] FACTORIES =
+	public static readonly Detector[] DETECTORS =
 	{
 		new JetBrainsDetector().Detect,
 		NpmWorkspace.Match,
@@ -76,15 +76,15 @@ public sealed class CodingScanner
 
 	public string Root { get; }
 
-	private readonly WorkspaceFactory[] factories;
+	private readonly Detector[] detectors;
 	private readonly TrieNode<Workspace[]> cacheRoot;
 
-	public CodingScanner(string root): this(root, GLOBALS, FACTORIES) {}
+	public CodingScanner(string root): this(root, GLOBALS, DETECTORS) {}
 
-	public CodingScanner(string root, Workspace[] globals, WorkspaceFactory[] factories)
+	public CodingScanner(string root, Workspace[] globals, Detector[] detectors)
 	{
 		Root = root;
-		this.factories = factories;
+		this.detectors = detectors;
 		cacheRoot = new TrieNode<Workspace[]>(globals);
 	}
 
@@ -135,7 +135,7 @@ public sealed class CodingScanner
 				var matches = new List<Workspace>();
 				var ctx = new DetectContxt(workspaces, path, matches);
 
-				foreach (var factory in factories)
+				foreach (var factory in detectors)
 				{
 					factory(ctx);
 				}

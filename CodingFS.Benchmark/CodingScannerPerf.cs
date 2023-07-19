@@ -23,8 +23,8 @@ public class CodingScannerPerf
 
 	static void Fac1(DetectContxt ctx)	{}
 
-	readonly FileClassifierV1 filter = new("/foo", Array.Empty<Workspace>(), new WorkspaceFactory[] { Fac1 });
-	readonly CodingScanner filter2 = new("/foo", Array.Empty<Workspace>(), new WorkspaceFactory[] { Fac1 });
+	readonly FileClassifierV1 filter = new("/foo", Array.Empty<Workspace>(), new Detector[] { Fac1 });
+	readonly CodingScanner filter2 = new("/foo", Array.Empty<Workspace>(), new Detector[] { Fac1 });
 
 	[Benchmark(Baseline = true)]
 	public FileType V1_StringPath()
