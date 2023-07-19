@@ -1,3 +1,4 @@
+using CodingFS.Workspaces;
 using CommandLine;
 
 namespace CodingFS.Cli;
@@ -5,8 +6,8 @@ namespace CodingFS.Cli;
 [Verb("mount", HelpText = "Map a directory to a virtual drive, containing only files of the specified type.")]
 sealed class MountCommand : Command
 {
-	[Value(0, HelpText = "Directory to map, default is current directory.")]
-	public string Root { get; set; } = Environment.CurrentDirectory;
+	[Value(0, HelpText = "Config file to use.")]
+	public string? ConfigFile { get; set; }
 
 	[Option('p', "point", HelpText = "The mount point.")]
 	public string Point { get; set; } = @"x:\";
@@ -18,12 +19,12 @@ sealed class MountCommand : Command
 	
 	IDisposable virtualFS = null!;
 
-	void OnExit(object? _, EventArgs e)
+	void OnExit(object? sender, EventArgs e)
 	{
 		virtualFS.Dispose();
 	}
 
-	void OnCtrlC(object? _, ConsoleCancelEventArgs e)
+	void OnCtrlC(object? sender, ConsoleCancelEventArgs e)
 	{
 		virtualFS.Dispose();
 		e.Cancel = true;
@@ -32,10 +33,11 @@ sealed class MountCommand : Command
 
 	public void Execute()
 	{
-		var scanner = new CodingScanner(Root);
+		var config = Command.LoadConfig(ConfigFile);
+		var scanner = config.CreateScanner();
 
 		var filter = new MappedPathFilter();
-		var top = Path.GetFileName(Root);
+		var top = Path.GetFileName(config.Root);
 		filter.Set(top, new CodingPathFilter(scanner, Type));
 
 		virtualFS = new VirtualFS(filter, new()
