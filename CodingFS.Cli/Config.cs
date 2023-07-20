@@ -35,7 +35,7 @@ public sealed class Config
 			custom, 
 			CodingScanner.GLOBALS[0]
 		};
-		return new CodingScanner(Root, globals, CodingScanner.DETECTORS)
+		return new CodingScanner(Root, globals)
 		{
 			ModuleDepth = ModuleDepth,
 			ProjectDepth = ProjectDepth,

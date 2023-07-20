@@ -89,6 +89,8 @@ public sealed class CodingScanner
 
 	public CodingScanner(string root): this(root, GLOBALS, DETECTORS) {}
 
+	public CodingScanner(string root, Workspace[] globals) : this(root, globals, DETECTORS) { }
+
 	public CodingScanner(string root, Workspace[] globals, Detector[] detectors)
 	{
 		Root = root;
@@ -177,7 +179,7 @@ public sealed class CodingScanner
 
 			if (Directory.Exists(file))
 			{
-				foreach (var i in Walk(file, includes)) yield return i;
+				foreach (var x in Walk(file, includes)) yield return x;
 			}
 		}
 	}
