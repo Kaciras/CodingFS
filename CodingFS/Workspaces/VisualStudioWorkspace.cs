@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,15 +12,13 @@ namespace CodingFS.Workspaces;
 /// Where NuGet records dependencies:
 /// https://fossa.com/blog/managing-dependencies-net-csproj-packagesconfig
 /// </summary>
-public class VisualStudioWorkspace : Workspace
+public sealed class VisualStudioWorkspace : Workspace
 {
 	public WorkspaceKind Kind => WorkspaceKind.IDE;
 
 	public string Folder { get; }
 
 	readonly Dictionary<string, string> projects;
-
-	bool legacyNuGet;
 
 	public VisualStudioWorkspace(string folder, Dictionary<string, string> projects)
 	{
@@ -36,27 +35,36 @@ public class VisualStudioWorkspace : Workspace
 			case "Release":
 				return RecognizeType.Ignored;
 			case ".vs":
-			case "packages" when legacyNuGet:
 				return RecognizeType.Dependency;
 			default:
 				return RecognizeType.NotCare;
 		}
 	}
 
-	static VisualStudioWorkspace ParseSln(string dir, string file)
+	static void ParseSln(DetectContxt ctx, string file, out VisualStudioWorkspace sln)
 	{
 		var projects = new Dictionary<string, string>();
 		var solution = SolutionFile.Parse(file);
+		var hasCsharpProject = false;
 
 		foreach (var project in solution.ProjectsInOrder)
 		{
-			var type = Path.GetExtension(project.RelativePath);
+			if (!hasCsharpProject)
+			{
+				var type = Path.GetExtension(project.RelativePath.AsSpan());
+				hasCsharpProject = type.SequenceEqual(".csproj");
+			}
+			
 			var folder = Path.GetDirectoryName(project.AbsolutePath)!;
-
 			projects[folder] = project.AbsolutePath;
 		}
 
-		return new VisualStudioWorkspace(dir, projects);
+		if (hasCsharpProject)
+		{
+			ctx.AddWorkspace(new NuGetWorkspace());
+		}
+
+		ctx.AddWorkspace(sln = new VisualStudioWorkspace(ctx.Path, projects));
 	}
 
 	public static void Match(DetectContxt ctx)
@@ -71,8 +79,7 @@ public class VisualStudioWorkspace : Workspace
 
 			if (slnFile != null)
 			{
-				vsSln = ParseSln(path, slnFile);
-				ctx.AddWorkspace(vsSln);
+				ParseSln(ctx, slnFile, out vsSln);
 			}
 		}
 
@@ -83,7 +90,10 @@ public class VisualStudioWorkspace : Workspace
 
 			if (project.SDK == MSBuildProject.SDK_CSHARP)
 			{
-				vsSln.legacyNuGet = vsSln.legacyNuGet || Path.Exists(path);
+				var nugetRoot = parent.OfType<NuGetWorkspace>().First();
+				var legacy = File.Exists(Path.Join(path, "packages.config"));
+				nugetRoot.legacy |= legacy;
+				ctx.AddWorkspace(new NuGetWorkspace(file, nugetRoot, legacy));
 			}
 		}
 	}

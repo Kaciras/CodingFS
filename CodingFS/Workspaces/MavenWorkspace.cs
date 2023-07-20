@@ -3,9 +3,13 @@ using System.IO;
 
 namespace CodingFS.Workspaces;
 
-public class MavenWorkspace : Workspace
+public sealed class MavenWorkspace : PackageManager
 {
 	public WorkspaceKind Kind => WorkspaceKind.PM;
+
+	public string[] ConfigFiles => new[] { "pom.xml" };
+
+	public PackageManager? Parent => null;
 
 	public static void Match(DetectContxt ctx)
 	{

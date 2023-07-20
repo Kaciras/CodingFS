@@ -3,7 +3,13 @@ using System.Collections.Generic;
 
 namespace CodingFS;
 
-public enum WorkspaceKind : byte { Other, PM, IDE, VCS }
+[Flags]
+public enum WorkspaceKind : byte { 
+	Other, 
+	PM, 
+	IDE,
+	VCS = 4,
+}
 
 public interface Workspace
 {
@@ -15,4 +21,11 @@ public interface Workspace
 	WorkspaceKind Kind { get; }
 
 	RecognizeType Recognize(string relativePath);
+}
+
+public interface PackageManager : Workspace
+{
+	string[] ConfigFiles { get; }
+
+	PackageManager? Parent { get; }
 }

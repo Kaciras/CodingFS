@@ -1,57 +1,67 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
 namespace CodingFS.Workspaces;
 
-public class NpmWorkspace : Workspace
+public sealed class NpmWorkspace : PackageManager
 {
-	public WorkspaceKind Kind => WorkspaceKind.PM;
+	static readonly string[] NPM_CONFIGS = { "package.json", "package-lock.json" };
 
-	public NpmWorkspace? Parent { get; }
+	public WorkspaceKind Kind => WorkspaceKind.PM;
 
 	public string Directory { get; }
 
-	public string PackageManager { get; }
+	public string App { get; }
 
-	public NpmWorkspace(NpmWorkspace? parent, string directory, string packageManager)
+	public string[] ConfigFiles { get; }
+
+	public PackageManager? Parent { get; }
+
+	NpmWorkspace(string directory, string app, string[] configFiles, NpmWorkspace? parent)
 	{
 		Directory = directory;
+		App = app;
+		ConfigFiles = configFiles;
 		Parent = parent;
-		PackageManager = packageManager;
 	}
 
 	public RecognizeType Recognize(string path)
 	{
 		var name = Path.GetFileName(path.AsSpan());
-		if (name.SequenceEqual("node_modules"))
-		{
-			return RecognizeType.Dependency;
-		}
-		return RecognizeType.NotCare;
+		return name.SequenceEqual("node_modules") 
+			? RecognizeType.Dependency : RecognizeType.NotCare;
 	}
 
 	public static void Match(DetectContxt ctx)
 	{
-		if (!File.Exists(Path.Combine(ctx.Path, "package.json")))
+		var (path, parents) = ctx;
+
+		if (!File.Exists(Path.Combine(path, "package.json")))
 		{
 			return;
 		}
 
-		// 
-		var parent = ctx.Parent.OfType<NpmWorkspace>().FirstOrDefault();
-		var type = "npm";
+		var parent = parents.OfType<NpmWorkspace>().FirstOrDefault();
+		var app = "npm";
+		var files = NPM_CONFIGS;
 
 		if (parent != null)
 		{
-			type = parent.PackageManager;
+			app = parent.App;
+			files = new[] { "package.json" };
 		}
-		if (!File.Exists(Path.Combine(ctx.Path, "pnpm-lock.yaml")))
+		else if (File.Exists(Path.Combine(path, "pnpm-lock.yaml")))
 		{
-			type = "pnpm";
+			app = "pnpm";
+			files = new[] { "package.json", "pnpm-lock.yaml" };
+		}
+		else if (File.Exists(Path.Combine(path, "yarn.lock")))
+		{
+			app = "yarn";
+			files = new[] { "package.json", "yarn.lock" };
 		}
 
-		ctx.AddWorkspace(new NpmWorkspace(parent, ctx.Path, type));
+		ctx.AddWorkspace(new NpmWorkspace(path, app, files, parent));
 	}
 }

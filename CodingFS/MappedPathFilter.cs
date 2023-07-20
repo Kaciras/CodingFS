@@ -11,7 +11,7 @@ namespace CodingFS;
 /// </summary>
 public sealed class MappedPathFilter : PathFilter
 {
-	static readonly string SEP = Path.DirectorySeparatorChar.ToString();
+	static readonly char SEP = Path.DirectorySeparatorChar;
 
 	readonly Dictionary<string, PathFilter> filters = new();
 	readonly DateTime creation = DateTime.Now;
@@ -36,7 +36,7 @@ public sealed class MappedPathFilter : PathFilter
 
 	public IEnumerable<FileInformation> ListFiles(string dir)
 	{
-		if (dir == SEP)
+		if (dir.Length == 1 && dir[0] == SEP)
 		{
 			return filters.Keys.Select(x => new FileInformation
 			{

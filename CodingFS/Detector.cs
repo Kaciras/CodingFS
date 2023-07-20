@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace CodingFS;
 
-public delegate void Detector(DetectContxt ctx);
+public delegate void Detector(DetectContxt context);
 
 public readonly struct DetectContxt
 {
