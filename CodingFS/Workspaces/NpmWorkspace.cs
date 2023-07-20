@@ -37,7 +37,7 @@ public sealed class NpmWorkspace : PackageManager
 	{
 		var (path, parents) = ctx;
 
-		if (!File.Exists(Path.Combine(path, "package.json")))
+		if (!Utils.IsFile(path, "package.json"))
 		{
 			return;
 		}
@@ -51,12 +51,12 @@ public sealed class NpmWorkspace : PackageManager
 			app = parent.App;
 			files = new[] { "package.json" };
 		}
-		else if (File.Exists(Path.Combine(path, "pnpm-lock.yaml")))
+		else if (Utils.IsFile(path, "pnpm-lock.yaml"))
 		{
 			app = "pnpm";
 			files = new[] { "package.json", "pnpm-lock.yaml" };
 		}
-		else if (File.Exists(Path.Combine(path, "yarn.lock")))
+		else if (Utils.IsFile(path, "yarn.lock"))
 		{
 			app = "yarn";
 			files = new[] { "package.json", "yarn.lock" };

@@ -9,7 +9,7 @@ public sealed class GitWorkspace : Workspace
 
 	public static void Match(DetectContxt ctx)
 	{
-		if (Directory.Exists(Path.Join(ctx.Path, ".git")))
+		if (Utils.IsDir(ctx.Path, ".git"))
 		{
 			ctx.AddWorkspace(new GitWorkspace(ctx.Path));
 		}

@@ -37,6 +37,25 @@ static class Utils
 		}
 	}
 
+	public static bool IsFile(string p0, string p1)
+	{
+		return File.Exists(Path.Join(p0, p1));
+	}
+
+	public static bool IsFile(params string[] paths)
+	{
+		if (paths.Length == 1)
+		{
+			return File.Exists(paths[0]);
+		}
+		return File.Exists(Path.Join(paths));
+	}
+
+	public static bool IsDir(string p0, string p1)
+	{
+		return Directory.Exists(Path.Join(p0, p1));
+	}
+
 	public static int JavaStringHashcode(ReadOnlySpan<char> str)
 	{
 		var hashCode = 0;

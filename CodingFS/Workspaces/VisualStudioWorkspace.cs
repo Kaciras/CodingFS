@@ -74,9 +74,7 @@ public sealed class VisualStudioWorkspace : Workspace
 
 		if (vsSln == null)
 		{
-			var slnFile = Directory.EnumerateFiles(path)
-				.FirstOrDefault(i => i.EndsWith(".sln"));
-
+			var slnFile = Directory.EnumerateFiles(path).FirstOrDefault(i => i.EndsWith(".sln"));
 			if (slnFile != null)
 			{
 				ParseSln(ctx, slnFile, out vsSln);
@@ -91,7 +89,7 @@ public sealed class VisualStudioWorkspace : Workspace
 			if (project.SDK == MSBuildProject.SDK_CSHARP)
 			{
 				var nugetRoot = parent.OfType<NuGetWorkspace>().First();
-				var legacy = File.Exists(Path.Join(path, "packages.config"));
+				var legacy = Utils.IsFile(path, "packages.config");
 				nugetRoot.legacy |= legacy;
 				ctx.AddWorkspace(new NuGetWorkspace(file, nugetRoot, legacy));
 			}

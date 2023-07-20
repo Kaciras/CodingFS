@@ -13,7 +13,7 @@ public sealed class MavenWorkspace : PackageManager
 
 	public static void Match(DetectContxt ctx)
 	{
-		if (File.Exists(Path.Join(ctx.Path, "pox.xml")))
+		if (Utils.IsFile(ctx.Path, "pox.xml"))
 		{
 			ctx.AddWorkspace(new MavenWorkspace());
 		}

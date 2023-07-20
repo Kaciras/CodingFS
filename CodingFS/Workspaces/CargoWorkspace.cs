@@ -10,15 +10,12 @@ public sealed class CargoWorkspace : PackageManager
 
 	public static void Match(DetectContxt ctx)
 	{
-		var tomlFile = Path.Join(ctx.Path, "cargo.toml");
-		var lockFile = Path.Join(ctx.Path, "cargo.lock");
-
-		if (!File.Exists(tomlFile))
+		if (!Utils.IsFile(ctx.Path, "cargo.toml"))
 		{
 			return;
 		}
 
-		var parent = File.Exists(lockFile)
+		var parent = Utils.IsFile(ctx.Path, "cargo.lock")
 			? null
 			: ctx.Parent.OfType<CargoWorkspace>().FirstOrDefault();
 

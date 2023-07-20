@@ -35,7 +35,7 @@ internal class VSCodeWorkspace : Workspace
 {
 	public static void Match(DetectContxt ctx)
 	{
-		if (Directory.Exists(Path.Join(ctx.Path, ".vscode")))
+		if (Utils.IsDir(ctx.Path, ".vscode"))
 		{
 			ctx.AddWorkspace(new VSCodeWorkspace(ctx.Path));
 		}

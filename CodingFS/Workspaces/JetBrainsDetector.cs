@@ -27,7 +27,7 @@ public sealed partial class JetBrainsDetector
 
 	public void Detect(DetectContxt ctx)
 	{
-		if (Directory.Exists(Path.Combine(ctx.Path, ".idea")))
+		if (Utils.IsDir(ctx.Path, ".idea"))
 		{
 			ctx.AddWorkspace(new IDEAWorkspace(this, ctx.Path));
 		}

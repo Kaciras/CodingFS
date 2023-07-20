@@ -69,7 +69,7 @@ public class IDEAWorkspace : Workspace
 	}
 
 	/// <summary>
-	/// 在.idea目录下可能存在一个modules.xml文件，里面记录了IML文件的位置。
+	/// There may be a modules.xml file in the .idea directory records the location of the IML files.
 	/// </summary>
 	internal void LoadModules()
 	{

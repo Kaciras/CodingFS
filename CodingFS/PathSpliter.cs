@@ -5,7 +5,7 @@ namespace CodingFS;
 /// <summary>
 /// Memory&lt;char&gt; based path splitor, only support POSIX and DOS paths.
 /// </summary>
-internal ref struct PathSpliter
+public ref struct PathSpliter
 {
 	readonly int root = -1;
 	readonly ReadOnlyMemory<char> path;
