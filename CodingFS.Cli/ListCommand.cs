@@ -18,7 +18,7 @@ internal sealed class ListCommand : Command
 		var scanner = config.CreateScanner();
 
 		var groups = scanner.Walk(config.Root, Type)
-			.GroupBy(v => v.Item2, v => v.Item1)
+			.GroupBy(v => v.Item2, v => v.Item1.FullName)
 			.ToImmutableDictionary(i => i.Key);
 
 		static void PrintGroup(IEnumerable<string> files, ConsoleColor color, string header)

@@ -56,14 +56,22 @@ static class Utils
 		return Directory.Exists(Path.Join(p0, p1));
 	}
 
-	public static int JavaStringHashcode(ReadOnlySpan<char> str)
+	public static unsafe int JavaStringHashCode(ReadOnlySpan<char> str)
 	{
-		var hashCode = 0;
-		for (var i = 0; i < str.Length; i++)
+		var h = 0;
+		fixed (char* r = str)
 		{
-			hashCode = 31 * hashCode + str[i];
+			var p = r;
+			var e = p + str.Length;
+
+			// C# does not optimize 31 * h to (h << 5) - h.
+			while (p < e)
+			{
+				h = (h << 5) - h + *p;
+				p += 1;
+			}
+			return h;
 		}
-		return hashCode;
 	}
 
 	public static void NormalizeSepUnsafe(string path)
@@ -104,5 +112,5 @@ sealed class CharMemComparator : IEqualityComparer<ReadOnlyMemory<char>>
 		return x.Span.SequenceEqual(y.Span);
 	}
 
-	public int GetHashCode(ReadOnlyMemory<char> x) => Utils.JavaStringHashcode(x.Span);
+	public int GetHashCode(ReadOnlyMemory<char> x) => Utils.JavaStringHashCode(x.Span);
 }

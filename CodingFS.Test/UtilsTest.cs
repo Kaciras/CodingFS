@@ -9,9 +9,9 @@ public sealed class UtilsTest
 	[InlineData("😗🍏🍎🚗", -734144743)]
 	[InlineData("the quick brown fox jumps over a lazy dog", 2013091971)]
 	[InlineData("", 0)]
-	public void JavaStringHashcode(string value, int hash)
+	public void JavaStringHashCode(string value, int hash)
 	{
-		Assert.Equal(hash, Utils.JavaStringHashcode(value));
+		Assert.Equal(hash, Utils.JavaStringHashCode(value));
 	}
 
 	[Fact]

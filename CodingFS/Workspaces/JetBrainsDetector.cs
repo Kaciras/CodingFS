@@ -43,7 +43,7 @@ public sealed partial class JetBrainsDetector
 	{
 		if (localConfig == null) return null;
 
-		var cache = Utils.JavaStringHashcode(path.Replace('\\', '/')).ToString("x2");
+		var cache = Utils.JavaStringHashCode(path.Replace('\\', '/')).ToString("x2");
 		cache = Path.GetFileName(path) + "." + cache;
 		var modules = Path.Join(localConfig, "projects", cache, "external_build_system/modules");
 

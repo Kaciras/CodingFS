@@ -18,8 +18,7 @@ public sealed class MappedPathFilter : PathFilter
 
 	public void Set(string path, PathFilter filter)
 	{
-		var name = Path.GetFileName(path.AsSpan());
-		if (name.Length == path.Length)
+		if (path.AsSpan().IndexOfAny('\\', '/') == -1)
 		{
 			filters[path] = filter;
 		}

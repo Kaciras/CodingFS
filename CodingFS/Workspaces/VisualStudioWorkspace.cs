@@ -51,8 +51,7 @@ public sealed class VisualStudioWorkspace : Workspace
 		{
 			if (!hasCsharpProject)
 			{
-				var type = Path.GetExtension(project.RelativePath.AsSpan());
-				hasCsharpProject = type.SequenceEqual(".csproj");
+				hasCsharpProject = project.RelativePath.EndsWith(".csproj");
 			}
 			
 			var folder = Path.GetDirectoryName(project.AbsolutePath)!;

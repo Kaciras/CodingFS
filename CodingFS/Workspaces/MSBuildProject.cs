@@ -21,7 +21,7 @@ public sealed class MSBuildProject : Workspace
 	{
 		Solution = solution;
 		Folder = folder;
-		SDK = Path.GetExtension(file) switch
+		SDK = Path.GetExtension(file.AsSpan()) switch
 		{
 			".csproj" => SDK_CSHARP,
 			".vcxproj" => SDK_CPP,

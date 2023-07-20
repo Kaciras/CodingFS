@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Xml;
 
 namespace CodingFS.Workspaces;
 
@@ -42,7 +39,7 @@ public class IDEAWorkspace : Workspace
 		{
 			return RecognizeType.Dependency;
 		}
-		if (Path.GetExtension(relative) == ".iml")
+		if (relative.EndsWith(".iml"))
 		{
 			return RecognizeType.Dependency;
 		}
@@ -74,28 +71,21 @@ public class IDEAWorkspace : Workspace
 	internal void LoadModules()
 	{
 		var xmlFile = Path.Join(root, ".idea/modules.xml");
-		if (!File.Exists(xmlFile))
-		{
-			var imlFile = Path.Join(root, Path.GetFileName(root) + ".iml");
-			ParseModuleManager(imlFile, null);
-		}
-		else
-		{
-			using var matcher = XmlReaderEx.ForFile(xmlFile);
-			while (matcher.GoToElement("module"))
-			{
-				var imlFile = matcher.GetAttribute("filepath");
-				imlFile = Path.Join(root, imlFile![14..]);
+		using var matcher = XmlReaderEx.ForFile(xmlFile);
 
-				var parent = Path.GetDirectoryName(imlFile);
-				if (parent == ".idea" || imlFile.Contains('/'))
-				{
-					ParseModuleManager(imlFile, null);
-				}
-				else
-				{
-					ParseModuleManager(imlFile, parent);
-				}
+		while (matcher.GoToElement("module"))
+		{
+			var imlFile = matcher.GetAttribute("filepath");
+			imlFile = Path.Join(root, imlFile![14..]);
+
+			var parent = Path.GetDirectoryName(imlFile.AsSpan());
+			if (parent.SequenceEqual(".idea") || imlFile.Contains('/'))
+			{
+				ParseModuleManager(imlFile, default);
+			}
+			else
+			{
+				ParseModuleManager(imlFile, parent);
 			}
 		}
 	}
@@ -119,16 +109,10 @@ public class IDEAWorkspace : Workspace
 	}
 
 	/// <summary>
-	/// 从模块配置文件（.iml）里读取被忽略的文件列表。
+	/// Read excluded files from *.iml file.
 	/// </summary>
-	/// <param name="imlFile"></param>
-	/// <param name="module"></param>
-	void ParseModuleManager(string imlFile, string? module)
+	void ParseModuleManager(string imlFile, ReadOnlySpan<char> module)
 	{
-		if (!File.Exists(imlFile))
-		{
-			return;
-		}
 		using var matcher = XmlReaderEx.ForFile(imlFile);
 		while (matcher.GoToElement("excludeFolder"))
 		{

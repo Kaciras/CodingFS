@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Xml.Linq;
 using CodingFS.Workspaces;
+using LibGit2Sharp;
 
 namespace CodingFS;
 
@@ -47,7 +49,7 @@ file class TrieNode<T>
 public sealed class CodingScanner
 {
 	/// <summary>
-	/// Directory concains VCS repository or IDE config is a project root.
+	/// Directory concains VCS repository or IDE config is a project folder.
 	/// </summary>
 	const WorkspaceKind PROJECT = WorkspaceKind.IDE | WorkspaceKind.VCS;
 
@@ -87,7 +89,7 @@ public sealed class CodingScanner
 	readonly Detector[] detectors;
 	readonly TrieNode<Workspace[]> cacheRoot;
 
-	public CodingScanner(string root): this(root, GLOBALS, DETECTORS) {}
+	public CodingScanner(string root) : this(root, GLOBALS, DETECTORS) { }
 
 	public CodingScanner(string root, Workspace[] globals) : this(root, globals, DETECTORS) { }
 
@@ -161,25 +163,32 @@ public sealed class CodingScanner
 			part = splitor.SplitNext();
 		}
 
-		return new WorkspacesInfo(directory, workspaces, node.Value); 
+		return new WorkspacesInfo(directory, workspaces, node.Value);
 	}
 
-	public IEnumerable<(string, FileType)> Walk(string root, FileType includes)
+	public IEnumerable<(FileSystemInfo, FileType)> Walk(string folder, FileType includes)
 	{
-		foreach (var file in Directory.EnumerateFileSystemEntries(root))
-		{
-			var folder = Path.GetDirectoryName(file)!;
-			var type = GetWorkspaces(folder).GetFileType(file);
+		return Walk(new DirectoryInfo(folder), includes);
+	}
 
+	// Enumerating FileSystemInfo does not produce more IO operations than enumerating path.
+	// https://github.com/dotnet/runtime/blob/485e4bf291285e281f1d8ff8861bf9b7a7827c64/src/libraries/System.Private.CoreLib/src/System/IO/Enumeration/FileSystemEnumerableFactory.cs
+	// https://github.com/dotnet/runtime/blob/485e4bf291285e281f1d8ff8861bf9b7a7827c64/src/libraries/System.Private.CoreLib/src/System/IO/FileSystemInfo.Windows.cs#L26
+	public IEnumerable<(FileSystemInfo, FileType)> Walk(DirectoryInfo folder, FileType includes)
+	{
+		var info = GetWorkspaces(folder.FullName);
+		foreach (var file in folder.EnumerateFileSystemInfos())
+		{
+			var type = info.GetFileType(file.FullName);
 			if (!includes.HasFlag(type))
 			{
 				continue;
 			}
 			yield return (file, type);
 
-			if (Directory.Exists(file))
+			if (file is DirectoryInfo next)
 			{
-				foreach (var x in Walk(file, includes)) yield return x;
+				foreach (var x in Walk(next, includes)) yield return x;
 			}
 		}
 	}

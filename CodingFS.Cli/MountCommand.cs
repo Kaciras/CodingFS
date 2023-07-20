@@ -9,14 +9,14 @@ sealed class MountCommand : Command
 	public string? ConfigFile { get; set; }
 
 	[Option('p', "point", HelpText = "The mount point.")]
-	public string Point { get; set; } = @"x:\";
+	public string Point { get; set; } = "x";
 
 	[Option('t', "type", HelpText = "Which type of files should listed in the file system.")]
 	public FileType Type { get; set; } = FileType.Source;
 
 	readonly ManualResetEvent blockMainThreadEvent = new(false);
-	
-	IDisposable virtualFS = null!;
+
+	VirtualFS virtualFS = null!;
 
 	void OnExit(object? sender, EventArgs e)
 	{
