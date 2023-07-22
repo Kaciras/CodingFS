@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using CodingFS.Workspaces;
 
 namespace CodingFS.Cli;
@@ -13,9 +12,9 @@ public sealed class Config
 
 	public int ModuleDepth { get; set; } = int.MaxValue;
 
-	public IList<string> Deps { get; set; } = ImmutableList.Create<string>();
+	public List<string> Deps { get; set; } = new();
 
-	public IList<string> Ingores { get; set; } = ImmutableList.Create<string>();
+	public List<string> Ingores { get; set; } = new();
 
 	public CodingScanner CreateScanner()
 	{
