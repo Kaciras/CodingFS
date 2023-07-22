@@ -30,11 +30,11 @@ public sealed class CodingPathFilter : PathFilter
 	public IEnumerable<FileInformation> ListFiles(string dir)
 	{
 		dir = Path.Join(scanner.Root, dir);
-		var ws = scanner.GetWorkspaces(dir);
+		var w = scanner.GetWorkspaces(dir);
 
 		return new DirectoryInfo(dir)
 			.EnumerateFileSystemInfos()
-			.Where(info => ws.GetFileType(info.FullName).HasFlag(includes))
+			.Where(info => (w.GetFileType(info.FullName) & includes) != 0)
 			.Select(Utils.ConvertFSInfo);
 	}
 }
