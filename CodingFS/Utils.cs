@@ -74,11 +74,6 @@ static class Utils
 		}
 	}
 
-	public static void NormalizeSepUnsafe(string path)
-	{
-		NormalizeSepUnsafe(path.AsMemory());
-	}
-
 	/// <summary>
 	/// Convert FileSystemInfo to Dokan's FileInformation.
 	/// </summary>
@@ -91,6 +86,11 @@ static class Utils
 		LastWriteTime = src.LastWriteTime,
 		Length = src is FileInfo file ? file.Length : 0,
 	};
+
+	public static void NormalizeSepUnsafe(string path)
+	{
+		NormalizeSepUnsafe(path.AsMemory());
+	}
 
 	public static void NormalizeSepUnsafe(ReadOnlyMemory<char> path)
 	{
@@ -112,5 +112,5 @@ sealed class CharMemComparator : IEqualityComparer<ReadOnlyMemory<char>>
 		return x.Span.SequenceEqual(y.Span);
 	}
 
-	public int GetHashCode(ReadOnlyMemory<char> x) => Utils.JavaStringHashCode(x.Span);
+	public int GetHashCode(ReadOnlyMemory<char> x) => string.GetHashCode(x.Span);
 }
