@@ -7,7 +7,7 @@ namespace CodingFS.Test;
 
 public sealed class VSCodeWorkspaceTest
 {
-	void CopyTestData(byte[] settings)
+	static void CopyTestData(byte[] settings)
 	{
 		Directory.CreateDirectory(".vscode");
 		File.WriteAllBytes(".vscode/settings.json", settings);

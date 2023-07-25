@@ -1,6 +1,5 @@
+using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Xunit;
 
 namespace CodingFS.Test;
@@ -13,7 +12,7 @@ public sealed class PathSpliterTest
 	[InlineData("a/bar/c", new string[] { "a", "bar", "c" })]
 	[InlineData("A:/b/c", new string[] { "A:/", "b", "c" })]
 	[Theory]
-	public void Split(string path, string[] components)
+	public void SplitNext(string path, string[] components)
 	{
 		var s = new PathSpliter(path);
 
@@ -35,19 +34,31 @@ public sealed class PathSpliterTest
 	public void Relative(string path, string root, string next)
 	{
 		var s = new PathSpliter(path, root);
-		Assert.Equal(root, new string(s.Left.Span));
+		Assert.Equal(root.AsMemory(), s.Left, Utils.memComparator);
 
 		if (s.HasNext)
 		{
 			s.SplitNext();
 		}
-		
-		Assert.Equal(next, new string(s.Left.Span));
+
+		Assert.Equal(next.AsMemory(), s.Left, Utils.memComparator);
 	}
 
 	[Fact]
-	public void SS()
+	public void RightWhenDrained() => Assert.Throws<ArgumentOutOfRangeException>(() =>
 	{
-		var list = Directory.EnumerateDirectories("D:/").ToList();
+		var s = new PathSpliter("foo");
+		s.SplitNext();
+		return s.Right;
+	});
+
+	[InlineData("a/bar/c", "", "a/bar/c")]
+	[InlineData("a/bar/c", "a/bar", "c")]
+	[InlineData("", "", "")]
+	[Theory]
+	public void Right(string path, string root, string expected)
+	{
+		var s = new PathSpliter(path, root);
+		Assert.Equal(expected.AsMemory(), s.Right, Utils.memComparator);
 	}
 }
