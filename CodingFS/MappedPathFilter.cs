@@ -13,14 +13,17 @@ public sealed class MappedPathFilter : PathFilter
 {
 	static readonly char SEP = Path.DirectorySeparatorChar;
 
-	readonly Dictionary<string, PathFilter> filters = new();
+	readonly Dictionary<ReadOnlyMemory<char>, PathFilter> filters = new(Utils.memComparator);
+	readonly List<string> directories = new();
+
 	readonly DateTime creation = DateTime.Now;
 
 	public void Set(string path, PathFilter filter)
 	{
 		if (path.AsSpan().IndexOfAny('\\', '/') == -1)
 		{
-			filters[path] = filter;
+			filters[path.AsMemory()] = filter;
+			directories.Add(path);
 		}
 		else
 		{
@@ -37,7 +40,7 @@ public sealed class MappedPathFilter : PathFilter
 	{
 		if (dir.Length == 1 && dir[0] == SEP)
 		{
-			return filters.Keys.Select(x => new FileInformation
+			return directories.Select(x => new FileInformation
 			{
 				CreationTime = creation,
 				FileName = x,
@@ -52,21 +55,32 @@ public sealed class MappedPathFilter : PathFilter
 		return Get(path, out var relative).MapPath(relative);
 	}
 
-	PathFilter Get(string value, out string relative)
+	PathFilter Get(string input, out string relative)
 	{
-		var split = value.Split(Path.DirectorySeparatorChar, 3);
-		if (filters.TryGetValue(split[1], out var filter))
+		var splitor = new PathSpliter(input);
+
+		// Skip the root slash.
+		switch (input[0])
 		{
-			if (split.Length < 3)
+			case '\\':
+			case '/':
+				splitor.Index = 0;
+				break;
+		}
+
+		var top = splitor.SplitNext();
+		if (filters.TryGetValue(top, out var filter))
+		{
+			if (splitor.HasNext)
 			{
-				relative = "";
+				relative = new string(splitor.Right.Span);
 			}
 			else
 			{
-				relative = split[2];
+				relative = string.Empty;
 			}
 			return filter;
 		}
-		throw new FileNotFoundException("Path is not in the map", value);
+		throw new FileNotFoundException("Path is not in the map", input);
 	}
 }

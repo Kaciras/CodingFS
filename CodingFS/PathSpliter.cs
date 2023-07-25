@@ -3,14 +3,39 @@ using System;
 namespace CodingFS;
 
 /// <summary>
-/// Memory&lt;char&gt; based path splitor, only support POSIX and DOS paths.
+/// ReadOnlyMemory&lt;char&gt; based path splitor, only support POSIX and DOS paths.
 /// </summary>
 public ref struct PathSpliter
 {
-	readonly int root = -1;
 	readonly ReadOnlyMemory<char> path;
+	readonly int root = -1;
 
-	int index = -1;
+	public int Index { get; set; } = -1;
+
+	public PathSpliter(string path, string relativeTo) : this(path)
+	{
+		if (relativeTo.Length == 0) return;
+
+		if (relativeTo[^1] == '\\' || relativeTo[^1] == '/')
+		{
+			relativeTo = relativeTo[..^1];
+		}
+
+		var length = relativeTo.Length;
+		var span = path.AsSpan();
+
+		if (span.StartsWith(relativeTo))
+		{
+			if (span.Length == relativeTo.Length ||
+				span[length] == '\\' ||
+				span[length] == '/')
+			{
+				Index = length;
+				return;
+			}
+		}
+		throw new ArgumentException($"{path} is not relative to {relativeTo}");
+	}
 
 	public PathSpliter(string path)
 	{
@@ -25,59 +50,39 @@ public ref struct PathSpliter
 		this.path = path.AsMemory();
 	}
 
-	public PathSpliter(string path, string root) : this(path)
-	{
-		if (root.Length == 0) return;
-
-		if (root[^1] == '\\' || root[^1] == '/')
-		{
-			root = root[..^1];
-		}
-
-		var length = root.Length;
-		var span = path.AsSpan();
-
-		if (span.StartsWith(root))
-		{
-			if (span.Length == root.Length ||
-				span[length] == '\\' || span[length] == '/')
-			{
-				index = length;
-				return;
-			}
-		}
-		throw new ArgumentException($"{path} is not relative to {root}");
-	}
-
-	public readonly bool HasNext => index != path.Length;
+	public readonly bool HasNext => Index != path.Length;
 
 	public ReadOnlyMemory<char> SplitNext()
 	{
-		if (index == -1 && root != -1)
+		if (Index == -1 && root != -1)
 		{
-			index = root;
+			Index = root;
 			return path[..(root + 1)];
 		}
 
-		var slice = path[(index + 1)..];
+		var slice = path[(Index + 1)..];
 		var i = slice.Span.IndexOfAny('\\', '/');
 
 		if (i == -1)
 		{
-			index = path.Length;
+			Index = path.Length;
 			return slice;
 		}
 		else
 		{
-			index += i + 1;
+			Index += i + 1;
 			return slice[..i];
 		}
 	}
 
 	public readonly ReadOnlyMemory<char> Left
 	{
-		get => index == root ? path[..(root + 1)] : path[..index];
+		get => Index == root ? path[..(root + 1)] : path[..Index];
 	}
 
-	public readonly ReadOnlyMemory<char> Right => path[(index + 1)..];
+	/// <summary>
+	/// The slice after the current index, only available if there are remaining components.
+	/// </summary>
+	/// <exception cref="ArgumentOutOfRangeException">If HasNext == false</exception>
+	public readonly ReadOnlyMemory<char> Right => path[(Index + 1)..];
 }
