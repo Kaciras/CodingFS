@@ -26,9 +26,8 @@ public sealed class WorkspacesInfo
 
 	public FileType GetFileType(string path)
 	{
-		var relative = Path.GetRelativePath(Directory, path);
 		return Workspaces
-			.Aggregate(RecognizeType.NotCare, (v, c) => v | c.Recognize(relative))
+			.Aggregate(RecognizeType.NotCare, (v, c) => v | c.Recognize(path))
 			.ToFileType();
 	}
 }

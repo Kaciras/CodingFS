@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 
 namespace CodingFS;
 
@@ -12,7 +13,13 @@ public ref struct PathSpliter
 
 	public int Index { get; set; } = -1;
 
-	public PathSpliter(string path, string relativeTo) : this(path)
+	/// <summary>
+	/// Create a new PathSplitor for the path, started at the end of the base path.
+	/// </summary>
+	/// <param name="path">The path to split</param>
+	/// <param name="relativeTo">The base path to skip</param>
+	/// <exception cref="ArgumentException">If the path is not relative to the base</exception>
+	public PathSpliter(string path, ReadOnlySpan<char> relativeTo) : this(path)
 	{
 		if (relativeTo.Length == 0) return;
 

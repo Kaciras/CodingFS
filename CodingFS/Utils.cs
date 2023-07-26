@@ -56,6 +56,16 @@ static class Utils
 		return Directory.Exists(Path.Join(p0, p1));
 	}
 
+	public static int IndexOfSpan(IReadOnlyList<string> list, ReadOnlySpan<char> value)
+	{
+		var length = list.Count;
+		for (var i = 0; i < length; i++)
+		{
+			if (value.SequenceEqual(list[i])) return i;
+		}
+		return -1;
+	}
+
 	public static unsafe int JavaStringHashCode(ReadOnlySpan<char> str)
 	{
 		var h = 0;
@@ -102,6 +112,11 @@ static class Utils
 				span[i] = Path.DirectorySeparatorChar;
 			}
 		}
+	}
+
+	public static string NormalizeSep(string path)
+	{
+		return path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
 	}
 }
 

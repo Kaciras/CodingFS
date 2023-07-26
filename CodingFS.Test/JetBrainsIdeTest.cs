@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CodingFS.Workspaces;
@@ -10,7 +11,7 @@ public sealed class JetBrainsIDETest
 	[Fact]
 	public void LoadWorkspace()
 	{
-		var dict = new Dictionary<string, RecognizeType>();
+		var dict = new CharsDictionary<RecognizeType>();
 		var instance = new IDEAWorkspace(dict,  "Resources", null!);
 		instance.LoadWorkspace();
 
@@ -23,7 +24,7 @@ public sealed class JetBrainsIDETest
 	[Fact]
 	public void LoadModules()
 	{
-		var dict = new Dictionary<string, RecognizeType>();
+		var dict = new CharsDictionary<RecognizeType>();
 		var instance = new IDEAWorkspace(dict, "Resources", null!);
 		instance.LoadModules();
 

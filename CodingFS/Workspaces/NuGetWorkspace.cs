@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 
 namespace CodingFS.Workspaces;
 
@@ -34,7 +35,15 @@ public sealed class NuGetWorkspace : PackageManager
 
 	public RecognizeType Recognize(string path)
 	{
-		return path == "packages" && Parent == null && legacy
+		if (Parent != null || !legacy)
+		{
+			return RecognizeType.NotCare;
+		}
+
+		var folder = Path.GetDirectoryName(csproj.AsSpan());
+		var relative = new PathSpliter(path, folder).Right.Span;
+
+		return relative.SequenceEqual("packages")
 			? RecognizeType.Dependency : RecognizeType.NotCare;
 	}
 }

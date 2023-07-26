@@ -8,7 +8,7 @@ public class IDEAWorkspace : Workspace
 {
 	public WorkspaceKind Kind => WorkspaceKind.IDE;
 
-	readonly Dictionary<string, RecognizeType> dict;
+	readonly CharsDictionary<RecognizeType> dict;
 	readonly JetBrainsDetector detector;
 	readonly string root;
 
@@ -24,7 +24,7 @@ public class IDEAWorkspace : Workspace
 	/// This constructor is only used for test/benchmark.
 	/// </summary>
 	internal IDEAWorkspace(
-		Dictionary<string, RecognizeType> dict,
+		CharsDictionary<RecognizeType> dict,
 		string root, 
 		JetBrainsDetector detector)
 	{
@@ -33,13 +33,16 @@ public class IDEAWorkspace : Workspace
 		this.detector = detector;
 	}
 
-	public RecognizeType Recognize(string relative)
+	public RecognizeType Recognize(string path)
 	{
-		if (relative == ".idea")
+		var relative = new PathSpliter(path, root).Right;
+		var span = relative.Span;
+
+		if (span.SequenceEqual(".idea"))
 		{
 			return RecognizeType.Dependency;
 		}
-		if (relative.EndsWith(".iml"))
+		if (span.EndsWith(".iml"))
 		{
 			return RecognizeType.Dependency;
 		}

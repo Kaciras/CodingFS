@@ -21,20 +21,22 @@ public sealed class GitWorkspace : Workspace
 	// so just let GC to dispose them.
 	public Repository Repository { get; }
 
-	public string Folder => Path.GetDirectoryName(Repository.Info.Path[..^1])!;
+	public string Folder { get; }
 
  	public GitWorkspace(string path)
 	{
+		Folder = path;
 		Repository = new Repository(path);
 	}
 
 	public RecognizeType Recognize(string path)
 	{
-		if (path == ".git")
+		if (!Ignore)
 		{
 			return RecognizeType.NotCare;
 		}
-		return Ignore && Repository.Ignore.IsPathIgnored(path) 
+		var relative = Path.GetRelativePath(Folder, path);
+		return Repository.Ignore.IsPathIgnored(relative)
 			? RecognizeType.Ignored : RecognizeType.NotCare;
 	}
 }

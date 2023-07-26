@@ -4,6 +4,4 @@ using CodingFS.Benchmark;
 
 [module: SkipLocalsInit]
 
-BenchmarkRunner.Run<CodingScannerPerf>();
-
-//new PathDictionaryPerf().CheckEquality();
+BenchmarkRunner.Run<IndexOfSpanPerf>();

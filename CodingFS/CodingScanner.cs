@@ -95,7 +95,7 @@ public sealed class CodingScanner
 
 	public CodingScanner(string root, Workspace[] globals, Detector[] detectors)
 	{
-		Root = root;
+		Root = Utils.NormalizeSep(root);
 		this.detectors = detectors;
 		cacheRoot = new TrieNode<Workspace[]>(globals);
 	}

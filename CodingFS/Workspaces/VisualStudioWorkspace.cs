@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using LibGit2Sharp;
 using Microsoft.Build.Construction;
 
 namespace CodingFS.Workspaces;
@@ -28,7 +29,8 @@ public sealed class VisualStudioWorkspace : Workspace
 
 	public RecognizeType Recognize(string path)
 	{
-		switch (path)
+		var relative = new PathSpliter(path, Folder).Right.Span;
+		switch (relative)
 		{
 			case "TestResults":
 			case "Debug":

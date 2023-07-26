@@ -1,12 +1,11 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 
 namespace CodingFS.Workspaces;
 
 public sealed class MSBuildProject : Workspace
 {
-	public static readonly string[] SDK_CSHARP = { "obj" , "bin" };
+	public static readonly string[] SDK_CSHARP = { "obj", "bin" };
 	public static readonly string[] SDK_CPP = { "Debug", "Release", "x64", "win32" };
 
 	public WorkspaceKind Kind => WorkspaceKind.IDE;
@@ -31,7 +30,8 @@ public sealed class MSBuildProject : Workspace
 
 	public RecognizeType Recognize(string path)
 	{
-		return SDK.Contains(path) 
+		var relative = new PathSpliter(path, Folder).Right.Span;
+		return Utils.IndexOfSpan(SDK, relative) != -1
 			? RecognizeType.Ignored : RecognizeType.NotCare;
 	}
 }

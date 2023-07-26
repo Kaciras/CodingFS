@@ -23,8 +23,7 @@ public sealed class CodingPathFilter : PathFilter
 
 	public void HandleChange(string file)
 	{
-		file = Path.Join(scanner.Root, file);
-		scanner.InvalidCache(file);
+		scanner.InvalidCache(MapPath(file));
 	}
 
 	public IEnumerable<FileInformation> ListFiles(string dir)

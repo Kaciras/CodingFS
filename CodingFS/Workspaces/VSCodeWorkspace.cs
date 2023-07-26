@@ -47,6 +47,9 @@ internal class VSCodeWorkspace : Workspace
 
 	readonly Matcher excludes = new();
 
+	// https://code.visualstudio.com/docs/editor/glob-patterns#_glob-pattern-syntax
+	// https://github.com/microsoft/vscode/blob/main/src/vs/base/common/glob.ts
+
 	public VSCodeWorkspace(string folder)
 	{
 		Folder = folder;
@@ -67,13 +70,15 @@ internal class VSCodeWorkspace : Workspace
 		}
 	}
 
-	public RecognizeType Recognize(string relative)
+	public RecognizeType Recognize(string path)
 	{
-		if (relative == ".vscode")
+		if (path == ".vscode")
 		{
 			return RecognizeType.Dependency;
 		}
-		else if (excludes.Match(relative).HasMatches)
+
+		var relative = Path.GetRelativePath(Folder, path);
+		if (excludes.Match(relative).HasMatches)
 		{
 			return RecognizeType.Ignored;
 		}
