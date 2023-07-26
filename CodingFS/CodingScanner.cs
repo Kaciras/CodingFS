@@ -47,11 +47,6 @@ file sealed class TrieNode<T>
 public sealed class CodingScanner
 {
 	/// <summary>
-	/// Directory concains VCS repository or IDE config is a project folder.
-	/// </summary>
-	const WorkspaceKind PROJECT = WorkspaceKind.IDE | WorkspaceKind.VCS;
-
-	/// <summary>
 	/// Maximum supported components length in file path.
 	/// </summary>
 	public const int MAX_COMPONENT = 255;
@@ -73,14 +68,9 @@ public sealed class CodingScanner
 	};
 
 	/// <summary>
-	/// Maximum search depth from the Root to project.
+	/// Maximum search depth (include the root directory).
 	/// </summary>
-	public int ProjectDepth { get; set; } = int.MaxValue;
-
-	/// <summary>
-	/// Maximum search depth from project to sub module.
-	/// </summary>
-	public int ModuleDepth { get; set; } = int.MaxValue;
+	public int MaxDepth { get; set; } = int.MaxValue;
 
 	public string Root { get; }
 
@@ -93,7 +83,7 @@ public sealed class CodingScanner
 
 	public CodingScanner(string root, Workspace[] globals, Detector[] detectors)
 	{
-		Root = Utils.NormalizeSep(root);
+		Root = root;
 		this.detectors = detectors;
 		cacheRoot = new TrieNode<Workspace[]>(globals);
 	}
@@ -133,7 +123,7 @@ public sealed class CodingScanner
 		var workspaces = new List<Workspace>(node.Value);
 		var part = Root.AsMemory();
 
-		for (; ; )
+		for (var limit = MaxDepth; limit > 0; limit--)
 		{
 			if (node.TryGet(part, out var child))
 			{

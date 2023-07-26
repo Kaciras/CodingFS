@@ -49,4 +49,17 @@ public sealed class CodingScannerTest
 		i.GetWorkspaces("/foo/bar/baz");
 
 	}
+
+	[Fact]
+	public void MaxDepth()
+	{
+		var i = new CodingScanner("/foo", Array.Empty<Workspace>(), new Detector[] { RecordPath });
+		i.MaxDepth = 3;
+		i.GetWorkspaces("/foo/CSharp/CodingFS/CodingFS/bin/Debug/net7.0");
+
+		Assert.Equal(3, checkedPaths.Count);
+		Assert.Equal("/foo", checkedPaths[0]);
+		Assert.Equal("/foo/CSharp", checkedPaths[1]);
+		Assert.Equal("/foo/CSharp/CodingFS", checkedPaths[2]);
+	}
 }
