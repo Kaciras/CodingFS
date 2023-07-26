@@ -19,7 +19,7 @@ public class PathDictionaryPerf
 	const string ROOT = @"D:\Coding";
 
 	readonly PathDictionary old = new(ROOT);
-	readonly Dictionary<ReadOnlyMemory<char>, RecognizeType> dict = new(Utils.memComparator);
+	readonly CharsDictionary<RecognizeType> dict = new();
 
 	public PathDictionaryPerf()
 	{

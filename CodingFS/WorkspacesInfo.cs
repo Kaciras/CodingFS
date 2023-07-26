@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace CodingFS;
@@ -12,7 +11,10 @@ public sealed class WorkspacesInfo
 
 	public string Directory { get; }
 
-	internal WorkspacesInfo(string path, List<Workspace> workspaces, Workspace[] current)
+	internal WorkspacesInfo(
+		string path,
+		List<Workspace> workspaces,
+		Workspace[] current)
 	{
 		Directory = path;
 		Workspaces = workspaces;
@@ -26,8 +28,11 @@ public sealed class WorkspacesInfo
 
 	public FileType GetFileType(string path)
 	{
-		return Workspaces
-			.Aggregate(RecognizeType.NotCare, (v, c) => v | c.Recognize(path))
-			.ToFileType();
+		var recognized = RecognizeType.NotCare;
+		foreach (var w in Workspaces)
+		{
+			recognized |= w.Recognize(path);
+		}
+		return recognized.ToFileType();
 	}
 }

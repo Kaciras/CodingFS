@@ -11,11 +11,11 @@ namespace CodingFS.FUSE;
 /// Attempt to convert IO exception thrown in IDokanOperations to NtStatus,
 /// or re-throw it if cannot convert.
 /// </summary>
-public sealed class ExceptionWrapper : IDokanOperations
+sealed class DokanExceptionWrapper : IDokanOperations
 {
 	public IDokanOperations Native { get; }
 
-	public ExceptionWrapper(IDokanOperations native)
+	public DokanExceptionWrapper(IDokanOperations native)
 	{
 		Native = native;
 	}

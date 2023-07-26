@@ -29,8 +29,7 @@ public sealed class VisualStudioWorkspace : Workspace
 
 	public RecognizeType Recognize(string path)
 	{
-		var relative = new PathSpliter(path, Folder).Right.Span;
-		switch (relative)
+		switch (PathSpliter.GetRelative(path, Folder))
 		{
 			case "TestResults":
 			case "Debug":

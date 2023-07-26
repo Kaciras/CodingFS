@@ -17,7 +17,7 @@ public class AopFSWrapper : DispatchProxy
 		catch (TargetInvocationException e)
 		when (method.ReturnType == typeof(NtStatus))
 		{
-			return ExceptionWrapper.HandleException(e.InnerException!);
+			return DokanExceptionWrapper.HandleException(e.InnerException!);
 		}
 	}
 

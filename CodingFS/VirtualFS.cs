@@ -89,6 +89,6 @@ public sealed class VirtualFS : IDisposable
 			});
 		
 		disposables.Add(dokan);
-		disposables.Add(builder.Build(new ExceptionWrapper(vfs)));
+		disposables.Add(builder.Build(new DokanExceptionWrapper(vfs)));
 	}
 }

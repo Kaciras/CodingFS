@@ -37,7 +37,7 @@ namespace CodingFS.FUSE;
 /// <summary>
 /// Copied from https://github.com/dokan-dev/dokan-dotnet/blob/master/sample/DokanNetMirror/Mirror.cs
 /// </summary>
-public abstract partial class RedirectDokan : IDokanOperations
+abstract partial class RedirectDokan : IDokanOperations
 {
 	const FileAccess DataAccess = FileAccess.Execute | FileAccess.GenericExecute
 								| FileAccess.GenericWrite | FileAccess.GenericRead

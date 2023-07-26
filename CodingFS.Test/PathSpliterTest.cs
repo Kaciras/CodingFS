@@ -6,6 +6,17 @@ namespace CodingFS.Test;
 
 public sealed class PathSpliterTest
 {
+	[InlineData("A:/foo/bar", "A:/foo/", "bar")]
+	[InlineData("A:/foo/bar", "A:/foo", "bar")]
+	[InlineData("A:/foo/bar", "", "A:/foo/bar")]
+	[InlineData("A:/foo/bar", "A:/foo/bar", ".")]
+	[Theory]
+	public void GetRelative(string path, string relativeTo, string expected)
+	{
+		var relative = PathSpliter.GetRelative(path, relativeTo);
+		Assert.Equal(expected, relative.ToString());
+	}
+
 	[InlineData("😗🍏🍎🚗", new string[] { "😗🍏🍎🚗" })]
 	[InlineData("", new string[] { "" })]
 	[InlineData("/a", new string[] { "/", "a" })]

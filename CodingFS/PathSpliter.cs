@@ -8,6 +8,45 @@ namespace CodingFS;
 /// </summary>
 public ref struct PathSpliter
 {
+	static int RelativePosition(ReadOnlySpan<char> path, ReadOnlySpan<char> relativeTo)
+	{
+		if (relativeTo.Length == 0) return -1;
+
+		var end = relativeTo[^1];
+		if (end == '\\' || end == '/')
+		{
+			relativeTo = relativeTo[..^1];
+		}
+
+		var length = relativeTo.Length;
+		if (path.StartsWith(relativeTo))
+		{
+			if (path.Length == relativeTo.Length ||
+				path[length] == '\\' ||
+				path[length] == '/')
+			{
+				return length;
+			}
+		}
+		throw new ArgumentException($"{path} is not relative to {relativeTo}");
+	}
+
+	/// <summary>
+	/// ReadOnlySpan-based alternative of `Path.GetRelativePath`.
+	/// Difference:
+	/// 1) Comparison is case-sensitive on all platforms.
+	/// 2) Throw ArgumentException if the paths don't share the same root.
+	/// </summary>
+	public static ReadOnlySpan<char> GetRelative(
+		ReadOnlySpan<char> path,
+		ReadOnlySpan<char> relativeTo)
+	{
+		var i = RelativePosition(path, relativeTo);
+		return i == path.Length ? "." : path[(i + 1)..];
+	}
+
+	// =============================================================================
+
 	readonly ReadOnlyMemory<char> path;
 	readonly int root = -1;
 
@@ -21,27 +60,7 @@ public ref struct PathSpliter
 	/// <exception cref="ArgumentException">If the path is not relative to the base</exception>
 	public PathSpliter(string path, ReadOnlySpan<char> relativeTo) : this(path)
 	{
-		if (relativeTo.Length == 0) return;
-
-		if (relativeTo[^1] == '\\' || relativeTo[^1] == '/')
-		{
-			relativeTo = relativeTo[..^1];
-		}
-
-		var length = relativeTo.Length;
-		var span = path.AsSpan();
-
-		if (span.StartsWith(relativeTo))
-		{
-			if (span.Length == relativeTo.Length ||
-				span[length] == '\\' ||
-				span[length] == '/')
-			{
-				Index = length;
-				return;
-			}
-		}
-		throw new ArgumentException($"{path} is not relative to {relativeTo}");
+		Index = RelativePosition(path, relativeTo);
 	}
 
 	public PathSpliter(string path)

@@ -8,7 +8,7 @@ using AccessType = System.IO.FileAccess;
 
 namespace CodingFS.FUSE;
 
-public abstract partial class UnsafeRedirectDokan : RedirectDokan, IDokanOperationsUnsafe
+abstract partial class UnsafeRedirectDokan : RedirectDokan, IDokanOperationsUnsafe
 {
 	public virtual NtStatus ReadFile(string fileName, IntPtr buffer, uint bufferLength,
 		out int bytesRead, long offset, IDokanFileInfo info)

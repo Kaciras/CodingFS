@@ -13,7 +13,7 @@ public sealed class MappedPathFilter : PathFilter
 {
 	static readonly char SEP = Path.DirectorySeparatorChar;
 
-	readonly Dictionary<ReadOnlyMemory<char>, PathFilter> filters = new(Utils.memComparator);
+	readonly CharsDictionary<PathFilter> filters = new();
 	readonly List<string> directories = new();
 
 	readonly DateTime creation = DateTime.Now;

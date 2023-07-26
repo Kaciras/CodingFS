@@ -18,4 +18,10 @@
   <ItemGroup>
     <ProjectReference Include="..\CodingFS\CodingFS.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="config.user.toml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

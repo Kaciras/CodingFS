@@ -5,7 +5,7 @@ using DokanNet;
 
 namespace CodingFS.FUSE;
 
-public sealed class FilteredDokan : UnsafeRedirectDokan
+sealed class FilteredDokan : UnsafeRedirectDokan
 {
 	readonly string name;
 	readonly PathFilter filter;

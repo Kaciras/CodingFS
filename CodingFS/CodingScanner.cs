@@ -2,15 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Xml.Linq;
 using CodingFS.Workspaces;
-using LibGit2Sharp;
 
 namespace CodingFS;
 
-file class TrieNode<T>
+file sealed class TrieNode<T>
 {
-	Dictionary<ReadOnlyMemory<char>, TrieNode<T>>? children;
+	CharsDictionary<TrieNode<T>>? children;
 
 	public T Value { get; set; }
 
@@ -38,7 +36,7 @@ file class TrieNode<T>
 
 	public TrieNode<T> Put(ReadOnlyMemory<char> part, T value)
 	{
-		children ??= new(Utils.memComparator);
+		children ??= new();
 		return children[part] = new TrieNode<T>(value);
 	}
 }
