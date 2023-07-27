@@ -11,11 +11,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Resources\.vscode\vscode-empty.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    <None Include="Resources\.idea\modules.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\.vscode\vscode-exclude.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    <None Include="Resources\.idea\test.iml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\.idea\workspace.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
@@ -53,14 +56,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Resources\.idea\test.iml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Update="Resources\VSCode\vscode-empty.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\.idea\modules.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\.idea\workspace.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Update="Resources\VSCode\vscode-exclude.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

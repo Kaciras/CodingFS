@@ -55,16 +55,23 @@ public class IDEAWorkspace : Workspace
 	internal void LoadWorkspace()
 	{
 		var xmlFile = Path.Join(root, ".idea/workspace.xml");
-		using var reader = XmlReaderEx.ForFile(xmlFile);
-
-		reader.GoToAttribute("name", "exactExcludedFiles");
-		reader.GoToElement("list");
-
-		var depth = reader.Depth + 1;
-		while (reader.NextInLayer(depth))
+		try
 		{
-			var value = reader.GetAttribute("value")!;
-			dict[ToRelative(value)] = RecognizeType.Ignored;
+			using var reader = XmlReaderEx.ForFile(xmlFile);
+
+			reader.GoToAttribute("name", "exactExcludedFiles");
+			reader.GoToElement("list");
+
+			var depth = reader.Depth + 1;
+			while (reader.NextInLayer(depth))
+			{
+				var value = reader.GetAttribute("value")!;
+				dict[ToRelative(value)] = RecognizeType.Ignored;
+			}
+		} 
+		catch (FileNotFoundException)
+		{
+			// Only if the user delete the file, ignored for robust.
 		}
 	}
 
@@ -73,41 +80,50 @@ public class IDEAWorkspace : Workspace
 	/// </summary>
 	internal void LoadModules()
 	{
-		var xmlFile = Path.Join(root, ".idea/modules.xml");
-		using var matcher = XmlReaderEx.ForFile(xmlFile);
-
-		while (matcher.GoToElement("module"))
+		try
 		{
-			var imlFile = matcher.GetAttribute("filepath");
-			imlFile = Path.Join(root, imlFile![14..]);
+			var xmlFile = Path.Join(root, ".idea/modules.xml");
+			using var matcher = XmlReaderEx.ForFile(xmlFile);
 
-			var parent = Path.GetDirectoryName(imlFile.AsSpan());
-			if (parent.SequenceEqual(".idea") || imlFile.Contains('/'))
+			while (matcher.GoToElement("module"))
 			{
-				ParseModuleManager(imlFile, default);
+				var imlFile = matcher.GetAttribute("filepath");
+				imlFile = Path.Join(root, imlFile![14..]);
+
+				var parent = Path.GetDirectoryName(imlFile.AsSpan());
+				if (parent.SequenceEqual(".idea") || imlFile.Contains('/'))
+				{
+					ParseModuleManager(imlFile, default);
+				}
+				else
+				{
+					ParseModuleManager(imlFile, parent);
+				}
 			}
-			else
-			{
-				ParseModuleManager(imlFile, parent);
-			}
+		}
+		catch (FileNotFoundException)
+		{
+			var name = Path.GetFileName(root);
+			ParseModuleManager(Path.Join(root, name + ".iml"), null);
 		}
 	}
 
 	internal void ResolveExternalBuildSystem()
 	{
-		var ext = detector.EBSModuleFiles(root);
-		if (ext != null)
+		var ext = detector.ExternalBuildSystem(root);
+		if (ext == null)
 		{
-			foreach (var file in Directory.EnumerateFiles(ext))
+			return;
+		}
+		foreach (var file in Directory.EnumerateFiles(ext))
+		{
+			string? moduleDirectory = null;
+			var stem = Path.GetFileNameWithoutExtension(file);
+			if (Path.GetFileName(root) != stem)
 			{
-				string? moduleDirectory = null;
-				var stem = Path.GetFileNameWithoutExtension(file);
-				if (Path.GetFileName(root) != stem)
-				{
-					moduleDirectory = stem;
-				}
-				ParseModuleManager(file, moduleDirectory);
+				moduleDirectory = stem;
 			}
+			ParseModuleManager(file, moduleDirectory);
 		}
 	}
 
@@ -116,17 +132,24 @@ public class IDEAWorkspace : Workspace
 	/// </summary>
 	void ParseModuleManager(string imlFile, ReadOnlySpan<char> module)
 	{
-		using var matcher = XmlReaderEx.ForFile(imlFile);
-		while (matcher.GoToElement("excludeFolder"))
+		try
 		{
-			var folder = matcher.GetAttribute("url")!;
-			if (!folder.StartsWith("file://$MODULE_DIR$/"))
+			using var matcher = XmlReaderEx.ForFile(imlFile);
+			while (matcher.GoToElement("excludeFolder"))
 			{
-				throw new Exception("断言失败");
+				var folder = matcher.GetAttribute("url")!;
+				if (!folder.StartsWith("file://$MODULE_DIR$/"))
+				{
+					throw new Exception("断言失败");
+				}
+				folder = folder[20..];
+				var path = module == null ? folder : Path.Join(module, folder);
+				dict[path] = RecognizeType.Ignored;
 			}
-			folder = folder[20..];
-			var path = module == null ? folder : Path.Join(module, folder);
-			dict[path] = RecognizeType.Ignored;
+		}
+		catch (FileNotFoundException)
+		{
+			// Only if the user delete the file, ignored for robust.
 		}
 	}
 

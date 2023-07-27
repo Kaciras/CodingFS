@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using CodingFS.Workspaces;
 using Xunit;
 
@@ -12,7 +9,7 @@ public sealed class JetBrainsIDETest
 	public void LoadWorkspace()
 	{
 		var dict = new CharsDictionary<RecognizeType>();
-		var instance = new IDEAWorkspace(dict,  "Resources", null!);
+		var instance = new IDEAWorkspace(dict, "Resources", null!);
 		instance.LoadWorkspace();
 
 		Assert.Equal(87, dict.Count);
