@@ -41,7 +41,7 @@ public sealed class NuGetWorkspace : PackageManager
 		}
 
 		var folder = Path.GetDirectoryName(csproj.AsSpan());
-		var relative = PathSpliter.GetRelative(path, folder);
+		var relative = PathSpliter.GetRelative(folder, path);
 
 		return relative.SequenceEqual("packages")
 			? RecognizeType.Dependency : RecognizeType.NotCare;

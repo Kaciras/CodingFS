@@ -4,7 +4,7 @@ using System.IO;
 namespace CodingFS;
 
 /// <summary>
-/// ReadOnlyMemory&lt;char&gt; based path splitor, only support POSIX and DOS paths.
+/// ReadOnlyMemory&lt;char&gt; based path splitor. Only support POSIX and DOS paths.
 /// </summary>
 public ref struct PathSpliter
 {
@@ -12,24 +12,23 @@ public ref struct PathSpliter
 	{
 		if (relativeTo.Length == 0) return -1;
 
-		var end = relativeTo[^1];
-		if (end == '\\' || end == '/')
+		if (IsSep(relativeTo[^1]))
 		{
 			relativeTo = relativeTo[..^1];
 		}
 
-		var length = relativeTo.Length;
 		if (path.StartsWith(relativeTo))
 		{
-			if (path.Length == relativeTo.Length ||
-				path[length] == '\\' ||
-				path[length] == '/')
+			var length = relativeTo.Length;
+			if (path.Length == relativeTo.Length || IsSep(path[length]))
 			{
 				return length;
 			}
 		}
 		throw new ArgumentException($"{path} is not relative to {relativeTo}");
 	}
+
+	static bool IsSep(char @char) => @char == '\\' || @char == '/';
 
 	/// <summary>
 	/// ReadOnlySpan-based alternative of `Path.GetRelativePath`.
@@ -38,8 +37,8 @@ public ref struct PathSpliter
 	/// 2) Throw ArgumentException if the paths don't share the same root.
 	/// </summary>
 	public static ReadOnlySpan<char> GetRelative(
-		ReadOnlySpan<char> path,
-		ReadOnlySpan<char> relativeTo)
+		ReadOnlySpan<char> relativeTo,
+		ReadOnlySpan<char> path)
 	{
 		var i = RelativePosition(path, relativeTo);
 		return i == path.Length ? "." : path[(i + 1)..];

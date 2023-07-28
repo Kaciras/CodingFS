@@ -30,7 +30,7 @@ public sealed class MSBuildProject : Workspace
 
 	public RecognizeType Recognize(string path)
 	{
-		var relative = PathSpliter.GetRelative(path, Folder);
+		var relative = PathSpliter.GetRelative(Folder, path);
 		return Utils.IndexOfSpan(SDK, relative) != -1
 			? RecognizeType.Ignored : RecognizeType.NotCare;
 	}

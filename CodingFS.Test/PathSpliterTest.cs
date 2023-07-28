@@ -13,7 +13,7 @@ public sealed class PathSpliterTest
 	[Theory]
 	public void GetRelative(string path, string relativeTo, string expected)
 	{
-		var relative = PathSpliter.GetRelative(path, relativeTo);
+		var relative = PathSpliter.GetRelative(relativeTo, path);
 		Assert.Equal(expected, relative.ToString());
 	}
 
