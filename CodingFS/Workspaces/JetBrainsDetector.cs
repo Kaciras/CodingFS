@@ -49,7 +49,7 @@ public sealed partial class JetBrainsDetector
 		path = path.Replace('\\', '/');
 		var hash = Utils.JavaStringHashCode(path);
 
-		var builder = new ValueStringBuilder(stackalloc char[4096]);
+		var builder = new StackStringBuilder(stackalloc char[4096]);
 		builder.Append(localConfig);
 		builder.Append(Path.DirectorySeparatorChar);
 		builder.Append("projects");
