@@ -13,23 +13,22 @@ namespace CodingFS;
 
 ref struct StackStringBuilder
 {
-	readonly Span<char> _chars;
+	readonly Span<char> buffer;
 
-	private int _pos;
+	int position;
 
 	public StackStringBuilder(Span<char> buffer)
 	{
-		_pos = 0;
-		_chars = buffer;
+		this.buffer = buffer;
 	}
+
+	public readonly int Capacity => buffer.Length;
 
 	public int Length
 	{
-		readonly get => _pos;
-		set { _pos = value; }
+		readonly get => position;
+		set { position = value; }
 	}
-
-	public readonly int Capacity => _chars.Length;
 
 	/// <summary>
 	/// Get a pinnable reference to the builder.
@@ -39,53 +38,54 @@ ref struct StackStringBuilder
 	/// </summary>
 	public readonly ref char GetPinnableReference()
 	{
-		return ref MemoryMarshal.GetReference(_chars);
+		return ref MemoryMarshal.GetReference(buffer);
 	}
 
-	public readonly ref char this[int index] => ref _chars[index];
+	public readonly ref char this[int index] => ref buffer[index];
 
-	public override readonly string ToString()=> _chars[.._pos].ToString();
+	public override readonly string ToString()=> buffer[..position].ToString();
 
-	public readonly ReadOnlySpan<char> AsSpan() => _chars[.._pos];
-	public readonly ReadOnlySpan<char> AsSpan(int start) => _chars[start.._pos];
-	public readonly ReadOnlySpan<char> AsSpan(int start, int length) => _chars.Slice(start, length);
+	public readonly ReadOnlySpan<char> AsSpan() => buffer[..position];
+	public readonly ReadOnlySpan<char> AsSpan(int start) => buffer[start..position];
+	public readonly ReadOnlySpan<char> AsSpan(int start, int length) => buffer.Slice(start, length);
 
 	public void Insert(int index, char value, int count)
 	{
-		if (_pos > _chars.Length - count)
+		if (position > buffer.Length - count)
 		{
 			OutOfCapacity();
 		}
-		int remaining = _pos - index;
-		_pos += count;
-		_chars.Slice(index, remaining).CopyTo(_chars[(index + count)..]);
-		_chars.Slice(index, count).Fill(value);
+		int remaining = position - index;
+		position += count;
+		buffer.Slice(index, remaining).CopyTo(buffer[(index + count)..]);
+		buffer.Slice(index, count).Fill(value);
 	}
 
 	public void Insert(int index, string s)
 	{
 		int count = s.Length;
 
-		if (_pos > (_chars.Length - count))
+		if (position > buffer.Length - count)
 		{
 			OutOfCapacity();
 		}
 
-		int remaining = _pos - index;
-		_pos += count;
-		_chars.Slice(index, remaining).CopyTo(_chars[(index + count)..]);
-		s.AsSpan().CopyTo(_chars[index..]);
+		int remaining = position - index;
+		position += count;
+		buffer.Slice(index, remaining).CopyTo(buffer[(index + count)..]);
+		s.AsSpan().CopyTo(buffer[index..]);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public void Append(char c)
 	{
-		var pos = _pos;
-		var chars = _chars;
-		if ((uint)pos < (uint)chars.Length)
+		var chars = buffer;
+		var p = position;
+
+		if (p < chars.Length)
 		{
-			chars[pos] = c;
-			_pos = pos + 1;
+			chars[p] = c;
+			position = p + 1;
 		}
 		else
 		{
@@ -94,41 +94,41 @@ ref struct StackStringBuilder
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public void Append(string s)
+	public void Append(string value)
 	{
-		int pos = _pos;
-		if (pos > _chars.Length - s.Length)
+		int p = position;
+		if (p > buffer.Length - value.Length)
 		{
 			OutOfCapacity();
 		}
 
-		_pos += s.Length;
-		s.AsSpan().CopyTo(_chars[pos..]);
+		position += value.Length;
+		value.AsSpan().CopyTo(buffer[p..]);
 	}
 
 	public void Append(ReadOnlySpan<char> value)
 	{
-		int pos = _pos;
-		if (pos > _chars.Length - value.Length)
+		int p = position;
+		if (p > buffer.Length - value.Length)
 		{
 			OutOfCapacity();
 		}
 
-		_pos += value.Length;
-		value.CopyTo(_chars[_pos..]);
+		position += value.Length;
+		value.CopyTo(buffer[p..]);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public Span<char> AppendSpan(int length)
 	{
-		int origPos = _pos;
-		if (origPos > _chars.Length - length)
+		int p = position;
+		if (p > buffer.Length - length)
 		{
 			OutOfCapacity();
 		}
 
-		_pos = origPos + length;
-		return _chars.Slice(origPos, length);
+		position = p + length;
+		return buffer.Slice(p, length);
 	}
 
 	[DoesNotReturn]

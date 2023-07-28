@@ -48,7 +48,7 @@ public sealed partial class JetBrainsDetector
 		}
 		path = path.Replace('\\', '/');
 		var hash = Utils.JavaStringHashCode(path);
-
+		
 		var builder = new StackStringBuilder(stackalloc char[4096]);
 		builder.Append(localConfig);
 		builder.Append(Path.DirectorySeparatorChar);
@@ -56,7 +56,7 @@ public sealed partial class JetBrainsDetector
 		builder.Append(Path.DirectorySeparatorChar);
 		builder.Append(Path.GetFileName(path.AsSpan()));
 		builder.Append('.');
-		builder.Append(hash.ToString("x2"));
+		hash.TryFormat(builder.AppendSpan(8), out _, "x2");
 		builder.Append(Path.DirectorySeparatorChar);
 		builder.Append("external_build_system");
 		builder.Append(Path.DirectorySeparatorChar);
