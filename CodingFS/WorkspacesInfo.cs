@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace CodingFS;
 
-public sealed class WorkspacesInfo
+public readonly struct WorkspacesInfo
 {
 	public IReadOnlyList<Workspace> Workspaces { get; }
 
