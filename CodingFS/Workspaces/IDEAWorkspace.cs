@@ -115,15 +115,23 @@ public class IDEAWorkspace : Workspace
 		{
 			return;
 		}
-		foreach (var file in Directory.EnumerateFiles(ext))
+		try
 		{
-			string? moduleDirectory = null;
-			var stem = Path.GetFileNameWithoutExtension(file);
-			if (Path.GetFileName(root) != stem)
+
+			foreach (var file in Directory.EnumerateFiles(ext))
 			{
-				moduleDirectory = stem;
+				string? moduleDirectory = null;
+				var stem = Path.GetFileNameWithoutExtension(file);
+				if (Path.GetFileName(root) != stem)
+				{
+					moduleDirectory = stem;
+				}
+				ParseModuleManager(file, moduleDirectory);
 			}
-			ParseModuleManager(file, moduleDirectory);
+		}
+		catch (DirectoryNotFoundException)
+		{
+			// Project may not have EBS, ignored for robust.
 		}
 	}
 

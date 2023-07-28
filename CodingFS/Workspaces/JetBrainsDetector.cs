@@ -13,7 +13,7 @@ public sealed partial class JetBrainsDetector
 	private static partial Regex JBConfigRE();
 
 	// Config directory of the latest version of IntelliJIdea.
-	private string? localConfig;
+	string? localConfig;
 
 	public JetBrainsDetector()
 	{
@@ -42,24 +42,25 @@ public sealed partial class JetBrainsDetector
 	/// </summary>
 	public string? ExternalBuildSystem(string path)
 	{
-		if (localConfig == null) return null;
+		if (localConfig == null)
+		{
+			return null;
+		}
+		path = path.Replace('\\', '/');
+		var hash = Utils.JavaStringHashCode(path);
 
-		var hash = Utils.JavaStringHashCode(path.Replace('\\', '/')).ToString("x2");
-
-		var builder = new StringBuilder()
-			.Append(localConfig)
-			.Append(Path.DirectorySeparatorChar)
-			.Append("projects")
-			.Append(Path.DirectorySeparatorChar)
-			.Append(Path.GetFileName(path.AsSpan()))
-			.Append('.')
-			.Append(hash)
-			.Append(Path.DirectorySeparatorChar)
-			.Append("external_build_system")
-			.Append(Path.DirectorySeparatorChar)
-			.Append("modules");
-
-		var modules = builder.ToString();
-		return Directory.Exists(modules) ? modules : null;
+		var builder = new ValueStringBuilder(stackalloc char[4096]);
+		builder.Append(localConfig);
+		builder.Append(Path.DirectorySeparatorChar);
+		builder.Append("projects");
+		builder.Append(Path.DirectorySeparatorChar);
+		builder.Append(Path.GetFileName(path.AsSpan()));
+		builder.Append('.');
+		builder.Append(hash.ToString("x2"));
+		builder.Append(Path.DirectorySeparatorChar);
+		builder.Append("external_build_system");
+		builder.Append(Path.DirectorySeparatorChar);
+		builder.Append("modules");
+		return builder.ToString();
 	}
 }
