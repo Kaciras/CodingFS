@@ -4,7 +4,7 @@ using System.IO;
 
 namespace CodingFS.Workspaces;
 
-public class IDEAWorkspace : Workspace
+public sealed class IDEAWorkspace : Workspace
 {
 	public WorkspaceKind Kind => WorkspaceKind.IDE;
 
@@ -104,7 +104,7 @@ public class IDEAWorkspace : Workspace
 		catch (FileNotFoundException)
 		{
 			var name = Path.GetFileName(root);
-			ParseModuleManager(Path.Join(root, name + ".iml"), null);
+			ParseModuleManager(Path.Join(root, name + ".iml"), default);
 		}
 	}
 
@@ -120,13 +120,13 @@ public class IDEAWorkspace : Workspace
 
 			foreach (var file in Directory.EnumerateFiles(ext))
 			{
-				string? moduleDirectory = null;
+				ReadOnlySpan<char> module = default;
 				var stem = Path.GetFileNameWithoutExtension(file);
 				if (Path.GetFileName(root) != stem)
 				{
-					moduleDirectory = stem;
+					module = stem;
 				}
-				ParseModuleManager(file, moduleDirectory);
+				ParseModuleManager(file, module);
 			}
 		}
 		catch (DirectoryNotFoundException)
@@ -145,14 +145,8 @@ public class IDEAWorkspace : Workspace
 			using var matcher = XmlReaderEx.ForFile(imlFile);
 			while (matcher.GoToElement("excludeFolder"))
 			{
-				var folder = matcher.GetAttribute("url")!;
-				if (!folder.StartsWith("file://$MODULE_DIR$/"))
-				{
-					throw new Exception("断言失败");
-				}
-				folder = folder[20..];
-				var path = module == null ? folder : Path.Join(module, folder);
-				dict[path] = RecognizeType.Ignored;
+				var url = matcher.GetAttribute("url")!;
+				dict[ToRelative(url, module)] = RecognizeType.Ignored;
 			}
 		}
 		catch (FileNotFoundException)
@@ -161,12 +155,31 @@ public class IDEAWorkspace : Workspace
 		}
 	}
 
-	internal string ToRelative(string value)
+	static ReadOnlyMemory<char> ToRelative(string value)
 	{
-		value = value.Replace("$PROJECT_DIR$", root);
+		if (value.StartsWith("$PROJECT_DIR$/"))
+		{
+			var relative = value.AsMemory()[14..];
+			Utils.NormalizeSepUnsafe(relative);
+			return relative;
+		}
+		else
+		{
+			throw new Exception("Expect relative path only.");
+		}
+	}
 
-		// 绝对路径也有可能是项目下的文件
-		// Directory.GetRelativePath 对于非子路径不报错，而是原样返回
-		return Path.GetRelativePath(root, value);
+	static ReadOnlyMemory<char> ToRelative(string value, ReadOnlySpan<char> prefix)
+	{
+		if (!value.StartsWith("file://$MODULE_DIR$/"))
+		{
+			throw new Exception("Expect relative path only.");
+		}
+		var relative = value.AsMemory()[20..];
+		Utils.NormalizeSepUnsafe(relative);
+
+		return prefix.IsEmpty 
+			? relative 
+			: Path.Join(prefix, relative.Span).AsMemory();
 	}
 }

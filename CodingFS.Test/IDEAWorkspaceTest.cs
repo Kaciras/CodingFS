@@ -3,7 +3,7 @@ using Xunit;
 
 namespace CodingFS.Test;
 
-public sealed class JetBrainsIDETest
+public sealed class IDEAWorkspaceTest
 {
 	[Fact]
 	public void LoadWorkspace()
