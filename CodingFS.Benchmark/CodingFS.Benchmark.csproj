@@ -21,4 +21,10 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Resources\words.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
