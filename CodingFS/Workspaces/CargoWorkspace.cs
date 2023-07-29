@@ -24,13 +24,13 @@ public sealed class CargoWorkspace : PackageManager
 
 	public WorkspaceKind Kind => WorkspaceKind.PM;
 
-	public string[] ConfigFiles => Parent == null ? ROOT_FILES : MODULE_FILES;
+	public string[] ConfigFiles => Root == this ? ROOT_FILES : MODULE_FILES;
 
-	public PackageManager? Parent { get; }
+	public PackageManager Root { get; }
 
-	public CargoWorkspace(CargoWorkspace? parent)
+	public CargoWorkspace(CargoWorkspace? root)
 	{
-		Parent = parent;
+		Root = root ?? this;
 	}
 
 	public RecognizeType Recognize(string path) => RecognizeType.NotCare;

@@ -14,7 +14,7 @@ public sealed class NuGetWorkspace : PackageManager
 
 	public WorkspaceKind Kind => WorkspaceKind.PM;
 
-	public string[] ConfigFiles => (legacy, Parent == null) switch
+	public string[] ConfigFiles => (legacy, Root == this) switch
 	{
 		(true, false) => PACKAGES_CONFIG,
 		(true, true) => CACHE_STORE,
@@ -22,20 +22,23 @@ public sealed class NuGetWorkspace : PackageManager
 		(false, false) => Array.Empty<string>(),
 	};
 
-	public PackageManager? Parent { get; }
+	public PackageManager Root { get; }
 
-	public NuGetWorkspace() {}
+	public NuGetWorkspace() 
+	{
+		Root = this;
+	}
 
 	public NuGetWorkspace(string csproj, NuGetWorkspace parent, bool legacy)
 	{
-		Parent = parent;
+		Root = parent;
 		this.csproj = csproj;
 		this.legacy = legacy;
 	}
 
 	public RecognizeType Recognize(string path)
 	{
-		if (Parent != null || !legacy)
+		if (Root != this || !legacy)
 		{
 			return RecognizeType.NotCare;
 		}

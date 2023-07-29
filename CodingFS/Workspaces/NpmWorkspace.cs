@@ -16,14 +16,14 @@ public sealed class NpmWorkspace : PackageManager
 
 	public string[] ConfigFiles { get; }
 
-	public PackageManager? Parent { get; }
+	public PackageManager Root { get; }
 
 	NpmWorkspace(string directory, string app, string[] configFiles, NpmWorkspace? parent)
 	{
 		Directory = directory;
 		App = app;
 		ConfigFiles = configFiles;
-		Parent = parent;
+		Root = parent ?? this;
 	}
 
 	public RecognizeType Recognize(string path)

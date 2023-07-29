@@ -9,7 +9,7 @@ public sealed class MavenWorkspace : PackageManager
 
 	public string[] ConfigFiles => new[] { "pom.xml" };
 
-	public PackageManager? Parent => null;
+	public PackageManager Root => this;
 
 	public static void Match(DetectContxt ctx)
 	{

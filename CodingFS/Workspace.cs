@@ -25,7 +25,7 @@ public interface Workspace
 
 public interface PackageManager : Workspace
 {
-	string[] ConfigFiles { get; }
+	PackageManager Root { get; }
 
-	PackageManager? Parent { get; }
+	string[] ConfigFiles { get; }
 }
