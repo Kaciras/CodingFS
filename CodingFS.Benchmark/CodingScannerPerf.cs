@@ -4,17 +4,13 @@ using CodingFS.Benchmark.Legacy;
 
 namespace CodingFS.Benchmark;
 
-/// <summary>
-/// |        Method |       Mean |    Error |   StdDev | Ratio |   Gen0 | Allocated | Alloc Ratio |
-/// |-------------- |-----------:|---------:|---------:|------:|-------:|----------:|------------:|
-/// | V1_StringPath | 2,581.6 ns | 18.09 ns | 16.92 ns |  1.00 | 0.7744 |   6.34 KB |        1.00 |
-/// |   CurrentImpl |   812.7 ns | 12.01 ns | 11.23 ns |  0.31 | 0.5169 |   4.23 KB |        0.67 |
-/// 
-/// |        Method |     Mean |   Error |  StdDev | Ratio |   Gen0 | Allocated | Alloc Ratio |
-/// |-------------- |---------:|--------:|--------:|------:|-------:|----------:|------------:|
-/// | V1_StringPath | 759.5 ns | 3.05 ns | 2.85 ns |  1.00 | 0.1297 |    1088 B |        1.00 |
-/// |   CurrentImpl | 431.0 ns | 1.42 ns | 1.33 ns |  0.57 | 0.0238 |     200 B |        0.18 |
-/// </summary>
+/**
+ * |  Method |       Mean |    Error |   StdDev | Ratio |   Gen0 |   Gen1 | Allocated | Alloc Ratio |
+ * |-------- |-----------:|---------:|---------:|------:|-------:|-------:|----------:|------------:|
+ * |      V1 | 2,722.3 ns | 11.43 ns | 10.69 ns |  3.30 | 0.7782 | 0.0076 |   6.37 KB |        1.40 |
+ * |      V2 |   805.3 ns |  1.67 ns |  1.40 ns |  0.98 | 0.3319 | 0.0010 |   2.71 KB |        0.60 |
+ * | Current |   823.8 ns | 12.14 ns | 10.76 ns |  1.00 | 0.5569 | 0.0067 |   4.55 KB |        1.00 |
+ */
 [MemoryDiagnoser]
 public class CodingScannerPerf
 {
@@ -23,18 +19,38 @@ public class CodingScannerPerf
 
 	static void Fac1(DetectContxt ctx)	{}
 
-	readonly FileClassifierV1 filter = new("/foo", Array.Empty<Workspace>(), new Detector[] { Fac1 });
-	readonly CodingScanner filter2 = new("/foo", Array.Empty<Workspace>(), new Detector[] { Fac1 });
+	readonly Detector[] detectors = { Fac1 };
 
-	[Benchmark(Baseline = true)]
-	public FileType V1_StringPath()
+	internal FileClassifierV1 NewV1()
 	{
-		return filter.GetWorkspaces(DIR).GetFileType(PATH);
+		return new FileClassifierV1("/foo", Array.Empty<Workspace>(), detectors);
+	}
+
+	internal CodingScannerV2 NewV2()
+	{
+		return new CodingScannerV2("/foo", detectors);
+	}
+
+	internal CodingScanner NewCurrent()
+	{
+		return new CodingScanner("/foo", Array.Empty<Workspace>(), detectors);
 	}
 
 	[Benchmark]
-	public FileType CurrentImpl()
+	public FileType V1()
 	{
-		return filter2.GetWorkspaces(DIR).GetFileType(PATH);
+		return NewV1().GetWorkspaces(DIR).GetFileType(PATH);
+	}
+
+	[Benchmark]
+	public FileType V2()
+	{
+		return NewV2().GetWorkspaces(DIR).GetFileType(PATH);
+	}
+
+	[Benchmark(Baseline = true)]
+	public FileType Current()
+	{
+		return NewCurrent().GetWorkspaces(DIR).GetFileType(PATH);
 	}
 }

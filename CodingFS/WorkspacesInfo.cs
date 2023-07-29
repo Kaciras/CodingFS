@@ -13,8 +13,8 @@ public readonly struct WorkspacesInfo
 
 	internal WorkspacesInfo(
 		string path,
-		List<Workspace> workspaces,
-		Workspace[] current)
+		IReadOnlyList<Workspace> workspaces,
+		IReadOnlyList<Workspace> current)
 	{
 		Directory = path;
 		Workspaces = workspaces;

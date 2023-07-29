@@ -9,16 +9,12 @@ public readonly struct DetectContxt
 	public readonly IReadOnlyList<Workspace> Parent;
 	public readonly string Path;
 
-	readonly List<Workspace> matches;
+	internal readonly List<Workspace> Matches = new();
 
-	public DetectContxt(
-		IReadOnlyList<Workspace> parent,
-		string path,
-		List<Workspace> matches)
+	public DetectContxt(string path, List<Workspace> parent)
 	{
-		Parent = parent;
 		Path = path;
-		this.matches = matches;
+		Parent = parent;
 	}
 
 	public void Deconstruct(
@@ -29,5 +25,5 @@ public readonly struct DetectContxt
 		parent = Parent;
 	}
 
-	public void AddWorkspace(Workspace value) => matches.Add(value);
+	public void AddWorkspace(Workspace value) => Matches.Add(value);
 }

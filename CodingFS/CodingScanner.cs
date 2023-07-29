@@ -1,51 +1,24 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Runtime.InteropServices;
 using CodingFS.Workspaces;
 
 namespace CodingFS;
-
-file sealed class TrieNode<T>
-{
-	CharsDictionary<TrieNode<T>>? children;
-
-	public T Value { get; set; }
-
-	public TrieNode(T value)
-	{
-		Value = value;
-	}
-
-	public bool TryGet(
-		ReadOnlyMemory<char> part,
-		[MaybeNullWhen(false)] out TrieNode<T> child)
-	{
-		if (children == null)
-		{
-			child = default!;
-			return false;
-		}
-		return children.TryGetValue(part, out child!);
-	}
-
-	public void Remove(ReadOnlyMemory<char> part)
-	{
-		children?.Remove(part);
-	}
-
-	public TrieNode<T> Put(ReadOnlyMemory<char> part, T value)
-	{
-		children ??= new();
-		return children[part] = new TrieNode<T>(value);
-	}
-}
 
 /// <summary>
 /// Scan and cache workspaces of directories. This class is not thread-safe.
 /// </summary>
 public sealed class CodingScanner
 {
+	readonly struct TrieNode
+	{
+		public readonly CharsDictionary<TrieNode> Children = new();
+		public readonly IReadOnlyList<Workspace> Value;
+
+		public TrieNode(IReadOnlyList<Workspace> value) { Value = value; }
+	}
+
 	/// <summary>
 	/// Maximum supported components length in file path.
 	/// </summary>
@@ -75,7 +48,7 @@ public sealed class CodingScanner
 	public string Root { get; }
 
 	readonly Detector[] detectors;
-	readonly TrieNode<Workspace[]> cacheRoot;
+	readonly TrieNode cacheRoot;
 
 	public CodingScanner(string root) : this(root, GLOBALS, DETECTORS) { }
 
@@ -85,7 +58,7 @@ public sealed class CodingScanner
 	{
 		Root = root;
 		this.detectors = detectors;
-		cacheRoot = new TrieNode<Workspace[]>(globals);
+		cacheRoot = new TrieNode(globals);
 	}
 
 	public void InvalidCache(string directory)
@@ -97,7 +70,7 @@ public sealed class CodingScanner
 
 		for (; ; )
 		{
-			if (node.TryGet(part, out var child))
+			if (node.Children.TryGetValue(part, out var child))
 			{
 				node = child;
 			}
@@ -112,36 +85,38 @@ public sealed class CodingScanner
 			part = splitor.SplitNext();
 		}
 
-		node.Remove(part);
+		node.Children.Remove(part);
 	}
 
 	public WorkspacesInfo GetWorkspaces(string directory)
 	{
 		var splitor = new PathSpliter(directory, Root);
-
 		var node = cacheRoot;
-		var workspaces = new List<Workspace>(node.Value);
 		var part = Root.AsMemory();
+		var workspaces = new List<Workspace>(node.Value);
 
 		for (var limit = MaxDepth; limit > 0; limit--)
 		{
-			if (node.TryGet(part, out var child))
-			{
+			ref var child = ref CollectionsMarshal
+				.GetValueRefOrAddDefault(node.Children, part, out var exists);
+
+            if (exists)
+            {
 				node = child;
 			}
 			else
 			{
 				var path = new string(splitor.Left.Span);
-				var matches = new List<Workspace>();
-				var ctx = new DetectContxt(workspaces, path, matches);
+				var ctx = new DetectContxt(path, workspaces);
 
-				foreach (var factory in detectors)
+				foreach (var detector in detectors)
 				{
-					factory(ctx);
+					detector(ctx);
 				}
 
-				node = node.Put(part, matches.ToArray());
+				child = node = new(ctx.Matches);
 			}
+
 			workspaces.AddRange(node.Value);
 
 			if (!splitor.HasNext)

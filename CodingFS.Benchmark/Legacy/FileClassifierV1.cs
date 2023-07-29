@@ -84,15 +84,14 @@ internal sealed class FileClassifierV1
 			else
 			{
 				var tempDir = Path.Join(Root, string.Join('\\', parts.Take(i + 1)));
-				var matches = new List<Workspace>();
-				var ctx = new DetectContxt(workspaces, tempDir, matches);
+				var ctx = new DetectContxt(tempDir, workspaces);
 
 				foreach (var factory in factories)
 				{
 					factory(ctx);
 				}
 
-				node = node.Put(part, matches.ToArray());
+				node = node.Put(part, ctx.Matches.ToArray());
 			}
 
 			workspaces.AddRange(node.Value);
