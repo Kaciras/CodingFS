@@ -56,7 +56,7 @@ public sealed partial class JetBrainsDetector
 		builder.Append(Path.DirectorySeparatorChar);
 		builder.Append(Path.GetFileName(path.AsSpan()));
 		builder.Append('.');
-		hash.TryFormat(builder.AppendSpan(8), out _, "x2");
+		builder.AppendFormat(hash, "x2");
 		builder.Append(Path.DirectorySeparatorChar);
 		builder.Append("external_build_system");
 		builder.Append(Path.DirectorySeparatorChar);

@@ -7,7 +7,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace CodingFS;
 
@@ -22,40 +21,18 @@ ref struct StackStringBuilder
 		this.buffer = buffer;
 	}
 
-	public readonly int Capacity => buffer.Length;
+	public int Length { readonly get => position; set { position = value; } }
 
-	public int Length
+	public override readonly string ToString()
 	{
-		readonly get => position;
-		set { position = value; }
+		return new string(buffer[..position]);
 	}
-
-	/// <summary>
-	/// Get a pinnable reference to the builder.
-	/// Does not ensure there is a null char after <see cref="Length"/>
-	/// This overload is pattern matched in the C# 7.3+ compiler so you can omit
-	/// the explicit method call, and write eg "fixed (char* c = builder)"
-	/// </summary>
-	public readonly ref char GetPinnableReference()
-	{
-		return ref MemoryMarshal.GetReference(buffer);
-	}
-
-	public readonly ref char this[int index] => ref buffer[index];
-
-	public override readonly string ToString()=> buffer[..position].ToString();
-
-	public readonly ReadOnlySpan<char> AsSpan() => buffer[..position];
-	public readonly ReadOnlySpan<char> AsSpan(int start) => buffer[start..position];
-	public readonly ReadOnlySpan<char> AsSpan(int start, int length) => buffer.Slice(start, length);
 
 	public void Insert(int index, char value, int count)
 	{
-		if (position > buffer.Length - count)
-		{
-			OutOfCapacity();
-		}
-		int remaining = position - index;
+		CheckCapacity(count);
+
+		var remaining = position - index;
 		position += count;
 		buffer.Slice(index, remaining).CopyTo(buffer[(index + count)..]);
 		buffer.Slice(index, count).Fill(value);
@@ -63,14 +40,10 @@ ref struct StackStringBuilder
 
 	public void Insert(int index, string s)
 	{
-		int count = s.Length;
+		var count = s.Length;
+		CheckCapacity(count);
 
-		if (position > buffer.Length - count)
-		{
-			OutOfCapacity();
-		}
-
-		int remaining = position - index;
+		var remaining = position - index;
 		position += count;
 		buffer.Slice(index, remaining).CopyTo(buffer[(index + count)..]);
 		s.AsSpan().CopyTo(buffer[index..]);
@@ -89,51 +62,55 @@ ref struct StackStringBuilder
 		}
 		else
 		{
-			OutOfCapacity();
+			ThrowOutOfCapacity();
 		}
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public void Append(string value)
 	{
-		int p = position;
-		if (p > buffer.Length - value.Length)
-		{
-			OutOfCapacity();
-		}
-
+		CheckCapacity(value.Length);
+		value.AsSpan().CopyTo(buffer[position..]);
 		position += value.Length;
-		value.AsSpan().CopyTo(buffer[p..]);
 	}
 
 	public void Append(ReadOnlySpan<char> value)
 	{
-		int p = position;
-		if (p > buffer.Length - value.Length)
-		{
-			OutOfCapacity();
-		}
-
+		CheckCapacity(value.Length);
+		value.CopyTo(buffer[position..]);
 		position += value.Length;
-		value.CopyTo(buffer[p..]);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public Span<char> AppendSpan(int length)
 	{
-		int p = position;
-		if (p > buffer.Length - length)
-		{
-			OutOfCapacity();
-		}
-
+		CheckCapacity(length);
+		var p = position;
 		position = p + length;
 		return buffer.Slice(p, length);
 	}
 
-	[DoesNotReturn]
-	static void OutOfCapacity()
+	public void AppendFormat(int value, string format)
 	{
-		throw new IndexOutOfRangeException();
+		var span = buffer[position..];
+		if (value.TryFormat(span, out var count, format))
+		{
+			position += count;
+		}
+		else
+		{
+			ThrowOutOfCapacity();
+		}
+	}
+
+	void CheckCapacity(int length)
+	{
+		if (position + length > buffer.Length) ThrowOutOfCapacity();
+	}
+
+	[DoesNotReturn]
+	void ThrowOutOfCapacity()
+	{
+		throw new IndexOutOfRangeException($"Append chars out of the capacity(${buffer.Length})");
 	}
 }
