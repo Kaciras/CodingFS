@@ -12,5 +12,5 @@ var parser = new Parser(options =>
 	options.HelpWriter = Console.Error;
 });
 
-parser.ParseArguments<MountCommand, ListCommand>(args)
+parser.ParseArguments<MountCommand, ListCommand, InspectCommand>(args)
 	.WithParsed<Command>(command => command.Execute());

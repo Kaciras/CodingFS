@@ -8,9 +8,7 @@ public sealed class Config
 
 	public bool Gitignore { get; set; }
 
-	public int ProjectDepth { get; set; } = int.MaxValue;
-
-	public int ModuleDepth { get; set; } = int.MaxValue;
+	public int MaxDepth { get; set; } = int.MaxValue;
 
 	public List<string> Deps { get; set; } = new();
 
@@ -30,14 +28,10 @@ public sealed class Config
 			custom.Dict[module] = RecognizeType.Ignored;
 		}
 
-		var globals = new Workspace[] { 
-			custom, 
+		var globals = new Workspace[] {
+			custom,
 			CodingScanner.GLOBALS[0]
 		};
-		return new CodingScanner(Root, globals)
-		{
-			ModuleDepth = ModuleDepth,
-			ProjectDepth = ProjectDepth,
-		};
+		return new(Root, globals) { MaxDepth = MaxDepth };
 	}
 }
