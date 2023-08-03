@@ -14,21 +14,27 @@ public sealed class InspectCommand : Command
 	public void Execute()
 	{
 		var scanner = Command.LoadConfig(ConfigFile).CreateScanner();
-		var dir = FileName = Path.GetFullPath(FileName); 
+		FileName = Path.GetFullPath(FileName);
+		var dir = Path.GetDirectoryName(FileName)!;
 
-		if (File.Exists(FileName))
-		{
-			dir = Path.GetDirectoryName(dir);
-		}
+		var info = scanner.GetWorkspaces(dir);
+		var type = info.GetFileType(FileName);
 
-		while (dir.Length > scanner.Root.Length)
+		Console.Write($"File type of {FileName} is ");
+		Console.ForegroundColor = GetColor(type);
+		Console.WriteLine(Enum.GetName(type));
+		Console.ForegroundColor = ConsoleColor.Gray;
+
+		var splitor = new PathSpliter(dir, scanner.Root);
+		while (splitor.HasNext)
 		{
-			var info = scanner.GetWorkspaces(dir);
-			if(info.Current.Count > 0)
+			splitor.SplitNext();
+
+			info = scanner.GetWorkspaces(splitor.Left.ToString());
+			if (info.Current.Count > 0)
 			{
 				PrintRecognizeResults(info);
 			}
-			dir = Path.GetDirectoryName(dir);
 		}
 	}
 
@@ -39,23 +45,35 @@ public sealed class InspectCommand : Command
 
 		foreach (var w in info.Current)
 		{
-			Console.Write($"{w.Name} -> ");
-
-			var recognized = w.Recognize(FileName);
-			switch (recognized)
+			if (w is PackageManager p && p.Root != p)
 			{
-				case RecognizeType.NotCare:
-					Console.ForegroundColor = ConsoleColor.Blue;
-					break;
-				case RecognizeType.Dependency:
-					Console.ForegroundColor = ConsoleColor.DarkYellow;
-					break;
-				case RecognizeType.Ignored:
-					Console.ForegroundColor = ConsoleColor.Red;
-					break;
+				Console.Write($"{w.Name} [Sub] -> ");
 			}
-			Console.WriteLine(Enum.GetName(recognized));
-			Console.ForegroundColor = ConsoleColor.White;
+			else
+			{
+				Console.Write($"{w.Name} -> ");
+			}
+
+			var type = w.Recognize(FileName);
+			Console.ForegroundColor = GetColor(type);
+			Console.WriteLine(Enum.GetName(type));
+			Console.ForegroundColor = ConsoleColor.Gray;
 		}
 	}
+
+	static ConsoleColor GetColor(FileType x) => x switch
+	{
+		FileType.Source => ConsoleColor.Blue,
+		FileType.Dependency => ConsoleColor.DarkYellow,
+		FileType.Generated => ConsoleColor.Red,
+		_ => throw new NotImplementedException(Enum.GetName(x)),
+	};
+
+	static ConsoleColor GetColor(RecognizeType x) => x switch
+	{
+		RecognizeType.NotCare => ConsoleColor.DarkGreen,
+		RecognizeType.Dependency => ConsoleColor.DarkYellow,
+		RecognizeType.Ignored => ConsoleColor.Red,
+		_ => throw new NotImplementedException(Enum.GetName(x)),
+	};
 }
