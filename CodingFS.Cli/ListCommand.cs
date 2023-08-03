@@ -4,7 +4,7 @@ using CommandLine;
 namespace CodingFS.Cli;
 
 [Verb("list", HelpText = "Get the file list of specific type.")]
-internal sealed class ListCommand : Command
+public sealed class ListCommand : Command
 {
 	[Value(0, HelpText = "Config file to use.")]
 	public string? ConfigFile { get; set; }

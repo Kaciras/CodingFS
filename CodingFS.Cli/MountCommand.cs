@@ -3,7 +3,7 @@ using CommandLine;
 namespace CodingFS.Cli;
 
 [Verb("mount", HelpText = "Map a directory to a virtual drive, containing only files of the specified type.")]
-sealed class MountCommand : Command
+public sealed class MountCommand : Command
 {
 	[Value(0, HelpText = "Config file to use.")]
 	public string? ConfigFile { get; set; }

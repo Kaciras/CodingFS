@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Xunit;
 
 namespace CodingFS.Test;
@@ -42,7 +43,7 @@ public sealed class PathSpliterTest
 	[InlineData("A:/bar/c", "A:/", "A:/bar")]
 	[InlineData("D:/Coding", "D:/Coding", "D:/Coding")]
 	[Theory]
-	public void Relative(string path, string root, string next)
+	public void Relative(string path, string root, string prev)
 	{
 		var s = new PathSpliter(path, root);
 		Assert.Equal(root.AsMemory(), s.Left, Utils.memComparator);
@@ -52,7 +53,7 @@ public sealed class PathSpliterTest
 			s.SplitNext();
 		}
 
-		Assert.Equal(next.AsMemory(), s.Left, Utils.memComparator);
+		Assert.Equal(prev.AsMemory(), s.Left, Utils.memComparator);
 	}
 
 	[Fact]
