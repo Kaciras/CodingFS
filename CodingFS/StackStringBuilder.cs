@@ -1,7 +1,7 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 //
-// The original code is copied from:
+// The original code is from:
 // https://github.com/dotnet/runtime/blob/1da23b146496d95f017439a48f62e78ec15b0289/src/libraries/Common/src/System/Text/StackStringBuilder.cs
 
 using System;
@@ -90,6 +90,11 @@ ref struct StackStringBuilder
 		return buffer.Slice(p, length);
 	}
 
+	/// <summary>
+	/// Format the integer and append the result to the current instance.
+	/// </summary>
+	/// <param name="value">The integer to format</param>
+	/// <param name="format">A string defines the acceptable format</param>
 	public void AppendFormat(int value, string format)
 	{
 		var span = buffer[position..];

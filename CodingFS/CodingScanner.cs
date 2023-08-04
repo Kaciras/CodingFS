@@ -64,9 +64,8 @@ public sealed class CodingScanner
 	public void InvalidCache(string directory)
 	{
 		var splitor = new PathSpliter(directory, Root);
-
 		var node = cacheRoot;
-		var part = Root.AsMemory();
+		var part = ReadOnlyMemory<char>.Empty;
 
 		for (; ; )
 		{
@@ -92,7 +91,7 @@ public sealed class CodingScanner
 	{
 		var splitor = new PathSpliter(directory, Root);
 		var node = cacheRoot;
-		var part = Root.AsMemory();
+		var part = ReadOnlyMemory<char>.Empty;
 		var workspaces = new List<Workspace>(node.Value);
 
 		for (var limit = MaxDepth; limit > 0; limit--)
