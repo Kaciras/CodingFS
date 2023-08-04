@@ -1,4 +1,4 @@
-using System.IO;
+using System;
 using LibGit2Sharp;
 
 namespace CodingFS.Workspaces;
@@ -31,12 +31,17 @@ public sealed class GitWorkspace : Workspace
 
 	public RecognizeType Recognize(string path)
 	{
+		var relative = PathSpliter.GetRelative(Folder, path);
+		if (relative.SequenceEqual(".git"))
+		{
+			// .git is default ignored by IsPathIgnored().
+			return RecognizeType.NotCare;
+		}
 		if (!Ignore)
 		{
 			return RecognizeType.NotCare;
 		}
-		var relative = Path.GetRelativePath(Folder, path);
-		return Repository.Ignore.IsPathIgnored(relative)
+		return Repository.Ignore.IsPathIgnored(new string(relative))
 			? RecognizeType.Ignored : RecognizeType.NotCare;
 	}
 }

@@ -1,9 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CodingFS.Workspaces;
 using LibGit2Sharp;
 using Xunit;
@@ -19,9 +15,9 @@ public sealed class GitWorkspaceTest
 		File.WriteAllText(".gitignore", "/dist");
 
 		GitWorkspace.Ignore = true;
-		var i = new GitWorkspace(".");
+		var i = new GitWorkspace(Environment.CurrentDirectory);
 
-		Assert.Equal(RecognizeType.NotCare, i.Recognize(".git"));
-		Assert.Equal(RecognizeType.Ignored, i.Recognize("dist"));
+		Assert.Equal(RecognizeType.NotCare, i.Recognize(Path.GetFullPath(".git")));
+		Assert.Equal(RecognizeType.Ignored, i.Recognize(Path.GetFullPath("dist")));
 	}
 }
