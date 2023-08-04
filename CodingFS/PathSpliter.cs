@@ -10,16 +10,6 @@ public ref struct PathSpliter
 {
 	static int RelativePosition(ReadOnlySpan<char> path, ReadOnlySpan<char> relativeTo)
 	{
-		//switch (Path.IsPathRooted(path), Path.IsPathRooted(relativeTo))
-		//{
-		//	case (true, false):
-		//		TrimCwd(ref path, ref relativeTo);
-		//		break;
-		//	case (false, true):
-		//		TrimCwd(ref relativeTo, ref path);
-		//		break;
-		//}
-
         if (relativeTo.Length == 0) return -1;
 
 		if (IsSep(relativeTo[^1]))
@@ -36,35 +26,6 @@ public ref struct PathSpliter
 			}
 		}
 		throw new ArgumentException($"{path} is not relative to {relativeTo}");
-	}
-
-	static void TrimCwd(
-		ref ReadOnlySpan<char> absoulate, 
-		ref ReadOnlySpan<char> relative)
-	{
-		var cwd = Environment.CurrentDirectory.AsSpan();
-
-		while (relative.Length > 0 && relative[0] == '.')
-		{
-			if (relative.Length == 1) // "."
-			{
-				relative = ReadOnlySpan<char>.Empty;
-				break;
-			}
-			else if (relative[1] == '.'
-				&& relative.Length > 2
-				&& IsSep(relative[2]))
-			{
-				relative = relative[3..];
-				cwd = Path.GetDirectoryName(cwd);
-			}
-			else
-			{
-				break;
-			}
-		}
-
-		absoulate = GetRelative(cwd, absoulate);
 	}
 
 	static bool IsSep(char @char) => @char == '\\' || @char == '/';
@@ -88,34 +49,38 @@ public ref struct PathSpliter
 	readonly ReadOnlyMemory<char> path;
 	readonly int root;
 
-	public int Index { get; set; } = -1;
+	public int Index { get; set; }
 
-	public PathSpliter(string path, string relativeTo) : this(path.AsMemory(), relativeTo) {}
-
-	public PathSpliter(string path) : this(path.AsMemory()) { }
+	public PathSpliter(string path, ReadOnlySpan<char> relativeTo = default) 
+		: this(path.AsMemory(), relativeTo) {}
 
 	/// <summary>
-	/// Create a new PathSplitor for the path, started at the end of the base path.
+	/// Create a new PathSplitor for the path, started at the end of the base path (optional).
+	/// <br/>
+	/// This struct only operates on strings and does not resolve relative paths, 
+	/// so `path` and `relativeTo` must be both relative or absolute.
 	/// </summary>
 	/// <param name="path">The path to split</param>
 	/// <param name="relativeTo">The base path to skip</param>
 	/// <exception cref="ArgumentException">If the path is not relative to the base</exception>
-	public PathSpliter(ReadOnlyMemory<char> path, ReadOnlySpan<char> relativeTo) : this(path)
-	{
-		Index = RelativePosition(path.Span, relativeTo);
-	}
-
-	public PathSpliter(ReadOnlyMemory<char> path)
+	public PathSpliter(ReadOnlyMemory<char> path, ReadOnlySpan<char> relativeTo = default)
 	{
 		this.path = path;
 
 		root = path.Span switch
 		{
-			['/', ..] => 0,         // POSIX absoulate, e.g. "/foo/bar"
-			[_, ':', _, ..] => 2,   // DOS absoulate, e.g. "C:\foo\bar"
-			_ => -1,                // Relative, we do't support other types.
+			['/', ..] => 0,         // POSIX absoulate.
+			[_, ':', _, ..] => 2,   // DOS absoulate.
+			_ => -1,
 		};
+
+		Index = RelativePosition(path.Span, relativeTo);
 	}
+
+	/// <summary>
+	/// Return true if the original path contains a root, otherwise false.
+	/// </summary>
+	public readonly bool IsRooted => root != -1;
 
 	public readonly bool HasNext => Index != path.Length;
 

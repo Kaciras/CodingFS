@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using Xunit;
 
 namespace CodingFS.Test;
@@ -16,6 +15,17 @@ public sealed class PathSpliterTest
 	{
 		var relative = PathSpliter.GetRelative(relativeTo, path);
 		Assert.Equal(expected, relative.ToString());
+	}
+
+	[InlineData("foo/bar", "", false)]
+	[InlineData("A:/foo/bar", "", true)]
+	[InlineData("/foo/bar", "", true)]
+	[InlineData("/", "", true)]
+	[InlineData("/foo/bar", "/foo", true)]
+	[Theory]
+	public void IsRooted(string path, string relativeTo, bool expected)
+	{
+		Assert.Equal(expected, new PathSpliter(path, relativeTo).IsRooted);
 	}
 
 	[InlineData("😗🍏🍎🚗", new string[] { "😗🍏🍎🚗" })]
