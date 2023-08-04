@@ -5,8 +5,6 @@ namespace CodingFS.Workspaces;
 
 public sealed class MavenWorkspace : PackageManager
 {
-	public WorkspaceKind Kind => WorkspaceKind.PM;
-
 	public string[] ConfigFiles => new[] { "pom.xml" };
 
 	public PackageManager Root => this;

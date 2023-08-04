@@ -41,8 +41,6 @@ internal class VSCodeWorkspace : Workspace
 		}
 	}
 
-	public WorkspaceKind Kind => WorkspaceKind.IDE;
-
 	public string Folder { get; }
 
 	readonly Matcher excludes = new();

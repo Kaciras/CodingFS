@@ -12,8 +12,6 @@ public sealed class NuGetWorkspace : PackageManager
 
 	internal bool legacy;
 
-	public WorkspaceKind Kind => WorkspaceKind.PM;
-
 	public string[] ConfigFiles => (legacy, Root == this) switch
 	{
 		(true, false) => PACKAGES_CONFIG,

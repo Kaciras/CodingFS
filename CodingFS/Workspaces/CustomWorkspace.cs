@@ -12,21 +12,17 @@ public sealed class CustomWorkspace : Workspace
 
 	public ReadOnlySpan<char> Name => name;
 
-	public WorkspaceKind Kind { get; }
-
 	readonly string name;
 
-	public CustomWorkspace() : this("Custom", WorkspaceKind.Other) {}
+	public CustomWorkspace() : this("Custom") {}
 
-	public CustomWorkspace(string name, WorkspaceKind kind) : this(name, kind, new()) {}
+	public CustomWorkspace(string name) : this(name, new()) {}
 
 	public CustomWorkspace(
 		string name,
-		WorkspaceKind kind, 
 		Dictionary<string, RecognizeType> dict)
 	{
 		this.name = name;
-		Kind = kind;
 		Dict = dict;
 	}
 

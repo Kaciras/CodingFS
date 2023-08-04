@@ -8,8 +8,6 @@ namespace CodingFS.Workspaces;
 /// </summary>
 public class CommonWorkspace : Workspace
 {
-	public WorkspaceKind Kind => WorkspaceKind.Other;
-
 	public RecognizeType Recognize(string path)
 	{
 		var name = Path.GetFileName(path.AsSpan());

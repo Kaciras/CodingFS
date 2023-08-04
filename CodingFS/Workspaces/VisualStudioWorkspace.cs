@@ -15,8 +15,6 @@ namespace CodingFS.Workspaces;
 /// </summary>
 public sealed class VisualStudioWorkspace : Workspace
 {
-	public WorkspaceKind Kind => WorkspaceKind.IDE;
-
 	public string Folder { get; }
 
 	readonly Dictionary<string, string> projects;

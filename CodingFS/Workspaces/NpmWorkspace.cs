@@ -8,8 +8,6 @@ public sealed class NpmWorkspace : PackageManager
 {
 	static readonly string[] NPM_CONFIGS = { "package.json", "package-lock.json" };
 
-	public WorkspaceKind Kind => WorkspaceKind.PM;
-
 	public string Directory { get; }
 
 	public string App { get; }

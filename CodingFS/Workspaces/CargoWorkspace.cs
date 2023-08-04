@@ -22,8 +22,6 @@ public sealed class CargoWorkspace : PackageManager
 		ctx.AddWorkspace(new CargoWorkspace(parent));
 	}
 
-	public WorkspaceKind Kind => WorkspaceKind.PM;
-
 	public string[] ConfigFiles => Root == this ? ROOT_FILES : MODULE_FILES;
 
 	public PackageManager Root { get; }

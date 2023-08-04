@@ -6,8 +6,6 @@ namespace CodingFS.Workspaces;
 
 public sealed class IDEAWorkspace : Workspace
 {
-	public WorkspaceKind Kind => WorkspaceKind.IDE;
-
 	readonly CharsDictionary<RecognizeType> dict;
 	readonly JetBrainsDetector detector;
 	readonly string root;
