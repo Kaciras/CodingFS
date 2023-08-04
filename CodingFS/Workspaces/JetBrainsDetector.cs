@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using SpecialFolder = System.Environment.SpecialFolder;
 
@@ -48,7 +47,7 @@ public sealed partial class JetBrainsDetector
 		}
 		path = path.Replace('\\', '/');
 		var hash = Utils.JavaStringHashCode(path);
-		
+
 		var builder = new StackStringBuilder(stackalloc char[4096]);
 		builder.Append(localConfig);
 		builder.Append(Path.DirectorySeparatorChar);
@@ -61,6 +60,7 @@ public sealed partial class JetBrainsDetector
 		builder.Append("external_build_system");
 		builder.Append(Path.DirectorySeparatorChar);
 		builder.Append("modules");
+
 		return builder.ToString();
 	}
 }

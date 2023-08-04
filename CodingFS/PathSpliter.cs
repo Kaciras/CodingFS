@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 
 namespace CodingFS;
 
@@ -10,7 +9,7 @@ public ref struct PathSpliter
 {
 	static int RelativePosition(ReadOnlySpan<char> path, ReadOnlySpan<char> relativeTo)
 	{
-        if (relativeTo.Length == 0) return -1;
+		if (relativeTo.Length == 0) return -1;
 
 		if (IsSep(relativeTo[^1]))
 		{
@@ -51,8 +50,8 @@ public ref struct PathSpliter
 
 	public int Index { get; set; }
 
-	public PathSpliter(string path, ReadOnlySpan<char> relativeTo = default) 
-		: this(path.AsMemory(), relativeTo) {}
+	public PathSpliter(string path, ReadOnlySpan<char> relativeTo = default)
+		: this(path.AsMemory(), relativeTo) { }
 
 	/// <summary>
 	/// Create a new PathSplitor for the path, started at the end of the base path (optional).

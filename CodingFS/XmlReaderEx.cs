@@ -15,7 +15,7 @@ static class XmlReaderEx
 		return XmlReader.Create(file, settings);
 	}
 
-	public static bool NextInLayer(this XmlReader reader,int depth)
+	public static bool NextInLayer(this XmlReader reader, int depth)
 	{
 		while (reader.Read())
 		{
@@ -43,7 +43,7 @@ static class XmlReaderEx
 		return false;
 	}
 
-	public static bool GoToElement(this XmlReader reader,string tagName)
+	public static bool GoToElement(this XmlReader reader, string tagName)
 	{
 		while (reader.Read())
 		{

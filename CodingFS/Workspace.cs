@@ -2,6 +2,9 @@ using System;
 
 namespace CodingFS;
 
+/// <summary>
+/// Represents the configuration of a folder structure, which can be IDE, VCS or package manager.
+/// </summary>
 public interface Workspace
 {
 	ReadOnlySpan<char> Name
@@ -9,7 +12,7 @@ public interface Workspace
 		get => GetType().Name.AsSpan().TrimEnd("Workspace");
 	}
 
-	RecognizeType Recognize(string relativePath);
+	RecognizeType Recognize(string absoulatePath);
 }
 
 public interface PackageManager : Workspace
@@ -23,8 +26,8 @@ public interface PackageManager : Workspace
 	/// <summary>
 	/// Files that contains metadata that is needed to compile the package.
 	/// Usually manifest file and lock file (e.g. "cargo.toml" and "cargo.lock").
-	/// 
-	/// It not ensure these files are exists, you may neeed to check that.
+	/// <br/>
+	/// It does not ensure these files are exists, you may neeed to check that.
 	/// </summary>
 	string[] ConfigFiles { get; }
 }

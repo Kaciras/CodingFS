@@ -19,7 +19,7 @@ sealed class DokanExceptionWrapper : IDokanOperations
 	{
 		Native = native;
 	}
-	
+
 	internal static NtStatus HandleException(Exception e)
 	{
 		switch (e)
@@ -31,7 +31,7 @@ sealed class DokanExceptionWrapper : IDokanOperations
 			case UnauthorizedAccessException:
 				return DokanResult.AccessDenied;
 		}
-		return (uint)Marshal.GetHRForException(e) == 0x80070020 
+		return (uint)Marshal.GetHRForException(e) == 0x80070020
 			? DokanResult.SharingViolation : throw e;
 	}
 

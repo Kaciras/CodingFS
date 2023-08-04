@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using LibGit2Sharp;
 using Microsoft.Build.Construction;
 
 namespace CodingFS.Workspaces;
@@ -52,7 +50,7 @@ public sealed class VisualStudioWorkspace : Workspace
 			{
 				hasCsharpProject = project.RelativePath.EndsWith(".csproj");
 			}
-			
+
 			var folder = Path.GetDirectoryName(project.AbsolutePath)!;
 			projects[folder] = project.AbsolutePath;
 		}

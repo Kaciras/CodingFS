@@ -10,6 +10,9 @@ using System.Runtime.CompilerServices;
 
 namespace CodingFS;
 
+/// <summary>
+/// A simplified version of CLR's StackStringBuilder, which only uses fixed-length buffer.
+/// </summary>
 ref struct StackStringBuilder
 {
 	readonly Span<char> buffer;

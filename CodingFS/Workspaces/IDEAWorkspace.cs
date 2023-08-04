@@ -10,8 +10,8 @@ public sealed class IDEAWorkspace : Workspace
 	readonly JetBrainsDetector detector;
 	readonly string root;
 
-	public IDEAWorkspace(JetBrainsDetector detector, string root) 
-		: this(new(), root, detector) 
+	public IDEAWorkspace(JetBrainsDetector detector, string root)
+		: this(new(), root, detector)
 	{
 		LoadWorkspace();
 		LoadModules();
@@ -23,7 +23,7 @@ public sealed class IDEAWorkspace : Workspace
 	/// </summary>
 	internal IDEAWorkspace(
 		CharsDictionary<RecognizeType> dict,
-		string root, 
+		string root,
 		JetBrainsDetector detector)
 	{
 		this.dict = dict;
@@ -66,7 +66,7 @@ public sealed class IDEAWorkspace : Workspace
 				var value = reader.GetAttribute("value")!;
 				dict[ToRelative(value)] = RecognizeType.Ignored;
 			}
-		} 
+		}
 		catch (FileNotFoundException)
 		{
 			// Only if the user delete the file, ignored for robust.
@@ -176,8 +176,8 @@ public sealed class IDEAWorkspace : Workspace
 		var relative = value.AsMemory()[20..];
 		Utils.NormalizeSepUnsafe(relative);
 
-		return prefix.IsEmpty 
-			? relative 
+		return prefix.IsEmpty
+			? relative
 			: Path.Join(prefix, relative.Span).AsMemory();
 	}
 }

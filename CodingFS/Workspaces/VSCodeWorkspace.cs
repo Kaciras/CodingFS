@@ -51,7 +51,7 @@ internal class VSCodeWorkspace : Workspace
 	public VSCodeWorkspace(string folder)
 	{
 		Folder = folder;
-		
+
 		var file = Path.Join(folder, ".vscode/settings.json");
 		var setting = VSCodeSettings.Parse(file);
 		foreach (var (k, v) in setting.Exclude)

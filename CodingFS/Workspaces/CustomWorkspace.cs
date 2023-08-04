@@ -14,9 +14,9 @@ public sealed class CustomWorkspace : Workspace
 
 	readonly string name;
 
-	public CustomWorkspace() : this("Custom") {}
+	public CustomWorkspace() : this("Custom") { }
 
-	public CustomWorkspace(string name) : this(name, new()) {}
+	public CustomWorkspace(string name) : this(name, new()) { }
 
 	public CustomWorkspace(
 		string name,

@@ -3,7 +3,7 @@ using Xunit;
 
 namespace CodingFS.Test;
 
-public class StackStringBuilderTest
+public sealed class StackStringBuilderTest
 {
 	[InlineData(1145141919, "44417a9f")]
 	[InlineData(45781033, "2ba9029")]

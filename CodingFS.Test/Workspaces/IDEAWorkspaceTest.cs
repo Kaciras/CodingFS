@@ -1,7 +1,7 @@
 using CodingFS.Workspaces;
 using Xunit;
 
-namespace CodingFS.Test;
+namespace CodingFS.Test.Workspaces;
 
 public sealed class IDEAWorkspaceTest
 {

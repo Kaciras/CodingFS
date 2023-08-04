@@ -21,7 +21,7 @@ public sealed class GitWorkspace : Workspace
 
 	public string Folder { get; }
 
- 	public GitWorkspace(string path)
+	public GitWorkspace(string path)
 	{
 		Folder = path;
 		Repository = new Repository(path);

@@ -4,7 +4,7 @@ using CodingFS.Workspaces;
 using LibGit2Sharp;
 using Xunit;
 
-namespace CodingFS.Test;
+namespace CodingFS.Test.Workspaces;
 
 public sealed class GitWorkspaceTest
 {

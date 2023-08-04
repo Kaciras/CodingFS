@@ -99,8 +99,8 @@ public sealed class CodingScanner
 			ref var child = ref CollectionsMarshal
 				.GetValueRefOrAddDefault(node.Children, part, out var exists);
 
-            if (exists)
-            {
+			if (exists)
+			{
 				node = child;
 			}
 			else

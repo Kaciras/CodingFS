@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.IO;
-
 namespace CodingFS.Workspaces;
 
 public sealed class MavenWorkspace : PackageManager

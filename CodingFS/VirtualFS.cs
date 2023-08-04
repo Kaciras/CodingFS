@@ -49,7 +49,7 @@ public sealed class VirtualFS : IDisposable
 			throw new PlatformNotSupportedException();
 		}
 
-		disposables.Reverse(); // Dispose order is the reverse of init order.
+		disposables.Reverse(); // Disposing order is the reverse of init order.
 	}
 
 	/// <summary>
@@ -87,7 +87,7 @@ public sealed class VirtualFS : IDisposable
 				options.MountPoint = mountPoint;
 				options.Options = mountOptions;
 			});
-		
+
 		disposables.Add(dokan);
 		disposables.Add(builder.Build(new DokanExceptionWrapper(vfs)));
 	}

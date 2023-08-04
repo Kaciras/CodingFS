@@ -22,7 +22,7 @@ public sealed class NuGetWorkspace : PackageManager
 
 	public PackageManager Root { get; }
 
-	public NuGetWorkspace() 
+	public NuGetWorkspace()
 	{
 		Root = this;
 	}

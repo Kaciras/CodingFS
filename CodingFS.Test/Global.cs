@@ -4,4 +4,4 @@ using System.Runtime.CompilerServices;
 
 namespace CodingFS.Test;
 
-static class Global {}
+static class Global { }

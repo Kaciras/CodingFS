@@ -27,7 +27,7 @@ public sealed class NpmWorkspace : PackageManager
 	public RecognizeType Recognize(string path)
 	{
 		var name = Path.GetFileName(path.AsSpan());
-		return name.SequenceEqual("node_modules") 
+		return name.SequenceEqual("node_modules")
 			? RecognizeType.Dependency : RecognizeType.NotCare;
 	}
 
