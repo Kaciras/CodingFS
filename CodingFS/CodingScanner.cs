@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using CodingFS.Workspaces;
-
 namespace CodingFS;
 
 /// <summary>
@@ -126,6 +125,11 @@ public sealed class CodingScanner
 		}
 
 		return new WorkspacesInfo(directory, workspaces, node.Value);
+	}
+
+	public IEnumerable<(FileSystemInfo, FileType)> Walk(FileType includes)
+	{
+		return Walk(new DirectoryInfo(Root), includes);
 	}
 
 	public IEnumerable<(FileSystemInfo, FileType)> Walk(string folder, FileType includes)

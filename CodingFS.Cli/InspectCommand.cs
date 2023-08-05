@@ -8,6 +8,17 @@ public sealed class InspectCommand : Command
 	[Value(0, HelpText = "Path to inspect.")]
 	public string FileName { get; set; } = Environment.CurrentDirectory;
 
+	static void WriteColored(string? text, ConsoleColor color, bool lf = true)
+	{
+		Console.ForegroundColor = color;
+		Console.Write(text);
+		if (lf)
+		{
+			Console.WriteLine();
+		}
+		Console.ForegroundColor = ConsoleColor.Gray;
+	}
+
 	protected override void Execute(Config config)
 	{
 		FileName = Path.GetFullPath(FileName);
@@ -17,10 +28,10 @@ public sealed class InspectCommand : Command
 		var info = scanner.GetWorkspaces(dir);
 		var type = info.GetFileType(FileName);
 
-		Console.Write($"File type of {FileName} is ");
-		Console.ForegroundColor = GetColor(type);
-		Console.WriteLine(Enum.GetName(type));
-		Console.ForegroundColor = ConsoleColor.Gray;
+		Console.Write("File type of ");
+		WriteColored(FileName, ConsoleColor.Cyan, false);
+		Console.Write(" is ");
+		WriteColored(Enum.GetName(type), GetColor(type));
 
 		var splitor = new PathSpliter(dir, scanner.Root);
 		while (splitor.HasNext)
@@ -52,15 +63,13 @@ public sealed class InspectCommand : Command
 			}
 
 			var type = w.Recognize(FileName);
-			Console.ForegroundColor = GetColor(type);
-			Console.WriteLine(Enum.GetName(type));
-			Console.ForegroundColor = ConsoleColor.Gray;
+			WriteColored(Enum.GetName(type), GetColor(type));
 		}
 	}
 
 	static ConsoleColor GetColor(FileType x) => x switch
 	{
-		FileType.Source => ConsoleColor.Blue,
+		FileType.Source => ConsoleColor.DarkGreen,
 		FileType.Dependency => ConsoleColor.DarkYellow,
 		FileType.Generated => ConsoleColor.Red,
 		_ => throw new NotImplementedException(Enum.GetName(x)),

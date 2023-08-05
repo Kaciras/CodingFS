@@ -52,16 +52,17 @@ abstract partial class RedirectDokan : IDokanOperations
 
 	protected abstract string GetPath(string fileName);
 
-	protected static int GetNumOfBytesToCopy(int bufferLength, long offset, IDokanFileInfo info, FileStream stream)
+	protected static int NumOfBytesToCopy(int bufferLength, long offset, IDokanFileInfo info, FileStream stream)
 	{
 		if (info.PagingIo)
 		{
-			var longDistanceToEnd = stream.Length - offset;
-			var isDistanceToEndMoreThanInt = longDistanceToEnd > int.MaxValue;
-			if (isDistanceToEndMoreThanInt) return bufferLength;
-			var distanceToEnd = (int)longDistanceToEnd;
-			if (distanceToEnd < bufferLength) return distanceToEnd;
-			return bufferLength;
+			var longDistance = stream.Length - offset;
+			if (longDistance > int.MaxValue)
+			{
+				return bufferLength;
+			}
+			var distance = (int)longDistance;
+			if (distance < bufferLength) return distance;
 		}
 		return bufferLength;
 	}
@@ -84,7 +85,7 @@ abstract partial class RedirectDokan : IDokanOperations
 					{
 						try
 						{
-							if (!File.GetAttributes(filePath).HasFlag(FileAttributes.Directory))
+							if ((File.GetAttributes(filePath) & FileAttributes.Directory) == 0)
 								return DokanResult.NotADirectory;
 						}
 						catch (Exception)
@@ -104,7 +105,7 @@ abstract partial class RedirectDokan : IDokanOperations
 
 					try
 					{
-						File.GetAttributes(filePath).HasFlag(FileAttributes.Directory);
+						File.GetAttributes(filePath);
 						return DokanResult.AlreadyExists;
 					}
 					catch (IOException)
@@ -126,7 +127,8 @@ abstract partial class RedirectDokan : IDokanOperations
 			try
 			{
 				pathExists = Directory.Exists(filePath) || File.Exists(filePath);
-				pathIsDirectory = pathExists && File.GetAttributes(filePath).HasFlag(FileAttributes.Directory);
+				pathIsDirectory = pathExists && 
+					(File.GetAttributes(filePath) & FileAttributes.Directory) != 0;
 			}
 			catch (IOException)
 			{
@@ -135,7 +137,6 @@ abstract partial class RedirectDokan : IDokanOperations
 			switch (mode)
 			{
 				case FileMode.Open:
-
 					if (!pathExists)
 					{
 						return DokanResult.FileNotFound;
@@ -144,9 +145,10 @@ abstract partial class RedirectDokan : IDokanOperations
 					// check if driver only wants to read attributes, security info, or open directory
 					if (readWriteAttributes || pathIsDirectory)
 					{
-						if (pathIsDirectory && (access & FileAccess.Delete) == FileAccess.Delete
-							&& (access & FileAccess.Synchronize) != FileAccess.Synchronize)
-							//It is a DeleteFile request on a directory
+						const FileAccess SYNC_DELETE = FileAccess.Delete & FileAccess.Synchronize;
+
+						if (pathIsDirectory && (access & SYNC_DELETE) == FileAccess.Delete)
+							// It is a DeleteFile request on a directory
 							return DokanResult.AccessDenied;
 
 						info.IsDirectory = pathIsDirectory;
@@ -168,7 +170,8 @@ abstract partial class RedirectDokan : IDokanOperations
 			{
 				var streamAccess = readAccess ? AccessType.Read : AccessType.ReadWrite;
 
-				if (mode == FileMode.CreateNew && readAccess) streamAccess = AccessType.ReadWrite;
+				if (mode == FileMode.CreateNew && readAccess)
+					streamAccess = AccessType.ReadWrite;
 
 				info.Context = new FileStream(filePath, mode,
 					streamAccess, share, 4096, options);
@@ -270,7 +273,7 @@ abstract partial class RedirectDokan : IDokanOperations
 			{
 				stream.Position = offset;
 			}
-			bytesWritten = GetNumOfBytesToCopy(buffer.Length, offset, info, stream);
+			bytesWritten = NumOfBytesToCopy(buffer.Length, offset, info, stream);
 			stream.Write(buffer, 0, bytesWritten);
 		}
 		else
@@ -294,7 +297,7 @@ abstract partial class RedirectDokan : IDokanOperations
 				{
 					stream.Position = offset;
 				}
-				bytesWritten = GetNumOfBytesToCopy(buffer.Length, offset, info, stream);
+				bytesWritten = NumOfBytesToCopy(buffer.Length, offset, info, stream);
 				stream.Write(buffer, 0, bytesWritten);
 			}
 		}
@@ -416,19 +419,18 @@ abstract partial class RedirectDokan : IDokanOperations
 			var ct = creationTime?.ToFileTime() ?? 0;
 			var lat = lastAccessTime?.ToFileTime() ?? 0;
 			var lwt = lastWriteTime?.ToFileTime() ?? 0;
+
 			if (SetFileTime(stream.SafeFileHandle, ref ct, ref lat, ref lwt))
 				return DokanResult.Success;
-			throw Marshal.GetExceptionForHR(Marshal.GetLastWin32Error());
+			throw Marshal.GetExceptionForHR(Marshal.GetLastWin32Error())!;
 		}
 
 		var filePath = GetPath(fileName);
 
 		if (creationTime.HasValue)
 			File.SetCreationTime(filePath, creationTime.Value);
-
 		if (lastAccessTime.HasValue)
 			File.SetLastAccessTime(filePath, lastAccessTime.Value);
-
 		if (lastWriteTime.HasValue)
 			File.SetLastWriteTime(filePath, lastWriteTime.Value);
 
@@ -445,11 +447,10 @@ abstract partial class RedirectDokan : IDokanOperations
 		if (!File.Exists(filePath))
 			return DokanResult.FileNotFound;
 
-		if (File.GetAttributes(filePath).HasFlag(FileAttributes.Directory))
+		if ((File.GetAttributes(filePath) & FileAttributes.Directory) != 0)
 			return DokanResult.AccessDenied;
 
-		return DokanResult.Success;
-		// we just check here if we could delete the file - the true deletion is in Cleanup
+		return DokanResult.Success; // the true deletion is in Cleanup()
 	}
 
 	public virtual NtStatus DeleteDirectory(string fileName, IDokanFileInfo info)
@@ -470,10 +471,14 @@ abstract partial class RedirectDokan : IDokanOperations
 
 		CloseFile(oldName, info);
 
-		var exist = info.IsDirectory ? Directory.Exists(newpath) : File.Exists(newpath);
+		var exist = info.IsDirectory 
+			? Directory.Exists(newpath) 
+			: File.Exists(newpath);
+
 		if (!exist)
 		{
 			info.Context = null;
+
 			if (info.IsDirectory)
 				Directory.Move(oldpath, newpath);
 			else

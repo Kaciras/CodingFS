@@ -13,18 +13,17 @@ abstract partial class UnsafeRedirectDokan : RedirectDokan, IDokanOperationsUnsa
 	public virtual NtStatus ReadFile(string fileName, IntPtr buffer, uint bufferLength,
 		out int bytesRead, long offset, IDokanFileInfo info)
 	{
-		if (info.Context == null)
+		if (info.Context is FileStream reused)
 		{
-			using var stream = new FileStream(GetPath(fileName), FileMode.Open, AccessType.Read);
-			DoRead(stream.SafeFileHandle, buffer, bufferLength, out bytesRead, offset);
+			lock (reused)
+			{
+				DoRead(reused.SafeFileHandle, buffer, bufferLength, out bytesRead, offset);
+			}
 		}
 		else
 		{
-			var stream = (FileStream)info.Context;
-			lock (stream)
-			{
-				DoRead(stream.SafeFileHandle, buffer, bufferLength, out bytesRead, offset);
-			}
+			using var stream = new FileStream(GetPath(fileName), FileMode.Open, AccessType.Read);
+			DoRead(stream.SafeFileHandle, buffer, bufferLength, out bytesRead, offset);
 		}
 		return DokanResult.Success;
 	}
@@ -32,18 +31,17 @@ abstract partial class UnsafeRedirectDokan : RedirectDokan, IDokanOperationsUnsa
 	public virtual NtStatus WriteFile(string fileName, IntPtr buffer, uint bufferLength,
 		out int bytesWritten, long offset, IDokanFileInfo info)
 	{
-		if (info.Context == null)
+		if (info.Context is FileStream reused)
 		{
-			using var stream = new FileStream(GetPath(fileName), FileMode.Open, AccessType.Write);
-			DoWrite(stream.SafeFileHandle, buffer, bufferLength, out bytesWritten, offset);
+			lock (reused)
+			{
+				DoWrite(reused.SafeFileHandle, buffer, bufferLength, out bytesWritten, offset);
+			}
 		}
 		else
 		{
-			var stream = (FileStream)info.Context;
-			lock (stream)
-			{
-				DoWrite(stream.SafeFileHandle, buffer, bufferLength, out bytesWritten, offset);
-			}
+			using var stream = new FileStream(GetPath(fileName), FileMode.Open, AccessType.Write);
+			DoWrite(stream.SafeFileHandle, buffer, bufferLength, out bytesWritten, offset);
 		}
 		return DokanResult.Success;
 	}

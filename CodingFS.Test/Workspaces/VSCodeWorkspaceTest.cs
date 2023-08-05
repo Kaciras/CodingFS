@@ -17,18 +17,19 @@ public sealed class VSCodeWorkspaceTest
 	public void ReadExcludes()
 	{
 		CopyTestData(Resources.vscode_exclude);
-		var i = new VSCodeWorkspace(".");
-		Assert.Equal(RecognizeType.Dependency, i.Recognize(".vscode"));
-		Assert.Equal(RecognizeType.NotCare, i.Recognize("foo"));
-		Assert.Equal(RecognizeType.Ignored, i.Recognize(".idea"));
-		Assert.Equal(RecognizeType.NotCare, i.Recognize("packages/.DS_Store"));
+		var workspace = new VSCodeWorkspace(".");
+
+		workspace.AssertDependency(".vscode");
+		workspace.AssertNotCare("foo");
+		workspace.AssertIgnored(".idea");
+		workspace.AssertNotCare("packages/.DS_Store");
 	}
 
 	[Fact]
 	public void ReadSettingsWithoutExclude()
 	{
 		CopyTestData(Resources.vscode_empty);
-		var i = new VSCodeWorkspace(".");
-		Assert.Equal(RecognizeType.NotCare, i.Recognize(".idea"));
+		var workspace = new VSCodeWorkspace(".");
+		workspace.AssertNotCare(".idea");
 	}
 }
