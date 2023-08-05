@@ -1,22 +1,16 @@
-using Tomlyn;
+using CommandLine;
 
 namespace CodingFS.Cli;
 
-public interface Command
+public abstract class Command
 {
-	void Execute();
+	[Option('c', "config", HelpText = "Path of the config file to use.")]
+	public string? ConfigFile { get; set; }
 
-	protected static Config LoadConfig(string? file)
+	public void Execute()
 	{
-		if (file == null)
-		{
-			return new Config();
-		}
-		var options = new TomlModelOptions()
-		{
-			ConvertPropertyName = x => x,
-		};
-		var text = File.ReadAllText(file);
-		return Toml.ToModel<Config>(text, file, options);
+		Execute(Config.LoadToml(ConfigFile));
 	}
+
+	protected abstract void Execute(Config config);
 }

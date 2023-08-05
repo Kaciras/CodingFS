@@ -5,18 +5,15 @@ namespace CodingFS.Cli;
 [Verb("inspect", HelpText = "Show workspaces and their recognize result for path.")]
 public sealed class InspectCommand : Command
 {
-	[Value(0, HelpText = "Config file to use.")]
-	public string? ConfigFile { get; set; }
-
-	[Value(1, HelpText = "Path to inspect.")]
+	[Value(0, HelpText = "Path to inspect.")]
 	public string FileName { get; set; } = Environment.CurrentDirectory;
 
-	public void Execute()
+	protected override void Execute(Config config)
 	{
-		var scanner = Command.LoadConfig(ConfigFile).CreateScanner();
 		FileName = Path.GetFullPath(FileName);
 		var dir = Path.GetDirectoryName(FileName)!;
 
+		var scanner = config.CreateScanner();
 		var info = scanner.GetWorkspaces(dir);
 		var type = info.GetFileType(FileName);
 

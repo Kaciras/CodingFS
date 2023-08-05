@@ -1,3 +1,4 @@
+using System.Reflection.Emit;
 using CommandLine;
 
 namespace CodingFS.Cli;
@@ -5,11 +6,11 @@ namespace CodingFS.Cli;
 [Verb("mount", HelpText = "Map a directory to a virtual drive, containing only files of the specified type.")]
 public sealed class MountCommand : Command
 {
-	[Value(0, HelpText = "Config file to use.")]
-	public string? ConfigFile { get; set; }
+	[Value(0, Required = true, HelpText = "The mount point.")]
+	public string Point { get; set; } = string.Empty;
 
-	[Option('p', "point", HelpText = "The mount point.")]
-	public string Point { get; set; } = "x";
+	[Option('l', "label", HelpText = "Volume label in Windows")]
+	public string? VolumeLabel { get; set; }
 
 	[Option('t', "type", HelpText = "Which type of files should listed in the file system.")]
 	public FileType Type { get; set; } = FileType.Source;
@@ -30,13 +31,12 @@ public sealed class MountCommand : Command
 		blockMainThreadEvent.Set();
 	}
 
-	public void Execute()
+	protected override void Execute(Config config)
 	{
-		var config = Command.LoadConfig(ConfigFile);
 		var scanner = config.CreateScanner();
 
 		var filter = new MappedPathFilter();
-		var top = Path.GetFileName(config.Root);
+		var top = Path.GetFileName(scanner.Root);
 		filter.Set(top, new CodingPathFilter(scanner, Type));
 
 		virtualFS = new VirtualFS(filter, new()
@@ -46,9 +46,14 @@ public sealed class MountCommand : Command
 #else
 			Debug = false,
 #endif
+			Name = VolumeLabel,
 			Readonly = true,
 			MountPoint = Point,
 		});
+
+#if !DEBUG
+		Console.WriteLine($"Mouted to {Point}");
+#endif
 
 		Console.CancelKeyPress += OnCtrlC;
 		AppDomain.CurrentDomain.ProcessExit += OnExit;

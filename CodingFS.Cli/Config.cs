@@ -1,4 +1,5 @@
 using CodingFS.Workspaces;
+using Tomlyn;
 
 namespace CodingFS.Cli;
 
@@ -33,5 +34,19 @@ public sealed class Config
 			CodingScanner.GLOBALS[0]
 		};
 		return new(Root, globals) { MaxDepth = MaxDepth };
+	}
+
+	public static Config LoadToml(string? file)
+	{
+		if (file == null)
+		{
+			return new Config();
+		}
+		var options = new TomlModelOptions()
+		{
+			ConvertPropertyName = x => x,
+		};
+		var text = File.ReadAllText(file);
+		return Toml.ToModel<Config>(text, file, options);
 	}
 }

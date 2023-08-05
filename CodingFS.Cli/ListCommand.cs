@@ -6,20 +6,15 @@ namespace CodingFS.Cli;
 [Verb("list", HelpText = "Get the file list of specific type.")]
 public sealed class ListCommand : Command
 {
-	[Value(0, HelpText = "Config file to use.")]
-	public string? ConfigFile { get; set; }
-
 	[Option('t', "type", HelpText = "What types of files should be included.")]
 	public FileType Type { get; set; }
 
 	[Option('n', "name-only", HelpText = "Only show file names.")]
 	public bool NameOnly { get; set; }
-	
-	public void Execute()
+
+	protected override void Execute(Config config)
 	{
-		var config = Command.LoadConfig(ConfigFile);
-		var scanner = config.CreateScanner();
-		var walking = scanner.Walk(config.Root, Type);
+		var walking = config.CreateScanner().Walk(Type);
 
 		if (NameOnly)
 		{
