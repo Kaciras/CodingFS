@@ -13,6 +13,7 @@ namespace CodingFS.Benchmark;
  * |  ClassImpl | 351.93 ns | 6.822 ns | 9.563 ns |
  * | StructImpl |  77.51 ns | 0.605 ns | 0.566 ns |
  */
+[ReturnValueValidator]
 public class StackStringBuilderPerf
 {
 	const string LOCAL_CONFIG = @"C:\Users\Kaciras\AppData\Local\JetBrains\IntelliJIdea2023.1";

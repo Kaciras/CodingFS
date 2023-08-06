@@ -10,15 +10,21 @@ public class PathSpliterPerf
 	string relativeTo = @"Projects\CSharp\CodingFS";
 
 	[Params(true, false)]
-	public bool Fullly { get; set; }
+	public bool FullBase { get; set; }
+
+	[Params(true, false)]
+	public bool FullPath { get; set; }
 
 	[GlobalSetup]
 	public void GlobalSetup()
 	{
-		if (Fullly)
+		if (FullBase)
+		{
+			relativeTo = Path.GetFullPath(relativeTo);
+		}
+		if (FullPath)
 		{
 			path = Path.GetFullPath(path);
-			relativeTo = Path.GetFullPath(relativeTo);
 		}
 	}
 

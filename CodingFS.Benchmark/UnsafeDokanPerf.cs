@@ -23,13 +23,13 @@ file sealed class UnsafeImpl : UnsafeRedirectDokan
 	}
 }
 
-/// <summary>
-/// 测试 IDokanOperationsUnsafe 的两个指针读写比非指针的快多少，结果:
-/// |      Method |      Mean |     Error |    StdDev |
-/// |------------ |----------:|----------:|----------:|
-/// |  ReadUnsafe |  7.692 ms | 0.0711 ms | 0.0665 ms |
-/// | ReadDefault | 10.674 ms | 0.2061 ms | 0.1928 ms |
-/// </summary>
+/*
+ * |      Method |      Mean |     Error |    StdDev |    Median |
+ * |------------ |----------:|----------:|----------:|----------:|
+ * |  ReadUnsafe |  7.851 ms | 0.1558 ms | 0.1971 ms |  7.783 ms |
+ * | ReadDefault | 10.171 ms | 0.2009 ms | 0.3570 ms | 10.335 ms |
+ */
+[ReturnValueValidator]
 public class UnsafeDokanPerf
 {
 	Dokan dokan;

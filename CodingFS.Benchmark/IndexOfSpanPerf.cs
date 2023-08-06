@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using Benchmark;
 using BenchmarkDotNet.Attributes;
 
 namespace CodingFS.Benchmark;
@@ -17,6 +16,7 @@ namespace CodingFS.Benchmark;
  * |  Iterate |      True |     57.93 ns |   1.189 ns |   1.667 ns |  4.46 |    0.13 |
  * |  ForLoop |      True |     12.00 ns |   0.166 ns |   0.155 ns |  0.92 |    0.01 |
  */
+[ReturnValueValidator]
 public class IndexOfSpanPerf
 {
 	const string TO_FOUND = "relate";

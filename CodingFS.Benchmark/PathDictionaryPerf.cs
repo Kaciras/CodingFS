@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using BenchmarkDotNet.Attributes;
 using CodingFS.Benchmark.Legacy;
@@ -12,6 +11,7 @@ namespace CodingFS.Benchmark;
 /// | OldImpl | 354.0 ns | 3.16 ns | 2.96 ns | 0.0324 |     272 B |
 /// | NewImpl | 113.8 ns | 0.53 ns | 0.44 ns | 0.0162 |     136 B |
 /// </summary>
+[ReturnValueValidator]
 [MemoryDiagnoser]
 public class PathDictionaryPerf
 {
@@ -27,19 +27,17 @@ public class PathDictionaryPerf
 		dict[PATH.AsMemory()] = RecognizeType.Ignored;
 	}
 
-	[GlobalSetup]
-	public void CheckEquality()
-	{
-		if (OldImpl() != NewImpl())
-		{
-			throw new Exception("Results are not equal");
-		}
-	}
-
 	[Benchmark]
 	public RecognizeType OldImpl()
 	{
 		return old.Recognize(new string(PATH));
+	}
+
+	[Benchmark]
+	public RecognizeType NoNormalize()
+	{
+		var mem = new string(PATH).AsMemory();
+		return dict[mem.TrimEnd(Path.DirectorySeparatorChar)];
 	}
 
 	[Benchmark]

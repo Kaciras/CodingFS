@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Xml;
-using Benchmark;
 using BenchmarkDotNet.Attributes;
 using CodingFS.Workspaces;
 

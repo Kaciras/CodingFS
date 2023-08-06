@@ -11,15 +11,16 @@ namespace CodingFS.Benchmark;
  * |      V2 |   805.3 ns |  1.67 ns |  1.40 ns |  0.98 | 0.3319 | 0.0010 |   2.71 KB |        0.60 |
  * | Current |   823.8 ns | 12.14 ns | 10.76 ns |  1.00 | 0.5569 | 0.0067 |   4.55 KB |        1.00 |
  */
+[ReturnValueValidator]
 [MemoryDiagnoser]
 public class CodingScannerPerf
 {
 	const string DIR = "/foo/Projects/CSharp/CodingFS/CodingFS/bin/Debug/net7.0/runtimes/win-x64/native";
 	const string PATH = DIR + "/test.txt";
 
-	static void Fac1(DetectContxt ctx)	{}
+	static void Fac1(DetectContxt ctx) { }
 
-	readonly Detector[] detectors = { Fac1 };
+	Detector[] detectors = { Fac1 };
 
 	internal FileClassifierV1 NewV1()
 	{
