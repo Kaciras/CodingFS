@@ -1,8 +1,31 @@
 using System.Collections.Generic;
+using CodingFS.Workspaces;
 
 namespace CodingFS;
 
 public delegate void Detector(DetectContxt context);
+
+public struct BuiltinDetectorOptions
+{
+	public RecognizeType Gitignore { get; set; }
+}
+
+public static class Detectors
+{
+	public static Detector[] GetBuiltins(BuiltinDetectorOptions options)
+	{
+		return new Detector[]
+		{
+			new JetBrainsDetector().Detect,
+			new GitDetector(options.Gitignore).Match,
+			NpmWorkspace.Match,
+			MavenWorkspace.Match,
+			CargoWorkspace.Match,
+			VSCodeWorkspace.Match,
+			VisualStudioWorkspace.Match,
+		};
+	}
+}
 
 public readonly struct DetectContxt
 {

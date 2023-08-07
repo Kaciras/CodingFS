@@ -7,7 +7,7 @@ public sealed class Config
 {
 	public string Root { get; set; } = Environment.CurrentDirectory;
 
-	public bool Gitignore { get; set; }
+	public BuiltinDetectorOptions Detector { get; set; }
 
 	public int MaxDepth { get; set; } = int.MaxValue;
 
@@ -17,7 +17,7 @@ public sealed class Config
 
 	public CodingScanner CreateScanner()
 	{
-		GitWorkspace.Ignore = Gitignore;
+		var detectors = Detectors.GetBuiltins(Detector);
 
 		var custom = new CustomWorkspace();
 		foreach (var module in Deps)
@@ -31,9 +31,9 @@ public sealed class Config
 
 		var globals = new Workspace[] {
 			custom,
-			CodingScanner.GLOBALS[0]
+			new CommonWorkspace(),
 		};
-		return new(Root, globals) { MaxDepth = MaxDepth };
+		return new(Root, globals, detectors) { MaxDepth = MaxDepth };
 	}
 
 	public static Config LoadToml(string? file)

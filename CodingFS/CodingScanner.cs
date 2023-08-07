@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
-using CodingFS.Workspaces;
+
 namespace CodingFS;
 
 /// <summary>
@@ -19,27 +19,6 @@ public sealed class CodingScanner
 	}
 
 	/// <summary>
-	/// Maximum supported components length in file path.
-	/// </summary>
-	public const int MAX_COMPONENT = 255;
-
-	public static readonly Detector[] DETECTORS =
-	{
-		new JetBrainsDetector().Detect,
-		NpmWorkspace.Match,
-		GitWorkspace.Match,
-		MavenWorkspace.Match,
-		CargoWorkspace.Match,
-		VSCodeWorkspace.Match,
-		VisualStudioWorkspace.Match,
-	};
-
-	public static readonly Workspace[] GLOBALS =
-	{
-		new CommonWorkspace(),
-	};
-
-	/// <summary>
 	/// Maximum search depth (include the root directory).
 	/// </summary>
 	public int MaxDepth { get; set; } = int.MaxValue;
@@ -48,10 +27,6 @@ public sealed class CodingScanner
 
 	readonly Detector[] detectors;
 	readonly TrieNode cacheRoot;
-
-	public CodingScanner(string root) : this(root, GLOBALS, DETECTORS) { }
-
-	public CodingScanner(string root, Workspace[] globals) : this(root, globals, DETECTORS) { }
 
 	public CodingScanner(string root, Workspace[] globals, Detector[] detectors)
 	{
@@ -89,20 +64,17 @@ public sealed class CodingScanner
 	public WorkspacesInfo GetWorkspaces(string directory)
 	{
 		var splitor = new PathSpliter(directory, Root);
-		var node = cacheRoot;
+		var cacheRootLocal = cacheRoot;
 		var part = ReadOnlyMemory<char>.Empty;
-		var workspaces = new List<Workspace>(node.Value);
+		var workspaces = new List<Workspace>(cacheRootLocal.Value);
 
+		ref var node = ref cacheRootLocal;
 		for (var limit = MaxDepth; limit > 0; limit--)
 		{
-			ref var child = ref CollectionsMarshal
+			node = ref CollectionsMarshal
 				.GetValueRefOrAddDefault(node.Children, part, out var exists);
 
-			if (exists)
-			{
-				node = child;
-			}
-			else
+			if (!exists)
 			{
 				var path = new string(splitor.Left.Span);
 				var ctx = new DetectContxt(path, workspaces);
@@ -111,8 +83,7 @@ public sealed class CodingScanner
 				{
 					detector(ctx);
 				}
-
-				child = node = new(ctx.Matches);
+				node = new(ctx.Matches);
 			}
 
 			workspaces.AddRange(node.Value);

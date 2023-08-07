@@ -68,17 +68,16 @@ static class Utils
 
 	public static unsafe int JavaStringHashCode(ReadOnlySpan<char> str)
 	{
-		var h = 0;
 		fixed (char* r = str)
 		{
 			var p = r;
 			var e = p + str.Length;
+			var h = 0;
 
 			// C# does not optimize 31 * h to (h << 5) - h.
 			while (p < e)
 			{
-				h = (h << 5) - h + *p;
-				p += 1;
+				h = (h << 5) - h + *p++;
 			}
 			return h;
 		}
@@ -112,11 +111,6 @@ static class Utils
 				span[i] = Path.DirectorySeparatorChar;
 			}
 		}
-	}
-
-	public static string NormalizeSep(string path)
-	{
-		return path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
 	}
 }
 

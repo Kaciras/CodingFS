@@ -12,6 +12,7 @@ sealed class CodingScannerV2
 
 	readonly CharsDictionary<Workspace[]> cache = new();
 	readonly Detector[] detectors;
+	readonly Workspace[] globals = Array.Empty<Workspace>();
 
 	public CodingScannerV2(string root, Detector[] detectors)
 	{
@@ -23,9 +24,9 @@ sealed class CodingScannerV2
 	{
 		var splitor = new PathSpliter(directory, Root);
 
-		var workspaces = new List<Workspace>(CodingScanner.GLOBALS);
+		var workspaces = new List<Workspace>(globals);
 		var part = Root.AsMemory();
-		Workspace[] list = CodingScanner.GLOBALS;
+		Workspace[] list = globals;
 
 		for (var limit = MaxDepth; limit > 0; limit--)
 		{
