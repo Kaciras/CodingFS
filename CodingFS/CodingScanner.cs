@@ -1,18 +1,23 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 
 namespace CodingFS;
 
+sealed class ConcurrentCharsDict<T> : ConcurrentDictionary<ReadOnlyMemory<char>, T>
+{
+	public ConcurrentCharsDict(): base(Utils.memComparator) {}
+}
+
 /// <summary>
-/// Scan and cache workspaces of directories. This class is not thread-safe.
+/// Scan and cache workspaces of directories. This class is thread-safe.
 /// </summary>
 public sealed class CodingScanner
 {
 	readonly struct TrieNode
 	{
-		public readonly CharsDictionary<TrieNode> Children = new();
+		public readonly ConcurrentCharsDict<TrieNode> Children = new();
 		public readonly IReadOnlyList<Workspace> Value;
 
 		public TrieNode(IReadOnlyList<Workspace> value) { Value = value; }
@@ -58,7 +63,7 @@ public sealed class CodingScanner
 			part = splitor.SplitNext();
 		}
 
-		node.Children.Remove(part);
+		node.Children.Remove(part, out _);
 	}
 
 	public WorkspacesInfo GetWorkspaces(string directory)
@@ -71,23 +76,10 @@ public sealed class CodingScanner
 		ref var node = ref cacheRootLocal;
 		for (var limit = MaxDepth; limit > 0; limit--)
 		{
-			node = ref CollectionsMarshal
-				.GetValueRefOrAddDefault(node.Children, part, out var exists);
-
-			if (!exists)
-			{
-				var path = new string(splitor.Left.Span);
-				var ctx = new DetectContxt(path, workspaces);
-
-				foreach (var detector in detectors)
-				{
-					detector(ctx);
-				}
-				node = new(ctx.Matches);
-			}
+			var args = (splitor.Left, workspaces);
+			node = node.Children.GetOrAdd(part, NewNode, args);
 
 			workspaces.AddRange(node.Value);
-
 			if (!splitor.HasNext)
 			{
 				break;
@@ -96,6 +88,19 @@ public sealed class CodingScanner
 		}
 
 		return new WorkspacesInfo(directory, workspaces, node.Value);
+	}
+
+	TrieNode NewNode(ReadOnlyMemory<char> _, (ReadOnlyMemory<char>, List<Workspace>) t)
+	{
+		var ctx = new DetectContxt(
+			new string(t.Item1.Span),
+			t.Item2
+		);
+		foreach (var x in detectors)
+		{
+			x(ctx);
+		}
+		return new TrieNode(ctx.Matches);
 	}
 
 	public IEnumerable<(FileSystemInfo, FileType)> Walk(FileType includes)

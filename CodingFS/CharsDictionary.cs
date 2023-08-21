@@ -8,7 +8,7 @@ namespace CodingFS;
 /// </summary>
 /// <typeparam name="T">The value type</typeparam>
 /// <see href="https://github.com/dotnet/runtime/issues/27229"/>
-sealed class CharsDictionary<T> : Dictionary<ReadOnlyMemory<char>, T>
+public sealed class CharsDictionary<T> : Dictionary<ReadOnlyMemory<char>, T>
 {
 	public T this[string key]
 	{
@@ -17,4 +17,6 @@ sealed class CharsDictionary<T> : Dictionary<ReadOnlyMemory<char>, T>
 	}
 
 	public CharsDictionary() : base(Utils.memComparator) { }
+
+	public bool Remove(string key) => Remove(key.AsMemory());
 }

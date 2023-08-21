@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace CodingFS.Benchmark.Legacy;
 
-file sealed class PathTrieNode<T>
+sealed class PathTrieNode<T>
 {
 	private IDictionary<string, PathTrieNode<T>>? children;
 

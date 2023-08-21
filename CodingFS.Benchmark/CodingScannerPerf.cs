@@ -22,29 +22,29 @@ public class CodingScannerPerf
 
 	Detector[] detectors = { Fac1 };
 
-	internal FileClassifierV1 NewV1()
+	FileClassifierV1 NewV1()
 	{
 		return new FileClassifierV1("/foo", Array.Empty<Workspace>(), detectors);
 	}
 
-	internal CodingScannerV2 NewV2()
+	CodingScannerV2 NewV2()
 	{
 		return new CodingScannerV2("/foo", detectors);
 	}
 
-	internal CodingScanner NewCurrent()
+	CodingScanner NewCurrent()
 	{
 		return new CodingScanner("/foo", Array.Empty<Workspace>(), detectors);
 	}
 
 	[Benchmark]
-	public FileType V1()
+	public FileType V1_ThreadUnsafe()
 	{
 		return NewV1().GetWorkspaces(DIR).GetFileType(PATH);
 	}
 
 	[Benchmark]
-	public FileType V2()
+	public FileType V2_ThreadUnsafe()
 	{
 		return NewV2().GetWorkspaces(DIR).GetFileType(PATH);
 	}

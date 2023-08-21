@@ -36,7 +36,7 @@ public class MappedPathFilterPerf
 	[GlobalSetup]
 	public void SetUp()
 	{
-		Span<byte> buffer = stackalloc byte[8];
+		var buffer = (stackalloc byte[8]);
 		var name = string.Empty;
 		var inner = new NopPathFilter();
 
