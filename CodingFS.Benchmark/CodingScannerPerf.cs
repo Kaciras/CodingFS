@@ -11,12 +11,10 @@ namespace CodingFS.Benchmark;
  * |      V2 |   805.3 ns |  1.67 ns |  1.40 ns |  0.98 | 0.3319 | 0.0010 |   2.71 KB |        0.60 |
  * | Current |   823.8 ns | 12.14 ns | 10.76 ns |  1.00 | 0.5569 | 0.0067 |   4.55 KB |        1.00 |
  */
-[ReturnValueValidator]
 [MemoryDiagnoser]
 public class CodingScannerPerf
 {
 	const string DIR = "/foo/Projects/CSharp/CodingFS/CodingFS/bin/Debug/net7.0/runtimes/win-x64/native";
-	const string PATH = DIR + "/test.txt";
 
 	static void Fac1(DetectContxt ctx) { }
 
@@ -32,26 +30,37 @@ public class CodingScannerPerf
 		return new CodingScannerV2("/foo", detectors);
 	}
 
+	CodingScannerV2 NewV3()
+	{
+		return new CodingScannerV2("/foo", detectors);
+	}
+
 	CodingScanner NewCurrent()
 	{
 		return new CodingScanner("/foo", Array.Empty<Workspace>(), detectors);
 	}
 
 	[Benchmark]
-	public FileType V1_ThreadUnsafe()
+	public WorkspacesInfo V1_ThreadUnsafe()
 	{
-		return NewV1().GetWorkspaces(DIR).GetFileType(PATH);
+		return NewV1().GetWorkspaces(DIR);
 	}
 
 	[Benchmark]
-	public FileType V2_ThreadUnsafe()
+	public WorkspacesInfo V2_ThreadUnsafe()
 	{
-		return NewV2().GetWorkspaces(DIR).GetFileType(PATH);
+		return NewV2().GetWorkspaces(DIR);
+	}
+
+	[Benchmark]
+	public WorkspacesInfo V3()
+	{
+		return NewV3().GetWorkspaces(DIR);
 	}
 
 	[Benchmark(Baseline = true)]
-	public FileType Current()
+	public WorkspacesInfo Current()
 	{
-		return NewCurrent().GetWorkspaces(DIR).GetFileType(PATH);
+		return NewCurrent().GetWorkspaces(DIR);
 	}
 }
