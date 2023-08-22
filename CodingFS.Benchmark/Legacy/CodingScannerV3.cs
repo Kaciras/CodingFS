@@ -5,34 +5,43 @@ namespace CodingFS.Benchmark.Legacy;
 
 sealed class CodingScannerV3
 {
+	readonly struct TrieNode
+	{
+		public readonly ConcurrentCharsDict<TrieNode> Children = new();
+		public readonly IReadOnlyList<Workspace> Value;
+
+		public TrieNode(IReadOnlyList<Workspace> value) { Value = value; }
+	}
+
 	public int MaxDepth { get; set; } = int.MaxValue;
 
 	public string Root { get; }
 
-	readonly ConcurrentCharsDict<IReadOnlyList<Workspace>> cache = new();
 	readonly Detector[] detectors;
 	readonly Workspace[] globals = Array.Empty<Workspace>();
+	readonly TrieNode cacheRoot;
 
 	public CodingScannerV3(string root, Detector[] detectors)
 	{
 		Root = root;
 		this.detectors = detectors;
+		cacheRoot = new TrieNode(globals);
 	}
 
 	public WorkspacesInfo GetWorkspaces(string directory)
 	{
 		var splitor = new PathSpliter(directory, Root);
-		var part = Root.AsMemory();
-		IReadOnlyList<Workspace> list = globals;
-		var workspaces = new List<Workspace>(list);
+		var cacheRootLocal = cacheRoot;
+		var part = ReadOnlyMemory<char>.Empty;
+		var workspaces = new List<Workspace>(cacheRootLocal.Value);
 
+		ref var node = ref cacheRootLocal;
 		for (var limit = MaxDepth; limit > 0; limit--)
 		{
 			var args = (splitor.Left, workspaces);
-			list = cache.GetOrAdd(part, Scan, args);
+			node = node.Children.GetOrAdd(part, NewNode, args);
 
-			workspaces.AddRange(list);
-
+			workspaces.AddRange(node.Value);
 			if (!splitor.HasNext)
 			{
 				break;
@@ -40,19 +49,19 @@ sealed class CodingScannerV3
 			part = splitor.SplitNext();
 		}
 
-		return new WorkspacesInfo(directory, workspaces, list);
+		return new WorkspacesInfo(directory, workspaces, node.Value);
 	}
 
-	List<Workspace> Scan(ReadOnlyMemory<char> _, (ReadOnlyMemory<char>, List<Workspace>) t)
+	TrieNode NewNode(ReadOnlyMemory<char> _, (ReadOnlyMemory<char>, List<Workspace>) t)
 	{
-		var path = new string(t.Item1.Span);
-		var context = new DetectContxt(path, t.Item2);
-
-		foreach (var factory in detectors)
+		var ctx = new DetectContxt(
+			new string(t.Item1.Span),
+			t.Item2
+		);
+		foreach (var x in detectors)
 		{
-			factory(context);
+			x(ctx);
 		}
-
-		return context.Matches;
+		return new TrieNode(ctx.Matches);
 	}
 }

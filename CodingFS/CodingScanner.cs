@@ -15,14 +15,6 @@ sealed class ConcurrentCharsDict<T> : ConcurrentDictionary<ReadOnlyMemory<char>,
 /// </summary>
 public sealed class CodingScanner
 {
-	readonly struct TrieNode
-	{
-		public readonly ConcurrentCharsDict<TrieNode> Children = new();
-		public readonly IReadOnlyList<Workspace> Value;
-
-		public TrieNode(IReadOnlyList<Workspace> value) { Value = value; }
-	}
-
 	/// <summary>
 	/// Maximum search depth (include the root directory).
 	/// </summary>
@@ -30,56 +22,38 @@ public sealed class CodingScanner
 
 	public string Root { get; }
 
+	readonly ConcurrentCharsDict<IReadOnlyList<Workspace>> cache = new();
 	readonly Detector[] detectors;
-	readonly TrieNode cacheRoot;
+	readonly Workspace[] globals = Array.Empty<Workspace>();
 
 	public CodingScanner(string root, Workspace[] globals, Detector[] detectors)
 	{
 		Root = root;
 		this.detectors = detectors;
-		cacheRoot = new TrieNode(globals);
 	}
 
 	public void InvalidCache(string directory)
 	{
 		var splitor = new PathSpliter(directory, Root);
-		var node = cacheRoot;
 		var part = ReadOnlyMemory<char>.Empty;
 
-		for (; ; )
-		{
-			if (node.Children.TryGetValue(part, out var child))
-			{
-				node = child;
-			}
-			else
-			{
-				return;
-			}
-			if (!splitor.HasNext)
-			{
-				break;
-			}
-			part = splitor.SplitNext();
-		}
-
-		node.Children.Remove(part, out _);
+		// TODO
 	}
 
 	public WorkspacesInfo GetWorkspaces(string directory)
 	{
 		var splitor = new PathSpliter(directory, Root);
-		var cacheRootLocal = cacheRoot;
 		var part = ReadOnlyMemory<char>.Empty;
-		var workspaces = new List<Workspace>(cacheRootLocal.Value);
+		IReadOnlyList<Workspace> list = globals;
+		var workspaces = new List<Workspace>(list);
 
-		ref var node = ref cacheRootLocal;
 		for (var limit = MaxDepth; limit > 0; limit--)
 		{
 			var args = (splitor.Left, workspaces);
-			node = node.Children.GetOrAdd(part, NewNode, args);
+			list = cache.GetOrAdd(part, Scan, args);
 
-			workspaces.AddRange(node.Value);
+			workspaces.AddRange(list);
+
 			if (!splitor.HasNext)
 			{
 				break;
@@ -87,20 +61,20 @@ public sealed class CodingScanner
 			part = splitor.SplitNext();
 		}
 
-		return new WorkspacesInfo(directory, workspaces, node.Value);
+		return new WorkspacesInfo(directory, workspaces, list);
 	}
 
-	TrieNode NewNode(ReadOnlyMemory<char> _, (ReadOnlyMemory<char>, List<Workspace>) t)
+	List<Workspace> Scan(ReadOnlyMemory<char> _, (ReadOnlyMemory<char>, List<Workspace>) t)
 	{
-		var ctx = new DetectContxt(
-			new string(t.Item1.Span),
-			t.Item2
-		);
-		foreach (var x in detectors)
+		var path = new string(t.Item1.Span);
+		var context = new DetectContxt(path, t.Item2);
+
+		foreach (var factory in detectors)
 		{
-			x(ctx);
+			factory(context);
 		}
-		return new TrieNode(ctx.Matches);
+
+		return context.Matches;
 	}
 
 	public IEnumerable<(FileSystemInfo, FileType)> Walk(FileType includes)

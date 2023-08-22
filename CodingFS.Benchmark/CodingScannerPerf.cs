@@ -5,11 +5,12 @@ using CodingFS.Benchmark.Legacy;
 namespace CodingFS.Benchmark;
 
 /**
- * |  Method |       Mean |    Error |   StdDev | Ratio |   Gen0 |   Gen1 | Allocated | Alloc Ratio |
- * |-------- |-----------:|---------:|---------:|------:|-------:|-------:|----------:|------------:|
- * |      V1 | 2,722.3 ns | 11.43 ns | 10.69 ns |  3.30 | 0.7782 | 0.0076 |   6.37 KB |        1.40 |
- * |      V2 |   805.3 ns |  1.67 ns |  1.40 ns |  0.98 | 0.3319 | 0.0010 |   2.71 KB |        0.60 |
- * | Current |   823.8 ns | 12.14 ns | 10.76 ns |  1.00 | 0.5569 | 0.0067 |   4.55 KB |        1.00 |
+ * |          Method |       Mean |    Error |   StdDev | Ratio | RatioSD |   Gen0 |   Gen1 | Allocated | Alloc Ratio |
+ * |---------------- |-----------:|---------:|---------:|------:|--------:|-------:|-------:|----------:|------------:|
+ * | V1_ThreadUnsafe | 2,519.0 ns |  5.40 ns |  4.22 ns |  2.67 |    0.01 | 0.7744 | 0.0076 |   6.33 KB |        1.80 |
+ * | V2_ThreadUnsafe |   745.8 ns |  7.74 ns |  7.24 ns |  0.79 |    0.01 | 0.3233 | 0.0010 |   2.65 KB |        0.76 |
+ * |              V3 | 2,585.3 ns | 50.80 ns | 66.05 ns |  2.73 |    0.07 | 1.5450 | 0.0610 |  12.64 KB |        3.60 |
+ * |         Current |   942.3 ns |  2.20 ns |  1.84 ns |  1.00 |    0.00 | 0.4292 | 0.0019 |   3.51 KB |        1.00 |
  */
 [MemoryDiagnoser]
 public class CodingScannerPerf
@@ -30,9 +31,9 @@ public class CodingScannerPerf
 		return new CodingScannerV2("/foo", detectors);
 	}
 
-	CodingScannerV2 NewV3()
+	CodingScannerV3 NewV3()
 	{
-		return new CodingScannerV2("/foo", detectors);
+		return new CodingScannerV3("/foo", detectors);
 	}
 
 	CodingScanner NewCurrent()
