@@ -43,32 +43,27 @@ public sealed class CodingScanner
 	public WorkspacesInfo GetWorkspaces(string directory)
 	{
 		var splitor = new PathSpliter(directory, Root);
-		var part = ReadOnlyMemory<char>.Empty;
 		IReadOnlyList<Workspace> list = globals;
 		var workspaces = new List<Workspace>(list);
 
 		for (var limit = MaxDepth; limit > 0; limit--)
 		{
-			var args = (splitor.Left, workspaces);
-			list = cache.GetOrAdd(part, Scan, args);
-
+			list = cache.GetOrAdd(splitor.Left, Scan, workspaces);
 			workspaces.AddRange(list);
 
 			if (!splitor.HasNext)
 			{
 				break;
 			}
-			part = splitor.SplitNext();
+			splitor.SplitNext();
 		}
 
 		return new WorkspacesInfo(directory, workspaces, list);
 	}
 
-	List<Workspace> Scan(ReadOnlyMemory<char> _, (ReadOnlyMemory<char>, List<Workspace>) t)
+	List<Workspace> Scan(ReadOnlyMemory<char> path, List<Workspace> workspaces)
 	{
-		var path = new string(t.Item1.Span);
-		var context = new DetectContxt(path, t.Item2);
-
+		var context = new DetectContxt(path.ToString(), workspaces);
 		foreach (var factory in detectors)
 		{
 			factory(context);

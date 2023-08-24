@@ -14,8 +14,7 @@ public sealed class GitWorkspaceTest
 		Repository.Init(".");
 		File.WriteAllText(".gitignore", "/dist");
 
-		GitWorkspace.Ignore = true;
-		var workspace = new GitWorkspace(Environment.CurrentDirectory);
+		var workspace = new GitWorkspace(Environment.CurrentDirectory, RecognizeType.Ignored);
 
 		workspace.AssertNotCare(".git");
 		workspace.AssertIgnored("dist");

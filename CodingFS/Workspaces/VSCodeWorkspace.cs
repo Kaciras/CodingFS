@@ -70,7 +70,7 @@ internal class VSCodeWorkspace : Workspace
 
 	public RecognizeType Recognize(string path)
 	{
-		if (path == ".vscode")
+		if (path.EndsWith(".vscode"))
 		{
 			return RecognizeType.Dependency;
 		}
