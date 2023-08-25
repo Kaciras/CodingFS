@@ -9,12 +9,7 @@ namespace CodingFS;
 public interface PathFilter
 {
 	/// <summary>
-	/// Called when a file/directory changed. You can invalid cache here.
-	/// </summary>
-	void HandleChange(string path);
-
-	/// <summary>
-	/// Get the real path of the vitrual path.
+	/// Get the real path of the path in the vitrual drive.
 	/// </summary>
 	string MapPath(string path);
 

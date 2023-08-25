@@ -15,7 +15,8 @@ public struct VirtualFSOptions
 	public string? Name;
 
 	/// <summary>
-	/// Mount the file system as read-only, default false.
+	/// Mount the file system as read-only to avoid unexpected modification.
+	/// Default is false.
 	/// </summary>
 	public bool Readonly;
 

@@ -21,11 +21,6 @@ public sealed class CodingPathFilter : PathFilter
 		return Path.Join(scanner.Root, path);
 	}
 
-	public void HandleChange(string file)
-	{
-		scanner.InvalidCache(MapPath(file));
-	}
-
 	public IEnumerable<FileInformation> ListFiles(string dir)
 	{
 		dir = Path.Join(scanner.Root, dir);

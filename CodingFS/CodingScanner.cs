@@ -32,14 +32,6 @@ public sealed class CodingScanner
 		this.detectors = detectors;
 	}
 
-	public void InvalidCache(string directory)
-	{
-		var splitor = new PathSpliter(directory, Root);
-		var part = ReadOnlyMemory<char>.Empty;
-
-		// TODO
-	}
-
 	public WorkspacesInfo GetWorkspaces(string directory)
 	{
 		var splitor = new PathSpliter(directory, Root);

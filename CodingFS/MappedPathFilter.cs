@@ -31,11 +31,6 @@ public sealed class MappedPathFilter : PathFilter
 		}
 	}
 
-	public void HandleChange(string file)
-	{
-		Get(file, out var relative).HandleChange(relative);
-	}
-
 	public IEnumerable<FileInformation> ListFiles(string dir)
 	{
 		if (dir.Length == 1 && dir[0] == SEP)

@@ -67,19 +67,4 @@ public sealed class MappedPathFilterTest
 
 		inner.Verify(i => i.ListFiles("Bar"));
 	}
-
-	[Theory]
-	[InlineData("/Foo/Bar", "Bar")]
-	[InlineData("/Foo/Bar/baz", "Bar/baz")]
-	[InlineData("/Foo", "")]
-	public void HandleChange(string input, string expected)
-	{
-		var filter = new MappedPathFilter();
-		var inner = new Mock<PathFilter>();
-		filter.Set("Foo", inner.Object);
-
-		filter.HandleChange(input);
-
-		inner.Verify(i => i.HandleChange(expected));
-	}
 }

@@ -51,9 +51,9 @@ public class MappedPathFilterPerf
 	}
 
 	[Benchmark]
-	public void HandleChange()
+	public string MapPath()
 	{
-		filter.HandleChange(filename);
+		return filter.MapPath(filename);
 	}
 
 	[Benchmark]
