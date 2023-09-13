@@ -17,6 +17,22 @@ public sealed class PathSpliterTest
 		Assert.Equal(expected, relative.ToString());
 	}
 
+	[Fact]
+	public void NormalizeSepUnsafe()
+	{
+		var path = @"C:\windows/a\bar/c";
+		PathSpliter.NormalizeSepUnsafe(path);
+
+		if (OperatingSystem.IsWindows())
+		{
+			Assert.Equal(@"C:\windows\a\bar\c", path);
+		}
+		else
+		{
+			Assert.Equal("C:/windows/a/bar/c", path);
+		}
+	}
+
 	[InlineData("foo/bar", "", false)]
 	[InlineData("A:/foo/bar", "", true)]
 	[InlineData("/foo/bar", "", true)]

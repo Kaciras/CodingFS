@@ -14,22 +14,6 @@ public sealed class UtilsTest
 		Assert.Equal(hash, Utils.JavaStringHashCode(value));
 	}
 
-	[Fact]
-	public void NormalizeSepUnsafe()
-	{
-		var path = @"C:\windows/a\bar/c";
-		Utils.NormalizeSepUnsafe(path);
-
-		if (OperatingSystem.IsWindows())
-		{
-			Assert.Equal(@"C:\windows\a\bar\c", path);
-		}
-		else
-		{
-			Assert.Equal("C:/windows/a/bar/c", path);
-		}
-	}
-
 	[InlineData(RecognizeType.NotCare, FileType.Source)]
 	[InlineData(RecognizeType.Dependency, FileType.Dependency)]
 	[InlineData(RecognizeType.Ignored, FileType.Generated)]

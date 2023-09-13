@@ -158,7 +158,7 @@ public sealed class IDEAWorkspace : Workspace
 		if (value.StartsWith("$PROJECT_DIR$/"))
 		{
 			var relative = value.AsMemory()[14..];
-			Utils.NormalizeSepUnsafe(relative);
+			PathSpliter.NormalizeSepUnsafe(relative);
 			return relative;
 		}
 		else
@@ -174,7 +174,7 @@ public sealed class IDEAWorkspace : Workspace
 			throw new Exception("Expect relative path only.");
 		}
 		var relative = value.AsMemory()[20..];
-		Utils.NormalizeSepUnsafe(relative);
+		PathSpliter.NormalizeSepUnsafe(relative);
 
 		return prefix.IsEmpty
 			? relative

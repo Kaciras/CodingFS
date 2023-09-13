@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Runtime.InteropServices;
 
 namespace CodingFS;
 
@@ -41,6 +43,26 @@ public ref struct PathSpliter
 	{
 		var i = RelativePosition(path, relativeTo);
 		return i == path.Length ? "." : path[(i + 1)..];
+	}
+
+	public static void NormalizeSepUnsafe(string path)
+	{
+		NormalizeSepUnsafe(path.AsMemory());
+	}
+
+	/// <summary>
+	/// In-place replace directory seperators with current OS-depent.
+	/// </summary>
+	public static void NormalizeSepUnsafe(ReadOnlyMemory<char> path)
+	{
+		var span = MemoryMarshal.AsMemory(path).Span;
+		for (var i = 0; i < span.Length; i++)
+		{
+			if (span[i] == Path.AltDirectorySeparatorChar)
+			{
+				span[i] = Path.DirectorySeparatorChar;
+			}
+		}
 	}
 
 	// =============================================================================

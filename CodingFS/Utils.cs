@@ -96,22 +96,7 @@ static class Utils
 		Length = src is FileInfo file ? file.Length : 0,
 	};
 
-	public static void NormalizeSepUnsafe(string path)
-	{
-		NormalizeSepUnsafe(path.AsMemory());
-	}
-
-	public static void NormalizeSepUnsafe(ReadOnlyMemory<char> path)
-	{
-		var span = MemoryMarshal.AsMemory(path).Span;
-		for (var i = 0; i < span.Length; i++)
-		{
-			if (span[i] == Path.AltDirectorySeparatorChar)
-			{
-				span[i] = Path.DirectorySeparatorChar;
-			}
-		}
-	}
+	
 }
 
 sealed class CharMemComparator : IEqualityComparer<ReadOnlyMemory<char>>

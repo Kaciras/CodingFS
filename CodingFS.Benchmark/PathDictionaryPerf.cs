@@ -44,7 +44,7 @@ public class PathDictionaryPerf
 	public RecognizeType NewImpl()
 	{
 		var ns = new string(PATH);
-		Utils.NormalizeSepUnsafe(ns);
+		PathSpliter.NormalizeSepUnsafe(ns);
 
 		var mem = ns.AsMemory();
 		return dict[mem.TrimEnd(Path.DirectorySeparatorChar)];
