@@ -3,20 +3,21 @@ using CommandLine;
 
 namespace CodingFS.Cli;
 
-[Verb("list", HelpText = "Get the file list of specific type.")]
+[Verb("list", HelpText = "List files in root directory of the specific type.")]
 public sealed class ListCommand : Command
 {
-	[Option('t', "type", HelpText = "What types of files should be included.")]
+	[Option('t', "type", HelpText = "Which type of files should be listed. " +
+		"Avaliable values: Source, Dependency, Generated, use comma to separate flags.")]
 	public FileType Type { get; set; }
 
-	[Option('n', "name-only", HelpText = "Only show file names.")]
-	public bool NameOnly { get; set; }
+	[Option('n', "name-only", Default = true, HelpText = "Only show file names.")]
+	public bool? NameOnly { get; set; }
 
 	protected override void Execute(Config config)
 	{
 		var walking = config.CreateScanner().Walk(Type);
 
-		if (NameOnly)
+		if (NameOnly!.Value)
 		{
 			foreach (var (name, _) in walking)
 			{

@@ -2,7 +2,7 @@
 
 namespace CodingFS.Cli;
 
-[Verb("inspect", HelpText = "Show workspaces and their recognize result for path.")]
+[Verb("inspect", HelpText = "Show workspaces and their recognize result for the specific path.")]
 public sealed class InspectCommand : Command
 {
 	[Value(0, HelpText = "Path to inspect.")]

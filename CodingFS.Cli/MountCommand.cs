@@ -1,4 +1,3 @@
-using System.Reflection.Emit;
 using CommandLine;
 
 namespace CodingFS.Cli;
@@ -6,13 +5,14 @@ namespace CodingFS.Cli;
 [Verb("mount", HelpText = "Map a directory to a virtual drive, containing only files of the specified type.")]
 public sealed class MountCommand : Command
 {
-	[Value(0, Required = true, HelpText = "The mount point.")]
+	[Value(0, Required = true, HelpText = "The mount point (drive letter).")]
 	public string Point { get; set; } = string.Empty;
 
-	[Option('l', "label", HelpText = "Volume label in Windows")]
+	[Option('l', "label", HelpText = "Volume label on Windows.")]
 	public string? VolumeLabel { get; set; }
 
-	[Option('t', "type", HelpText = "Which type of files should listed in the file system.")]
+	[Option('t', "type", HelpText = "Which type of files should be included in the file system. " +
+		"Avaliable values: Source, Dependency, Generated, use comma to separate flags.")]
 	public FileType Type { get; set; } = FileType.Source;
 
 	readonly ManualResetEvent blockMainThreadEvent = new(false);
