@@ -29,6 +29,7 @@ public sealed class CodingScanner
 	public CodingScanner(string root, Workspace[] globals, Detector[] detectors)
 	{
 		Root = root;
+		this.globals = globals;
 		this.detectors = detectors;
 	}
 
