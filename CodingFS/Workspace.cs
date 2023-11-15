@@ -7,12 +7,19 @@ namespace CodingFS;
 /// </summary>
 public interface Workspace
 {
-	ReadOnlySpan<char> Name
-	{
-		get => GetType().Name.AsSpan().TrimEnd("Workspace");
-	}
+	ReadOnlySpan<char> Name => GetType().Name.AsSpan().TrimEnd("Workspace");
 
 	RecognizeType Recognize(string absoulatePath);
+
+	static Workspace FromFn(Func<string, RecognizeType> fn)
+	{
+		return FromFn(fn.Method.Name, fn);
+	}
+
+	static Workspace FromFn(string name, Func<string, RecognizeType> fn)
+	{
+		return new FunctionalWS(name, fn);
+	}
 }
 
 public interface PackageManager : Workspace
@@ -30,4 +37,11 @@ public interface PackageManager : Workspace
 	/// It does not ensure these files are exists, you may neeed to check that.
 	/// </summary>
 	string[] ConfigFiles { get; }
+}
+
+file sealed class FunctionalWS(string name, Func<string, RecognizeType> fn) : Workspace
+{
+	public ReadOnlySpan<char> Name => name;
+
+	public RecognizeType Recognize(string absoulatePath) => fn(absoulatePath);
 }

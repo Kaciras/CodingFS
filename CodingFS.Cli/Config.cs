@@ -30,7 +30,7 @@ public sealed class Config
 		}
 
 		var globals = new Workspace[] {
-			new CustomWorkspace("Custom", custom),
+			Workspace.FromFn(custom.GetValueOrDefault),
 			new CommonWorkspace(),
 		};
 		return new(Root, globals, detectors) { MaxDepth = MaxDepth };
