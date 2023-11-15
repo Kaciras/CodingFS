@@ -53,7 +53,7 @@ public sealed class CodingScannerTest
 	[Fact]
 	public void MaxDepth()
 	{
-		var i = new CodingScanner("/foo", [], [RecordPath]);
+		var i = new CodingScanner("/foo", [], [RecordPath]) { MaxDepth = 3 };
 		i.GetWorkspaces("/foo/CSharp/CodingFS/CodingFS/bin/Debug/net7.0");
 
 		Assert.Equal(3, checkedPaths.Count);
