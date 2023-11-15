@@ -19,11 +19,11 @@ public class CodingScannerPerf
 
 	static void Fac1(DetectContxt ctx) { }
 
-	Detector[] detectors = { Fac1 };
+	readonly Detector[] detectors = [Fac1];
 
 	FileClassifierV1 NewV1()
 	{
-		return new FileClassifierV1("/foo", Array.Empty<Workspace>(), detectors);
+		return new FileClassifierV1("/foo", [], detectors);
 	}
 
 	CodingScannerV2 NewV2()
@@ -38,7 +38,7 @@ public class CodingScannerPerf
 
 	CodingScanner NewCurrent()
 	{
-		return new CodingScanner("/foo", Array.Empty<Workspace>(), detectors);
+		return new CodingScanner("/foo", [], detectors);
 	}
 
 	[Benchmark]

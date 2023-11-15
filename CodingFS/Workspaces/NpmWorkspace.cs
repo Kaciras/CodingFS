@@ -6,7 +6,7 @@ namespace CodingFS.Workspaces;
 
 public sealed class NpmWorkspace : PackageManager
 {
-	static readonly string[] NPM_CONFIGS = { "package.json", "package-lock.json" };
+	static readonly string[] NPM_CONFIGS = ["package.json", "package-lock.json"];
 
 	public string Directory { get; }
 
@@ -47,17 +47,17 @@ public sealed class NpmWorkspace : PackageManager
 		if (parent != null)
 		{
 			app = parent.App;
-			files = new[] { "package.json" };
+			files = ["package.json"];
 		}
 		else if (Utils.IsFile(path, "pnpm-lock.yaml"))
 		{
 			app = "pnpm";
-			files = new[] { "package.json", "pnpm-lock.yaml" };
+			files = ["package.json", "pnpm-lock.yaml"];
 		}
 		else if (Utils.IsFile(path, "yarn.lock"))
 		{
 			app = "yarn";
-			files = new[] { "package.json", "yarn.lock" };
+			files = ["package.json", "yarn.lock"];
 		}
 
 		ctx.AddWorkspace(new NpmWorkspace(path, app, files, parent));

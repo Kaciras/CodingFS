@@ -5,20 +5,14 @@ using DokanNet;
 
 namespace CodingFS.FUSE;
 
-sealed class FilteredDokan : UnsafeRedirectDokan
+/// <summary>
+/// Create a new CodingFS with name, the name will displayed as volume label.
+/// </summary>
+/// <param name="name"></param>
+sealed class FilteredDokan(string name, PathFilter filter) : UnsafeRedirectDokan
 {
-	readonly string name;
-	readonly PathFilter filter;
-
-	/// <summary>
-	/// Create a new CodingFS with name, the name will displayed as volume label.
-	/// </summary>
-	/// <param name="name"></param>
-	public FilteredDokan(string name, PathFilter filter)
-	{
-		this.name = name;
-		this.filter = filter;
-	}
+	readonly string name = name;
+	readonly PathFilter filter = filter;
 
 	protected override string GetPath(string value)
 	{

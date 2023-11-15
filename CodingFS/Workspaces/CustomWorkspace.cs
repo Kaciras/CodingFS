@@ -1,30 +1,20 @@
 using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 
 namespace CodingFS.Workspaces;
 
+using TypeDict = IReadOnlyDictionary<string, RecognizeType>;
+
 /// <summary>
 /// A simple workspace that you can manually associate type to some files.
 /// </summary>
-public sealed class CustomWorkspace : Workspace
+public sealed class CustomWorkspace(string name, TypeDict dict) : Workspace
 {
-	public Dictionary<string, RecognizeType> Dict { get; }
-
 	public ReadOnlySpan<char> Name => name;
 
-	readonly string name;
+	readonly TypeDict dict = dict.ToFrozenDictionary();
+	readonly string name = name;
 
-	public CustomWorkspace() : this("Custom") { }
-
-	public CustomWorkspace(string name) : this(name, new()) { }
-
-	public CustomWorkspace(
-		string name,
-		Dictionary<string, RecognizeType> dict)
-	{
-		this.name = name;
-		Dict = dict;
-	}
-
-	public RecognizeType Recognize(string path) => Dict.GetValueOrDefault(path);
+	public RecognizeType Recognize(string path) => dict.GetValueOrDefault(path);
 }

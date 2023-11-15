@@ -4,21 +4,15 @@ using System.Runtime.InteropServices;
 
 namespace CodingFS.Benchmark.Legacy;
 
-sealed class CodingScannerV2
+sealed class CodingScannerV2(string root, Detector[] detectors)
 {
 	public int MaxDepth { get; set; } = int.MaxValue;
 
-	public string Root { get; }
+	public string Root { get; } = root;
 
-	readonly CharsDictionary<Workspace[]> cache = new();
-	readonly Detector[] detectors;
-	readonly Workspace[] globals = Array.Empty<Workspace>();
-
-	public CodingScannerV2(string root, Detector[] detectors)
-	{
-		Root = root;
-		this.detectors = detectors;
-	}
+	readonly CharsDictionary<Workspace[]> cache = [];
+	readonly Detector[] detectors = detectors;
+	readonly Workspace[] globals = [];
 
 	public WorkspacesInfo GetWorkspaces(string directory)
 	{

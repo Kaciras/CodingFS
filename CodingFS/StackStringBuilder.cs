@@ -13,16 +13,11 @@ namespace CodingFS;
 /// <summary>
 /// A simplified version of CLR's StackStringBuilder, which only uses fixed-length buffer.
 /// </summary>
-ref struct StackStringBuilder
+ref struct StackStringBuilder(Span<char> buffer)
 {
-	readonly Span<char> buffer;
+	readonly Span<char> buffer = buffer;
 
 	int position;
-
-	public StackStringBuilder(Span<char> buffer)
-	{
-		this.buffer = buffer;
-	}
 
 	public int Length { readonly get => position; set { position = value; } }
 

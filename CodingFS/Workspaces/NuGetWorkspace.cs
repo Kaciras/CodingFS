@@ -5,8 +5,8 @@ namespace CodingFS.Workspaces;
 
 public sealed class NuGetWorkspace : PackageManager
 {
-	static readonly string[] PACKAGES_CONFIG = { "packages.config" };
-	static readonly string[] CACHE_STORE = { "packages" };
+	static readonly string[] PACKAGES_CONFIG = ["packages.config"];
+	static readonly string[] CACHE_STORE = ["packages"];
 
 	readonly string? csproj;
 
@@ -14,10 +14,10 @@ public sealed class NuGetWorkspace : PackageManager
 
 	public string[] ConfigFiles => (legacy, Root == this) switch
 	{
-		(true, false) => PACKAGES_CONFIG,
+		(false, true) => [csproj!],
+		(false, false) => [],
 		(true, true) => CACHE_STORE,
-		(false, true) => new[] { csproj! },
-		(false, false) => Array.Empty<string>(),
+		(true, false) => PACKAGES_CONFIG,
 	};
 
 	public PackageManager Root { get; }

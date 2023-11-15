@@ -5,16 +5,10 @@ using DokanNet;
 
 namespace CodingFS;
 
-public sealed class CodingPathFilter : PathFilter
+public sealed class CodingPathFilter(CodingScanner scanner, FileType includes) : PathFilter
 {
-	readonly CodingScanner scanner;
-	readonly FileType includes;
-
-	public CodingPathFilter(CodingScanner scanner, FileType includes)
-	{
-		this.scanner = scanner;
-		this.includes = includes;
-	}
+	readonly CodingScanner scanner = scanner;
+	readonly FileType includes = includes;
 
 	public string MapPath(string path)
 	{

@@ -8,8 +8,6 @@ namespace CodingFS.Benchmark;
 
 file sealed class NopPathFilter : PathFilter
 {
-	public void HandleChange(string path) { }
-
 	public IEnumerable<FileInformation> ListFiles(string _)
 	{
 		return Array.Empty<FileInformation>();

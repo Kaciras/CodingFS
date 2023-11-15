@@ -4,8 +4,8 @@ namespace CodingFS.Workspaces;
 
 public sealed class CargoWorkspace : PackageManager
 {
-	static readonly string[] ROOT_FILES = { "cargo.toml", "cargo.lock" };
-	static readonly string[] MODULE_FILES = { "cargo.toml" };
+	static readonly string[] ROOT_FILES = ["cargo.toml", "cargo.lock"];
+	static readonly string[] MODULE_FILES = ["cargo.toml"];
 
 	public static void Match(DetectContxt ctx)
 	{

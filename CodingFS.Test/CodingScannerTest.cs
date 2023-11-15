@@ -6,7 +6,7 @@ namespace CodingFS.Test;
 
 public sealed class CodingScannerTest
 {
-	readonly List<string> checkedPaths = new();
+	readonly List<string> checkedPaths = [];
 
 	void RecordPath(DetectContxt ctx)
 	{
@@ -16,7 +16,7 @@ public sealed class CodingScannerTest
 	[Fact]
 	public void DetectWorkspaces()
 	{
-		var i = new CodingScanner("/foo", Array.Empty<Workspace>(), new Detector[] { RecordPath });
+		var i = new CodingScanner("/foo", [], [RecordPath]);
 		i.GetWorkspaces("/foo/CSharp/CodingFS/CodingFS/bin/Debug/net7.0");
 
 		Assert.Equal(7, checkedPaths.Count);
@@ -32,7 +32,7 @@ public sealed class CodingScannerTest
 	[Fact]
 	public void Cache()
 	{
-		var i = new CodingScanner("/foo", Array.Empty<Workspace>(), new Detector[] { RecordPath });
+		var i = new CodingScanner("/foo", [], [RecordPath]);
 		i.GetWorkspaces("/foo/bar");
 
 		checkedPaths.Clear();
@@ -45,7 +45,7 @@ public sealed class CodingScannerTest
 	[Fact]
 	public void Invalid()
 	{
-		var i = new CodingScanner("/foo", Array.Empty<Workspace>(), new Detector[] { RecordPath });
+		var i = new CodingScanner("/foo", [], [RecordPath]);
 		i.GetWorkspaces("/foo/bar/baz");
 
 	}
@@ -53,8 +53,7 @@ public sealed class CodingScannerTest
 	[Fact]
 	public void MaxDepth()
 	{
-		var i = new CodingScanner("/foo", Array.Empty<Workspace>(), new Detector[] { RecordPath });
-		i.MaxDepth = 3;
+		var i = new CodingScanner("/foo", [], [RecordPath]);
 		i.GetWorkspaces("/foo/CSharp/CodingFS/CodingFS/bin/Debug/net7.0");
 
 		Assert.Equal(3, checkedPaths.Count);

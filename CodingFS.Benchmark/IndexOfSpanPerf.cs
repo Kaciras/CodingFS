@@ -30,7 +30,7 @@ public class IndexOfSpanPerf
 	public void SetData()
 	{
 		data = SmallData
-			? new[] { "Collections", "IndexOfSpanPerf", "node_modules" }
+			? ["Collections", "IndexOfSpanPerf", "node_modules"]
 			: File.ReadAllLines(@"Resources\words.txt");
 	}
 

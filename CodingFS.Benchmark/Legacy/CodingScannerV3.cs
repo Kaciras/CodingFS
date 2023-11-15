@@ -3,30 +3,21 @@ using System.Collections.Generic;
 
 namespace CodingFS.Benchmark.Legacy;
 
-sealed class CodingScannerV3
+sealed class CodingScannerV3(string root, Detector[] detectors)
 {
-	readonly struct TrieNode
+	readonly struct TrieNode(IReadOnlyList<Workspace> value)
 	{
 		public readonly ConcurrentCharsDict<TrieNode> Children = new();
-		public readonly IReadOnlyList<Workspace> Value;
-
-		public TrieNode(IReadOnlyList<Workspace> value) { Value = value; }
+		public readonly IReadOnlyList<Workspace> Value = value;
 	}
 
 	public int MaxDepth { get; set; } = int.MaxValue;
 
-	public string Root { get; }
+	public string Root { get; } = root;
 
-	readonly Detector[] detectors;
-	readonly Workspace[] globals = Array.Empty<Workspace>();
-	readonly TrieNode cacheRoot;
-
-	public CodingScannerV3(string root, Detector[] detectors)
-	{
-		Root = root;
-		this.detectors = detectors;
-		cacheRoot = new TrieNode(globals);
-	}
+	readonly Detector[] detectors = detectors;
+	readonly Workspace[] globals = [];
+	readonly TrieNode cacheRoot = new([]);
 
 	public WorkspacesInfo GetWorkspaces(string directory)
 	{

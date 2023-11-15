@@ -14,14 +14,9 @@ namespace CodingFS.Benchmark.Legacy;
 /// 2）整数不利于调试，在IDE里看不到原始值。
 /// </summary>
 [DebuggerDisplay("FilePath:{Value}")]
-public readonly struct FilePath
+public readonly struct FilePath(string value)
 {
-	public readonly string Value { get; }
-
-	public FilePath(string value)
-	{
-		Value = value;
-	}
+	public readonly string Value { get; } = value;
 
 	public override bool Equals(object? obj)
 	{

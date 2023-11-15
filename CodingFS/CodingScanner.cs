@@ -13,25 +13,18 @@ sealed class ConcurrentCharsDict<T> : ConcurrentDictionary<ReadOnlyMemory<char>,
 /// <summary>
 /// Scan and cache workspaces of directories. This class is thread-safe.
 /// </summary>
-public sealed class CodingScanner
+public sealed class CodingScanner(string root, Workspace[] globals, Detector[] detectors)
 {
 	/// <summary>
 	/// Maximum search depth (include the root directory).
 	/// </summary>
 	public int MaxDepth { get; set; } = int.MaxValue;
 
-	public string Root { get; }
+	public string Root { get; } = root;
 
 	readonly ConcurrentCharsDict<IReadOnlyList<Workspace>> cache = new();
-	readonly Detector[] detectors;
-	readonly Workspace[] globals = Array.Empty<Workspace>();
-
-	public CodingScanner(string root, Workspace[] globals, Detector[] detectors)
-	{
-		Root = root;
-		this.globals = globals;
-		this.detectors = detectors;
-	}
+	readonly Detector[] detectors = detectors;
+	readonly Workspace[] globals = globals;
 
 	public WorkspacesInfo GetWorkspaces(string directory)
 	{

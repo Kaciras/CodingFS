@@ -5,8 +5,8 @@ namespace CodingFS.Workspaces;
 
 public sealed class MSBuildProject : Workspace
 {
-	public static readonly string[] SDK_CSHARP = { "obj", "bin" };
-	public static readonly string[] SDK_CPP = { "Debug", "Release", "x64", "win32" };
+	public static readonly string[] SDK_CSHARP = ["obj", "bin"];
+	public static readonly string[] SDK_CPP = ["Debug", "Release", "x64", "win32"];
 
 	public VisualStudioWorkspace Solution { get; }
 

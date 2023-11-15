@@ -34,7 +34,7 @@ public struct VirtualFSOptions
 
 public sealed class VirtualFS : IDisposable
 {
-	readonly List<IDisposable> disposables = new();
+	readonly List<IDisposable> disposables = [];
 
 	/// <summary>
 	/// Create new instance of VirtualFS will mount the virtual drive.

@@ -11,7 +11,7 @@ public sealed class IDEAWorkspace : Workspace
 	readonly string root;
 
 	public IDEAWorkspace(JetBrainsDetector detector, string root)
-		: this(new(), root, detector)
+		: this([], root, detector)
 	{
 		LoadWorkspace();
 		LoadModules();

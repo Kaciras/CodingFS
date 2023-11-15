@@ -6,16 +6,11 @@ using System.Linq;
 
 namespace CodingFS.Benchmark.Legacy;
 
-sealed class PathTrieNode<T>
+sealed class PathTrieNode<T>(T value)
 {
-	private IDictionary<string, PathTrieNode<T>>? children;
+	Dictionary<string, PathTrieNode<T>>? children;
 
-	public T Value { get; set; }
-
-	public PathTrieNode(T value)
-	{
-		Value = value;
-	}
+	public T Value { get; set; } = value;
 
 	public bool TryGet(string part, [MaybeNullWhen(false)] out PathTrieNode<T> child)
 	{
@@ -34,28 +29,21 @@ sealed class PathTrieNode<T>
 
 	public PathTrieNode<T> Put(string part, T value)
 	{
-		children ??= new Dictionary<string, PathTrieNode<T>>();
+		children ??= new();
 		return children[part] = new PathTrieNode<T>(value);
 	}
 }
 
-internal sealed class FileClassifierV1
+internal sealed class FileClassifierV1(string root, Workspace[] globals, Detector[] factories)
 {
 	public int OuterDepth { get; set; } = int.MaxValue;
 
 	public int InnerDepth { get; set; } = int.MaxValue;
 
-	public string Root { get; }
+	public string Root { get; } = root;
 
-	private readonly Detector[] factories;
-	private readonly PathTrieNode<Workspace[]> cacheRoot;
-
-	public FileClassifierV1(string root, Workspace[] globals, Detector[] factories)
-	{
-		Root = root;
-		this.factories = factories;
-		cacheRoot = new PathTrieNode<Workspace[]>(globals);
-	}
+	private readonly Detector[] factories = factories;
+	private readonly PathTrieNode<Workspace[]> cacheRoot = new(globals);
 
 	string[] SplitPath(string path)
 	{

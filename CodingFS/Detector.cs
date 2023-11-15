@@ -14,8 +14,7 @@ public static class Detectors
 {
 	public static Detector[] GetBuiltins(BuiltinDetectorOptions options)
 	{
-		return new Detector[]
-		{
+		return [
 			new JetBrainsDetector().Detect,
 			new GitDetector(options.Gitignore).Match,
 			NpmWorkspace.Match,
@@ -23,22 +22,16 @@ public static class Detectors
 			CargoWorkspace.Match,
 			VSCodeWorkspace.Match,
 			VisualStudioWorkspace.Match,
-		};
+		];
 	}
 }
 
-public readonly struct DetectContxt
+public readonly struct DetectContxt(string path, List<Workspace> parent)
 {
-	public readonly IReadOnlyList<Workspace> Parent;
-	public readonly string Path;
+	public readonly IReadOnlyList<Workspace> Parent = parent;
+	public readonly string Path = path;
 
 	internal readonly List<Workspace> Matches = new();
-
-	public DetectContxt(string path, List<Workspace> parent)
-	{
-		Path = path;
-		Parent = parent;
-	}
 
 	public void Deconstruct(
 		out string path,

@@ -11,26 +11,26 @@ public sealed class Config
 
 	public int MaxDepth { get; set; } = int.MaxValue;
 
-	public List<string> Deps { get; set; } = new();
+	public List<string> Deps { get; set; } = [];
 
-	public List<string> Ingores { get; set; } = new();
+	public List<string> Ingores { get; set; } = [];
 
 	public CodingScanner CreateScanner()
 	{
 		var detectors = Detectors.GetBuiltins(Detector);
 
-		var custom = new CustomWorkspace();
+		var custom = new Dictionary<string, RecognizeType>();
 		foreach (var module in Deps)
 		{
-			custom.Dict[module] = RecognizeType.Dependency;
+			custom[module] = RecognizeType.Dependency;
 		}
 		foreach (var module in Ingores)
 		{
-			custom.Dict[module] = RecognizeType.Ignored;
+			custom[module] = RecognizeType.Ignored;
 		}
 
 		var globals = new Workspace[] {
-			custom,
+			new CustomWorkspace("Custom", custom),
 			new CommonWorkspace(),
 		};
 		return new(Root, globals, detectors) { MaxDepth = MaxDepth };

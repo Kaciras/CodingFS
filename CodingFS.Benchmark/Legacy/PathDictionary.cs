@@ -4,16 +4,10 @@ using System.IO;
 
 namespace CodingFS.Benchmark.Legacy;
 
-public sealed class PathDictionary
+public sealed class PathDictionary(string directory)
 {
-	private readonly string directory;
-	private readonly IDictionary<FilePath, RecognizeType> map;
-
-	public PathDictionary(string directory)
-	{
-		this.directory = directory;
-		map = new Dictionary<FilePath, RecognizeType>();
-	}
+	readonly string directory = directory;
+	readonly Dictionary<FilePath, RecognizeType> map = new();
 
 	public RecognizeType Recognize(string path)
 	{

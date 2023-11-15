@@ -31,11 +31,11 @@ public class GitDetectorPerf
 		{
 			Directory.CreateDirectory(TEMP_PROJECT);
 			Repository.Init(TEMP_PROJECT);
-			context = new(TEMP_PROJECT, new());
+			context = new(TEMP_PROJECT, []);
 		}
 		else
 		{
-			context = new(".", new());
+			context = new(".", []);
 		}
 	}
 
