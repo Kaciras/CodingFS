@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection.PortableExecutable;
+using System.Security.Policy;
+using System.Xml;
 
 namespace CodingFS.Workspaces;
 
@@ -141,10 +144,24 @@ public sealed class IDEAWorkspace : Workspace
 		try
 		{
 			using var matcher = XmlReaderEx.ForFile(imlFile);
-			while (matcher.GoToElement("excludeFolder"))
+			var rootProjectPath = "$MODULE_DIR$";
+			var excludeFolders = new List<string>();
+
+			while (matcher.Read())
 			{
-				var url = matcher.GetAttribute("url")!;
-				dict[ToRelative(url, module)] = RecognizeType.Ignored;
+				if (matcher.GetAttribute("name") == "ExternalSystem")
+				{
+					rootProjectPath = matcher.GetAttribute("rootProjectPath") ?? rootProjectPath;
+				}
+				if (matcher.NodeType == XmlNodeType.Element && matcher.Name == "excludeFolder")
+				{
+					excludeFolders.Add(matcher.GetAttribute("url")!);
+				}
+			}
+			
+			foreach (var url in excludeFolders)
+			{
+				dict[ToRelative(url, module, rootProjectPath)] = RecognizeType.Ignored;
 			}
 		}
 		catch (FileNotFoundException)
@@ -167,17 +184,18 @@ public sealed class IDEAWorkspace : Workspace
 		}
 	}
 
-	static ReadOnlyMemory<char> ToRelative(string value, ReadOnlySpan<char> prefix)
+	static ReadOnlyMemory<char> ToRelative(string value, ReadOnlySpan<char> moduleRoot, string prefix)
 	{
-		if (!value.StartsWith("file://$MODULE_DIR$/"))
+		var memory = value.AsMemory("file://".Length);
+		if (!memory.Span.StartsWith(prefix))
 		{
 			throw new Exception("Expect relative path only.");
 		}
-		var relative = value.AsMemory()[20..];
+		var relative = memory[(prefix.Length + 1)..];
 		PathSpliter.NormalizeSepUnsafe(relative);
 
-		return prefix.IsEmpty
+		return moduleRoot.IsEmpty
 			? relative
-			: Path.Join(prefix, relative.Span).AsMemory();
+			: Path.Join(moduleRoot, relative.Span).AsMemory();
 	}
 }
