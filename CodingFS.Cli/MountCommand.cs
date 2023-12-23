@@ -12,6 +12,9 @@ public sealed class MountCommand : Command
 	[Option('l', "label", HelpText = "Volume label on Windows.")]
 	public string? VolumeLabel { get; set; }
 
+	[Option('r', "readonly", HelpText = "Mount the volume as read-only.")]
+	public bool Readonly { get; set; } = true;
+
 	[Option('t', "type", HelpText = "Which type of files should be included in the file system. " +
 		"Avaliable values: Source, Dependency, Generated, use comma to separate flags.")]
 	public FileType Type { get; set; } = FileType.Source;
@@ -59,7 +62,7 @@ public sealed class MountCommand : Command
 			Debug = false,
 #endif
 			Name = VolumeLabel,
-			Readonly = true,
+			Readonly = Readonly,
 			MountPoint = Point,
 		});
 
