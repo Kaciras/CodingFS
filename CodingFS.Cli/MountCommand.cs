@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using CommandLine;
 
 namespace CodingFS.Cli;
@@ -39,7 +40,11 @@ public sealed class MountCommand : Command
 
 		if ((Type & FileType.Source) == 0)
 		{
+			Console.WriteLine($"Type does not contain Source, requires pre-scan files...");
+			var watch = new Stopwatch();
+			watch.Start();
 			filter.Set(top, new PrebuiltPathFilter(scanner, Type, config.MaxDepth));
+			Console.WriteLine($"Pre-scan completed in {watch.ElapsedMilliseconds}ms.\n");
 		}
 		else
 		{

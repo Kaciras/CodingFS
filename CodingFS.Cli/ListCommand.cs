@@ -8,7 +8,7 @@ public sealed class ListCommand : Command
 {
 	[Option('t', "type", HelpText = "Which type of files should be listed. " +
 		"Avaliable values: Source, Dependency, Generated, use comma to separate flags.")]
-	public FileType Type { get; set; }
+	public FileType Type { get; set; } = FileType.Source;
 
 	[Option('n', "name-only", Default = true, HelpText = "Only show file names.")]
 	public bool? NameOnly { get; set; }

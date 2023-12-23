@@ -44,6 +44,9 @@ Map a directory to a virtual drive, containing only files of the specified type.
 * `--type`: Which type of files should be included in the file system. Avaliable values: Source, Dependency, Generated. Use comma to separate flags.
 * `--label`: Volume label on Windows.
 
+> [!WARNING]
+> If you set `--type` without `Source`, CodingFS need to scan the directory recursively before mounting, This may take a while, you can limit the depth by set `MaxDepth` property in the config file.
+
 ## List
 
 ```
