@@ -33,11 +33,18 @@ public sealed class MountCommand : Command
 
 	protected override void Execute(Config config)
 	{
-		var scanner = config.CreateScanner();
-
 		var filter = new MappedPathFilter();
+		var scanner = config.CreateScanner();
 		var top = Path.GetFileName(scanner.Root);
-		filter.Set(top, new CodingPathFilter(scanner, Type));
+
+		if ((Type & FileType.Source) == 0)
+		{
+			filter.Set(top, new PrebuiltPathFilter(scanner, Type, config.MaxDepth));
+		}
+		else
+		{
+			filter.Set(top, new CodingPathFilter(scanner, Type));
+		}
 
 		virtualFS = new VirtualFS(filter, new()
 		{

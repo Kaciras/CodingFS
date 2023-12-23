@@ -5,11 +5,8 @@ using DokanNet;
 
 namespace CodingFS;
 
-public sealed class CodingPathFilter(CodingScanner scanner, FileType includes) : PathFilter
+public class CodingPathFilter(CodingScanner scanner, FileType includes) : PathFilter
 {
-	readonly CodingScanner scanner = scanner;
-	readonly FileType includes = includes;
-
 	public string MapPath(string path)
 	{
 		return Path.Join(scanner.Root, path);
