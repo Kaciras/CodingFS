@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using CodingFS.Helper;
 using DokanNet;
 
 namespace CodingFS;

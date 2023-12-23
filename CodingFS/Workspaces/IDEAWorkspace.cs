@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection.PortableExecutable;
 using System.Security.Policy;
 using System.Xml;
+using CodingFS.Helper;
 
 namespace CodingFS.Workspaces;
 

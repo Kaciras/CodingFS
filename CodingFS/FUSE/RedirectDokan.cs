@@ -25,6 +25,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
+using CodingFS.Helper;
 using DokanNet;
 using Microsoft.Win32.SafeHandles;
 using AccessType = System.IO.FileAccess;

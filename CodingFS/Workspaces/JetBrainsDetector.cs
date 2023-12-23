@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using CodingFS.Helper;
 using SpecialFolder = System.Environment.SpecialFolder;
 
 namespace CodingFS.Workspaces;

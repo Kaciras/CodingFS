@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using BenchmarkDotNet.Attributes;
+using CodingFS.Helper;
 using CodingFS.Workspaces;
 
 namespace CodingFS.Benchmark;

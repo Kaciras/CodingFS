@@ -2,14 +2,18 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using CodingFS.Helper;
 using DokanNet;
 
 namespace CodingFS;
 
+/**
+ * 
+ */
 public class PrebuiltPathFilter : PathFilter
 {
 	readonly Dictionary<string, List<string>> map = new();
-	readonly HashSet<ReadOnlyMemory<char>> matchedDirs = new (Utils.memComparator);
+	readonly HashSet<ReadOnlyMemory<char>> matches = new (Utils.memComparator);
 
 	readonly CodingScanner scanner;
 	readonly FileType includes;
@@ -21,10 +25,10 @@ public class PrebuiltPathFilter : PathFilter
 		this.includes = includes;
 		this.maxDepth = maxDepth;
 
-		BuildMap(scanner.Root, 0);
+		BuildMap(scanner.Root, maxDepth);
 	}
 
-	bool BuildMap(string directory, int depth)
+	bool BuildMap(string directory, int limit)
 	{
 		var ws = scanner.GetWorkspaces(directory);
 		var files = new List<string>();
@@ -36,14 +40,14 @@ public class PrebuiltPathFilter : PathFilter
 			var subMatches = false;
 			var isDir = Directory.Exists(e);
 
-			if (type == FileType.Source && isDir && depth < maxDepth)
+			if (type == FileType.Source && isDir && limit > 0)
 			{
-				subMatches = BuildMap(e, depth + 1);
+				subMatches = BuildMap(e, limit - 1);
 			}
 
 			if (matches && isDir)
 			{
-				matchedDirs.Add(e.AsMemory());
+				this.matches.Add(e.AsMemory());
 			}
 
 			if (matches || subMatches)
@@ -95,7 +99,7 @@ public class PrebuiltPathFilter : PathFilter
 		while (sep.HasNext)
 		{
 			sep.SplitNext();
-			if (matchedDirs.Contains(sep.Left))
+			if (matches.Contains(sep.Left))
 			{
 				return true;
 			}

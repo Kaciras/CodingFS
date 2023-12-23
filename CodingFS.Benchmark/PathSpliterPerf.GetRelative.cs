@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using BenchmarkDotNet.Attributes;
+using CodingFS.Helper;
 
 namespace CodingFS.Benchmark;
 

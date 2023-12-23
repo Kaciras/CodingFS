@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using CodingFS.Helper;
 
 namespace CodingFS.Workspaces;
 
