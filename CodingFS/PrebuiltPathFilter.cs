@@ -12,7 +12,7 @@ namespace CodingFS;
  */
 public class PrebuiltPathFilter : PathFilter
 {
-	readonly Dictionary<string, List<string>> map = new();
+	readonly Dictionary<string, List<FileSystemInfo>> map = new();
 	readonly HashSet<ReadOnlyMemory<char>> matches = new (Utils.memComparator);
 
 	readonly CodingScanner scanner;
@@ -25,40 +25,37 @@ public class PrebuiltPathFilter : PathFilter
 		this.includes = includes;
 		this.maxDepth = maxDepth;
 
-		BuildMap(scanner.Root, maxDepth);
+		BuildMap(new DirectoryInfo(scanner.Root), maxDepth);
 	}
 
-	bool BuildMap(string directory, int limit)
+	bool BuildMap(DirectoryInfo directory, int limit)
 	{
-		var ws = scanner.GetWorkspaces(directory);
-		var files = new List<string>();
+		var ws = scanner.GetWorkspaces(directory.FullName);
+		var files = new List<FileSystemInfo>();
 
-		foreach (var e in Directory.EnumerateFileSystemEntries(directory))
+		foreach (var e in directory.EnumerateFileSystemInfos())
 		{
-			var type = ws.GetFileType(e);
-			var matches = (type & includes) != 0;
-			var subMatches = false;
-			var isDir = Directory.Exists(e);
+			var type = ws.GetFileType(e.FullName);
+			var included = (type & includes) != 0;
 
-			if (type == FileType.Source && isDir && limit > 0)
-			{
-				subMatches = BuildMap(e, limit - 1);
-			}
+			var hasChildren = type == FileType.Source
+				&& e is DirectoryInfo next
+				&& limit > 0
+				&& BuildMap(next, limit - 1);
 
-			if (matches && isDir)
-			{
-				this.matches.Add(e.AsMemory());
-			}
-
-			if (matches || subMatches)
+			if (included || hasChildren)
 			{
 				files.Add(e);
+			}
+			if (included && e is DirectoryInfo)
+			{
+				matches.Add(e.FullName.AsMemory());
 			}
 		}
 
 		if (files.Count > 0)
 		{
-			map[directory] = files;
+			map[directory.FullName] = files;
 			return true;
 		}
 		return false;
@@ -69,28 +66,25 @@ public class PrebuiltPathFilter : PathFilter
 		return Path.Join(scanner.Root, path);
 	}
 
-	public IEnumerable<FileInformation> ListFiles(string directory)
+	public IEnumerable<FileInformation> ListFiles(string dir)
 	{
-		directory = Path.Join(scanner.Root, directory);
-		var depth = directory.AsSpan().Count(Path.DirectorySeparatorChar);
+		var depth = dir.AsSpan().Count(Path.DirectorySeparatorChar);
+		dir = Path.Join(scanner.Root, dir);
 
-		if (depth > maxDepth || IsSubOfMatched(directory))
+		if (depth >= maxDepth || IsSubOfMatched(dir))
 		{
-			return new DirectoryInfo(directory)
+			return new DirectoryInfo(dir)
 				.EnumerateFileSystemInfos()
 				.Select(Utils.ConvertFSInfo);
 		}
-		if (map.TryGetValue(directory, out var files))
+		else if (map.TryGetValue(dir, out var files))
 		{
-			return files.Select(f =>
-			{
-				if (File.Exists(f))
-					return Utils.ConvertFSInfo(new FileInfo(f));
-				else
-					return Utils.ConvertFSInfo(new DirectoryInfo(f));
-			});
+			return files.Select(Utils.ConvertFSInfo);
 		}
-		return Enumerable.Empty<FileInformation>();
+		else
+		{
+			return Enumerable.Empty<FileInformation>();
+		}
 	}
 
 	bool IsSubOfMatched(string path)
