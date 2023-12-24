@@ -34,7 +34,7 @@ Gitignore = "NotCare"
 ## Mount
 
 ```
-CodingFS.Cli mount <MountPoint> [--config=<config.toml>] [--type=<Source>] [--label=<SourceView>]
+CodingFS.Cli mount <MountPoint> [--config=<config.toml>] [--type=<Source>] [--label=<SourceView>] [--readonly=<bool>]
 ```
 
 Map a directory to a virtual drive, containing only files of the specified type. You must install [Dokan](https://github.com/dokan-dev/dokany) driver to run this command.
@@ -43,6 +43,9 @@ Map a directory to a virtual drive, containing only files of the specified type.
 * `--config`: Path of the config file to use.
 * `--type`: Which type of files should be included in the file system. Avaliable values: Source, Dependency, Generated. Use comma to separate flags.
 * `--label`: Volume label on Windows.
+* `--readonly`: Mount the volume as read-only. Default true.
+
+CodingFS does not watch files, changes made after mounting may not be reflected on the virtual volume.
 
 > [!WARNING]
 > If you set `--type` without `Source`, CodingFS need to scan the directory recursively before mounting, This may take a while, you can limit the depth by set `MaxDepth` property in the config file.

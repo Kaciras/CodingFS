@@ -33,7 +33,7 @@ public sealed class InspectCommand : Command
 		WriteColored(FileName, ConsoleColor.Cyan, false);
 		Console.Write(" is ");
 		WriteColored(Enum.GetName(type), GetColor(type));
-
+		
 		var splitor = new PathSpliter(dir, scanner.Root);
 		while (splitor.HasNext)
 		{

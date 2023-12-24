@@ -7,12 +7,27 @@ using DokanNet;
 
 namespace CodingFS;
 
-/**
- * 
- */
+///  <summary>
+/// This class searches for all visible files at startup, and it solves the problem that 
+/// CodingPathFilter could not display deep files when Source was not included in the includes parameter.
+/// <br/>
+/// For example, consider there is a folder A with its sub folder B, the type of A is Source and
+/// the type of B is Generated. In order to view only the generated files, you can use the mount command
+/// with the parameter `--type=Generated`, but no files will be displayed because the type of A is not Generated. 
+/// <br/>
+/// The correct result is to show the directory A, and the files within it B. To fix this we need to 
+/// traverse the directory tree to find directories which contains matched files.
+/// </summary>
 public class PrebuiltPathFilter : PathFilter
 {
+	/// <summary>
+	/// Directory path with its files to show (it or it has subfiles matching the includes).
+	/// </summary>
 	readonly Dictionary<string, List<FileSystemInfo>> map = new();
+
+	/// <summary>
+	/// Path of files matching the includes parameter.
+	/// </summary>
 	readonly HashSet<ReadOnlyMemory<char>> matches = new (Utils.memComparator);
 
 	readonly CodingScanner scanner;
@@ -28,24 +43,27 @@ public class PrebuiltPathFilter : PathFilter
 		BuildMap(new DirectoryInfo(scanner.Root), maxDepth);
 	}
 
-	bool BuildMap(DirectoryInfo directory, int limit)
+	void BuildMap(DirectoryInfo directory, int limit)
 	{
 		var ws = scanner.GetWorkspaces(directory.FullName);
-		var files = new List<FileSystemInfo>();
+		var visibleFiles = new List<FileSystemInfo>();
 
 		foreach (var e in directory.EnumerateFileSystemInfos())
 		{
 			var type = ws.GetFileType(e.FullName);
 			var included = (type & includes) != 0;
+			var sizeBefore = map.Count;
 
-			var hasChildren = type == FileType.Source
+			if (type == FileType.Source
 				&& e is DirectoryInfo next
-				&& limit > 0
-				&& BuildMap(next, limit - 1);
-
-			if (included || hasChildren)
+				&& limit > 0)
 			{
-				files.Add(e);
+				BuildMap(next, limit - 1);
+			}
+
+			if (included || map.Count > sizeBefore)
+			{
+				visibleFiles.Add(e);
 			}
 			if (included && e is DirectoryInfo)
 			{
@@ -53,17 +71,29 @@ public class PrebuiltPathFilter : PathFilter
 			}
 		}
 
-		if (files.Count > 0)
+		if (visibleFiles.Count > 0)
 		{
-			map[directory.FullName] = files;
-			return true;
+			map[directory.FullName] = visibleFiles;
 		}
-		return false;
 	}
 
 	public string MapPath(string path)
 	{
 		return Path.Join(scanner.Root, path);
+	}
+
+	bool IsSubOfMatched(string path)
+	{
+		var sep = new PathSpliter(path);
+		while (sep.HasNext)
+		{
+			sep.SplitNext();
+			if (matches.Contains(sep.Left))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public IEnumerable<FileInformation> ListFiles(string dir)
@@ -85,19 +115,5 @@ public class PrebuiltPathFilter : PathFilter
 		{
 			return Enumerable.Empty<FileInformation>();
 		}
-	}
-
-	bool IsSubOfMatched(string path)
-	{
-		var sep = new PathSpliter(path);
-		while (sep.HasNext)
-		{
-			sep.SplitNext();
-			if (matches.Contains(sep.Left))
-			{
-				return true;
-			}
-		}
-		return false;
 	}
 }

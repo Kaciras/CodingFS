@@ -12,11 +12,13 @@ public enum RecognizeType
 
 	/// <summary>
 	/// 3rd party file, cache (significantly improve performance)...
+	/// All files in a folder of this type are also of this type.
 	/// </summary>
 	Dependency = 2,
 
 	/// <summary>
 	/// Temp file, Logs, build output, cache (little improve performance)...
+	/// All files in a folder of this type are also of this type.
 	/// </summary>
 	Ignored = 4,
 }
