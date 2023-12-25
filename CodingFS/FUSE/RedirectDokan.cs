@@ -82,24 +82,20 @@ abstract partial class RedirectDokan : IDokanOperations
 			switch (mode)
 			{
 				case FileMode.Open:
-					if (!Directory.Exists(filePath))
+					try
 					{
-						try
-						{
-							if ((File.GetAttributes(filePath) & FileAttributes.Directory) == 0)
-								return DokanResult.NotADirectory;
-						}
-						catch (Exception)
-						{
-							return DokanResult.FileNotFound;
-						}
-						return DokanResult.PathNotFound;
+						var attrs = File.GetAttributes(filePath);
+						if ((attrs & FileAttributes.Directory) == 0)
+							return DokanResult.NotADirectory;
+
+						// Check you can list the directory.
+						_ = new DirectoryInfo(filePath).EnumerateFileSystemInfos().Any();
+						break;
 					}
-
-					_ = new DirectoryInfo(filePath).EnumerateFileSystemInfos().Any();
-					// you can't list the directory
-					break;
-
+					catch (Exception)
+					{
+						return DokanResult.FileNotFound;
+					}
 				case FileMode.CreateNew:
 					if (Directory.Exists(filePath))
 						return DokanResult.FileExists;
@@ -119,17 +115,16 @@ abstract partial class RedirectDokan : IDokanOperations
 		}
 		else
 		{
-			var pathExists = true;
-			var pathIsDirectory = false;
-
 			var readWriteAttributes = (access & DataAccess) == 0;
 			var readAccess = (access & DataWriteAccess) == 0;
+			var pathExists = false;
+			var pathIsDirectory = false;
 
 			try
 			{
-				pathExists = Directory.Exists(filePath) || File.Exists(filePath);
-				pathIsDirectory = pathExists && 
-					(File.GetAttributes(filePath) & FileAttributes.Directory) != 0;
+				var attrs = File.GetAttributes(filePath);
+				pathExists = true;
+				pathIsDirectory = (attrs & FileAttributes.Directory) != 0;
 			}
 			catch (IOException)
 			{
