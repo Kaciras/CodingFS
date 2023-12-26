@@ -90,13 +90,12 @@ abstract partial class RedirectDokan : IDokanOperations
 
 		if (info.IsDirectory)
 		{
-			switch (mode)
+			switch (mode, exists)
 			{
-				case FileMode.Open:
-					if (!exists)
-					{
-						return DokanResult.FileNotFound;
-					}
+				case (FileMode.Open, false):
+					return DokanResult.FileNotFound;
+
+				case (FileMode.Open, true):
 					if ((attrs & FileAttributes.Directory) == 0)
 					{
 						return DokanResult.NotADirectory;
@@ -106,51 +105,48 @@ abstract partial class RedirectDokan : IDokanOperations
 					_ = new DirectoryInfo(realPath).EnumerateFileSystemInfos().Any();
 					break;
 
-				case FileMode.CreateNew:
-					if (exists)
-					{
-						return (attrs & FileAttributes.Directory) != 0
-							? DokanResult.FileExists
-							: DokanResult.AlreadyExists;
-					}
+				case (FileMode.CreateNew, true):
+					return (attrs & FileAttributes.Directory) != 0
+						? DokanResult.FileExists
+						: DokanResult.AlreadyExists;
+
+				case (FileMode.CreateNew, false):
 					Directory.CreateDirectory(realPath);
 					break;
 			}
 		}
 		else
 		{
-			var readWriteAttributes = (access & DataAccess) == 0;
+			const FileAccess SYNC_DELETE = FileAccess.Delete & FileAccess.Synchronize;
 
-			switch (mode)
+			switch (mode, exists)
 			{
-				case FileMode.Open:
-					if (!exists)
-					{
-						return DokanResult.FileNotFound;
-					}
+				case (FileMode.Open, false):
+					return DokanResult.FileNotFound;
 
+				case (FileMode.Open, true):
+					var readWriteAttributes = (access & DataAccess) == 0;
 					var pathIsDirectory = (attrs & FileAttributes.Directory) != 0;
+
 					// check if driver only wants to read newAttrs, security info, or open directory
 					if (readWriteAttributes || pathIsDirectory)
 					{
-						const FileAccess SYNC_DELETE = FileAccess.Delete & FileAccess.Synchronize;
-
 						if (pathIsDirectory && (access & SYNC_DELETE) == FileAccess.Delete)
 							// It is a DeleteFile request on a directory
 							return DokanResult.AccessDenied;
 
-						info.IsDirectory = pathIsDirectory;
-						info.Context = new object();
 						// must set it to something if you return DokanError.Success
+						info.Context = new object();
+						info.IsDirectory = pathIsDirectory;
 
 						return DokanResult.Success;
 					}
 					break;
 
-				case FileMode.CreateNew when exists:
+				case (FileMode.CreateNew,true):
 					return DokanResult.FileExists;
 
-				case FileMode.Truncate when !exists:
+				case (FileMode.Truncate, false):
 					return DokanResult.FileNotFound;
 			}
 
