@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Enumeration;
 using CodingFS.Helper;
 
 namespace CodingFS;
@@ -24,8 +25,17 @@ public sealed class CodingScanner(string root, Workspace[] globals, Detector[] d
 	public string Root { get; } = root;
 
 	readonly ConcurrentCharsDict<IReadOnlyList<Workspace>> cache = new();
-	readonly Detector[] detectors = detectors;
 	readonly Workspace[] globals = globals;
+
+	readonly Func<ReadOnlyMemory<char>, List<Workspace>, List<Workspace>> Scan = (path, parent) =>
+	{
+		var context = new DetectContxt(path.ToString(), parent);
+		foreach (var detect in detectors)
+		{
+			detect(context);
+		}
+		return context.Matches;
+	};
 
 	public WorkspacesInfo GetWorkspaces(string directory)
 	{
@@ -46,17 +56,6 @@ public sealed class CodingScanner(string root, Workspace[] globals, Detector[] d
 		}
 
 		return new WorkspacesInfo(directory, workspaces, list);
-	}
-
-	List<Workspace> Scan(ReadOnlyMemory<char> path, List<Workspace> workspaces)
-	{
-		var context = new DetectContxt(path.ToString(), workspaces);
-		foreach (var factory in detectors)
-		{
-			factory(context);
-		}
-
-		return context.Matches;
 	}
 
 	public IEnumerable<(FileSystemInfo, FileType)> Walk(FileType includes)
