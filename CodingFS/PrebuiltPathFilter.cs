@@ -32,15 +32,13 @@ public class PrebuiltPathFilter : PathFilter
 
 	readonly CodingScanner scanner;
 	readonly FileType includes;
-	readonly int maxDepth;
 
-	public PrebuiltPathFilter(CodingScanner scanner, FileType includes, int maxDepth)
+	public PrebuiltPathFilter(CodingScanner scanner, FileType includes)
 	{
 		this.scanner = scanner;
 		this.includes = includes;
-		this.maxDepth = maxDepth;
 
-		BuildMap(new DirectoryInfo(scanner.Root), maxDepth);
+		BuildMap(new DirectoryInfo(scanner.Root), scanner.MaxDepth - 1);
 	}
 
 	void BuildMap(DirectoryInfo directory, int limit)
@@ -82,7 +80,7 @@ public class PrebuiltPathFilter : PathFilter
 		return Path.Join(scanner.Root, path);
 	}
 
-	bool IsSubOfMatched(string path)
+	bool AncestorMatches(string path)
 	{
 		var sep = new PathSpliter(path);
 		while (sep.HasNext)
@@ -101,7 +99,10 @@ public class PrebuiltPathFilter : PathFilter
 		var depth = dir.AsSpan().Count(Path.DirectorySeparatorChar);
 		dir = Path.Join(scanner.Root, dir);
 
-		if (depth >= maxDepth || IsSubOfMatched(dir))
+		// The root is not included here, so we need to -1.
+		var maxDepth = scanner.MaxDepth - 1;
+
+		if (depth >= maxDepth || AncestorMatches(dir))
 		{
 			return new DirectoryInfo(dir)
 				.EnumerateFileSystemInfos()

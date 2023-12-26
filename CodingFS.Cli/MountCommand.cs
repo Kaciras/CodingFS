@@ -46,7 +46,7 @@ public sealed class MountCommand : Command
 			Console.WriteLine($"Type does not contain Source, requires pre-scan files...");
 			var watch = new Stopwatch();
 			watch.Start();
-			filter.Set(top, new PrebuiltPathFilter(scanner, Type, config.MaxDepth));
+			filter.Set(top, new PrebuiltPathFilter(scanner, Type));
 			Console.WriteLine($"Pre-scan completed in {watch.ElapsedMilliseconds}ms.\n");
 		}
 		else
