@@ -72,71 +72,65 @@ abstract partial class RedirectDokan : IDokanOperations
 
 	public virtual NtStatus CreateFile(
 		string fileName, FileAccess access, FileShare share, FileMode mode,
-		FileOptions options, FileAttributes attributes, IDokanFileInfo info)
+		FileOptions options, FileAttributes newAttrs, IDokanFileInfo info)
 	{
 		var result = DokanResult.Success;
-		var filePath = GetPath(fileName);
+		var realPath = GetPath(fileName);
+		var attrs = FileAttributes.None;
+		var exists = true;
+
+		try
+		{
+			attrs = File.GetAttributes(realPath);
+		}
+		catch (IOException)
+		{
+			exists = false;
+		}
 
 		if (info.IsDirectory)
 		{
 			switch (mode)
 			{
 				case FileMode.Open:
-					try
-					{
-						var attrs = File.GetAttributes(filePath);
-						if ((attrs & FileAttributes.Directory) == 0)
-							return DokanResult.NotADirectory;
-
-						// Check you can list the directory.
-						_ = new DirectoryInfo(filePath).EnumerateFileSystemInfos().Any();
-						break;
-					}
-					catch (Exception)
+					if (!exists)
 					{
 						return DokanResult.FileNotFound;
 					}
-				case FileMode.CreateNew:
-					try
+					if ((attrs & FileAttributes.Directory) == 0)
 					{
-						var attrs = File.GetAttributes(filePath);
+						return DokanResult.NotADirectory;
+					}
+
+					// Check you can list the directory.
+					_ = new DirectoryInfo(realPath).EnumerateFileSystemInfos().Any();
+					break;
+
+				case FileMode.CreateNew:
+					if (exists)
+					{
 						return (attrs & FileAttributes.Directory) != 0
 							? DokanResult.FileExists
 							: DokanResult.AlreadyExists;
 					}
-					catch (IOException)
-					{
-					}
-
-					Directory.CreateDirectory(GetPath(fileName));
+					Directory.CreateDirectory(realPath);
 					break;
 			}
 		}
 		else
 		{
 			var readWriteAttributes = (access & DataAccess) == 0;
-			var pathExists = false;
-			var pathIsDirectory = false;
-
-			try
-			{
-				var attrs = File.GetAttributes(filePath);
-				pathExists = true;
-				pathIsDirectory = (attrs & FileAttributes.Directory) != 0;
-			}
-			catch (IOException)
-			{
-			}
 
 			switch (mode)
 			{
 				case FileMode.Open:
-					if (!pathExists)
+					if (!exists)
 					{
 						return DokanResult.FileNotFound;
 					}
 
-					// check if driver only wants to read attributes, security info, or open directory
+					var pathIsDirectory = (attrs & FileAttributes.Directory) != 0;
+					// check if driver only wants to read newAttrs, security info, or open directory
 					if (readWriteAttributes || pathIsDirectory)
 					{
 						const FileAccess SYNC_DELETE = FileAccess.Delete & FileAccess.Synchronize;
@@ -153,10 +147,10 @@ abstract partial class RedirectDokan : IDokanOperations
 					}
 					break;
 
-				case FileMode.CreateNew when pathExists:
+				case FileMode.CreateNew when exists:
 					return DokanResult.FileExists;
 
-				case FileMode.Truncate when !pathExists:
+				case FileMode.Truncate when !exists:
 					return DokanResult.FileNotFound;
 			}
 
@@ -168,23 +162,21 @@ abstract partial class RedirectDokan : IDokanOperations
 				if (mode == FileMode.CreateNew && readAccess)
 					streamAccess = AccessType.ReadWrite;
 
-				info.Context = new FileStream(filePath, mode,
+				info.Context = new FileStream(realPath, mode,
 					streamAccess, share, 4096, options);
 
-				if (pathExists && (mode == FileMode.OpenOrCreate || mode == FileMode.Create))
+				if (exists && (mode == FileMode.OpenOrCreate || mode == FileMode.Create))
 					result = DokanResult.AlreadyExists;
 
 				var fileCreated = mode == FileMode.CreateNew
 					|| mode == FileMode.Create
-					|| (!pathExists && mode == FileMode.OpenOrCreate);
+					|| (!exists && mode == FileMode.OpenOrCreate);
 
 				if (fileCreated)
 				{
-					FileAttributes new_attributes = attributes;
-					new_attributes |= FileAttributes.Archive; // Files are always created as Archive
-															  // FILE_ATTRIBUTE_NORMAL is override if any other attribute is set.
-					new_attributes &= ~FileAttributes.Normal;
-					File.SetAttributes(filePath, new_attributes);
+					newAttrs |= FileAttributes.Archive; // Files are always created as Archive
+					newAttrs &= ~FileAttributes.Normal; // FILE_ATTRIBUTE_NORMAL is override if any other attribute is set.
+					File.SetAttributes(realPath, newAttrs);
 				}
 			}
 			catch (UnauthorizedAccessException)
@@ -396,7 +388,7 @@ abstract partial class RedirectDokan : IDokanOperations
 	public virtual NtStatus SetFileAttributes(string fileName, FileAttributes attributes, IDokanFileInfo info)
 	{
 		// MS-FSCC 2.6 File Attributes : There is no file attribute with the value 0x00000000
-		// because a value of 0x00000000 in the FileAttributes field means that the file attributes for this file MUST NOT be changed when setting basic information for the file
+		// because a value of 0x00000000 in the FileAttributes field means that the file newAttrs for this file MUST NOT be changed when setting basic information for the file
 		if (attributes != 0)
 			File.SetAttributes(GetPath(fileName), attributes);
 		return DokanResult.Success;
