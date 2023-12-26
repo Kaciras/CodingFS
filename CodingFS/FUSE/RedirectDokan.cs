@@ -36,7 +36,7 @@ namespace CodingFS.FUSE;
 #pragma warning disable CA1416 // Unsupported operations will not be called.
 
 /// <summary>
-/// Copied from https://github.com/dokan-dev/dokan-dotnet/blob/master/sample/DokanNetMirror/Mirror.cs
+/// Derived from https://github.com/dokan-dev/dokan-dotnet/blob/master/sample/DokanNetMirror/Mirror.cs
 /// </summary>
 abstract partial class RedirectDokan : IDokanOperations
 {
@@ -97,13 +97,12 @@ abstract partial class RedirectDokan : IDokanOperations
 						return DokanResult.FileNotFound;
 					}
 				case FileMode.CreateNew:
-					if (Directory.Exists(filePath))
-						return DokanResult.FileExists;
-
 					try
 					{
-						File.GetAttributes(filePath);
-						return DokanResult.AlreadyExists;
+						var attrs = File.GetAttributes(filePath);
+						return (attrs & FileAttributes.Directory) != 0
+							? DokanResult.FileExists
+							: DokanResult.AlreadyExists;
 					}
 					catch (IOException)
 					{
@@ -116,7 +115,6 @@ abstract partial class RedirectDokan : IDokanOperations
 		else
 		{
 			var readWriteAttributes = (access & DataAccess) == 0;
-			var readAccess = (access & DataWriteAccess) == 0;
 			var pathExists = false;
 			var pathIsDirectory = false;
 
@@ -164,6 +162,7 @@ abstract partial class RedirectDokan : IDokanOperations
 
 			try
 			{
+				var readAccess = (access & DataWriteAccess) == 0;
 				var streamAccess = readAccess ? AccessType.Read : AccessType.ReadWrite;
 
 				if (mode == FileMode.CreateNew && readAccess)
@@ -223,7 +222,7 @@ abstract partial class RedirectDokan : IDokanOperations
 			stream.Dispose();
 			info.Context = null;
 		}
-		// could recreate cleanup code here but this is not called sometimes
+		// Could recreate cleanup code here but this is not called sometimes
 	}
 
 	public virtual NtStatus ReadFile(
@@ -320,7 +319,7 @@ abstract partial class RedirectDokan : IDokanOperations
 		out FileInformation fileInfo,
 		IDokanFileInfo info)
 	{
-		// 这个根文件夹必须要有，否则会出现许多奇怪的错误。
+		// Attributes of the volume, which filename is \
 		if (fileName == @"\")
 		{
 			fileInfo = new FileInformation
@@ -446,12 +445,12 @@ abstract partial class RedirectDokan : IDokanOperations
 		if ((File.GetAttributes(filePath) & FileAttributes.Directory) != 0)
 			return DokanResult.AccessDenied;
 
-		return DokanResult.Success; // the true deletion is in Cleanup()
+		return DokanResult.Success; // The true deletion is in Cleanup()
 	}
 
 	public virtual NtStatus DeleteDirectory(string fileName, IDokanFileInfo info)
 	{
-		// if dir is not empty it can't be deleted
+		// If dir is not empty it can't be deleted
 		return Directory.EnumerateFileSystemEntries(GetPath(fileName)).Any()
 				? DokanResult.DirectoryNotEmpty : DokanResult.Success;
 	}

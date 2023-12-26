@@ -8,7 +8,7 @@ public class AopFSWrapper : DispatchProxy
 {
 	public IDokanOperations? Native { get; set; }
 
-	protected override object? Invoke(MethodInfo method, object[] args)
+	protected override object? Invoke(MethodInfo method, object?[]? args)
 	{
 		try
 		{

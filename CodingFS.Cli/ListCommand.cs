@@ -11,13 +11,13 @@ public sealed class ListCommand : Command
 	public FileType Type { get; set; } = FileType.Source;
 
 	[Option('n', "name-only", Default = true, HelpText = "Only show file names.")]
-	public bool? NameOnly { get; set; }
+	public bool NameOnly { get; set; }
 
 	protected override void Execute(Config config)
 	{
 		var walking = config.CreateScanner().Walk(Type);
 
-		if (NameOnly!.Value)
+		if (NameOnly)
 		{
 			foreach (var (name, _) in walking)
 			{

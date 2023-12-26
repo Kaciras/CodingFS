@@ -37,7 +37,7 @@ public sealed class VirtualFS : IDisposable
 	readonly List<IDisposable> disposables = [];
 
 	/// <summary>
-	/// Create new instance of VirtualFS will mount the virtual drive.
+	/// Create new instance of VirtualFS will mount the virtual volume.
 	/// </summary>
 	public VirtualFS(PathFilter filter, in VirtualFSOptions options)
 	{

@@ -8,7 +8,7 @@ using DokanNet;
 namespace CodingFS;
 
 /// <summary>
-/// A vitrual directory in file system, 
+/// Represents a virtual directory with manually set contents.
 /// </summary>
 public sealed class MappedPathFilter : PathFilter
 {

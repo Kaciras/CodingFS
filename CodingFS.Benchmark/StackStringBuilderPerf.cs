@@ -9,10 +9,10 @@ using CodingFS.Workspaces;
 namespace CodingFS.Benchmark;
 
 /**
- * |     Method |      Mean |    Error |   StdDev |
- * |----------- |----------:|---------:|---------:|
- * |  ClassImpl | 351.93 ns | 6.822 ns | 9.563 ns |
- * | StructImpl |  77.51 ns | 0.605 ns | 0.566 ns |
+ * | Method     | Mean      | StdDev    | Median    | Ratio | RatioSD |
+ * |----------- |----------:|----------:|----------:|------:|--------:|
+ * | ClassImpl  | 292.68 ns | 15.868 ns | 287.51 ns |  4.45 |    0.16 |
+ * | StructImpl |  70.69 ns |  0.402 ns |  70.79 ns |  1.00 |    0.00 |
  */
 [ReturnValueValidator]
 public class StackStringBuilderPerf
@@ -59,7 +59,7 @@ public class StackStringBuilderPerf
 		return ExternalBuildSystemV1("CodingFS");
 	}
 
-	[Benchmark]
+	[Benchmark(Baseline = true)]
 	public string? StructImpl()
 	{
 		return detector.ExternalBuildSystem("CodingFS");

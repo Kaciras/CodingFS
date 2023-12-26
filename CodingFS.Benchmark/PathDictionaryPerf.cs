@@ -7,10 +7,11 @@ using CodingFS.Helper;
 namespace CodingFS.Benchmark;
 
 /// <summary>
-/// |  Method |     Mean |   Error |  StdDev |   Gen0 | Allocated |
-/// |-------- |---------:|--------:|--------:|-------:|----------:|
-/// | OldImpl | 354.0 ns | 3.16 ns | 2.96 ns | 0.0324 |     272 B |
-/// | NewImpl | 113.8 ns | 0.53 ns | 0.44 ns | 0.0162 |     136 B |
+/// | Method      | Mean      | StdDev   | Ratio | Gen0   | Allocated |
+/// |------------ |----------:|---------:|------:|-------:|----------:|
+/// | OldImpl     | 319.74 ns | 0.670 ns |  3.85 | 0.0324 |     272 B |
+/// | NoNormalize |  61.09 ns | 0.149 ns |  0.74 | 0.0162 |     136 B |
+/// | NewImpl     |  83.11 ns | 0.152 ns |  1.00 | 0.0162 |     136 B |
 /// </summary>
 [ReturnValueValidator]
 [MemoryDiagnoser]
@@ -41,7 +42,7 @@ public class PathDictionaryPerf
 		return dict[mem.TrimEnd(Path.DirectorySeparatorChar)];
 	}
 
-	[Benchmark]
+	[Benchmark(Baseline = true)]
 	public RecognizeType NewImpl()
 	{
 		var ns = new string(PATH);

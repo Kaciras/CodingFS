@@ -4,4 +4,4 @@ using CodingFS.Benchmark;
 
 [module: SkipLocalsInit]
 
-BenchmarkRunner.Run<CodingScannerPerf>();
+BenchmarkRunner.Run<PathDictionaryPerf>();

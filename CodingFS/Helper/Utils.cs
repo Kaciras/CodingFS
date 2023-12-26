@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using DokanNet;
 
 [assembly: InternalsVisibleTo("CodingFS.Test")]
@@ -95,8 +94,6 @@ static class Utils
         LastWriteTime = src.LastWriteTime,
         Length = src is FileInfo file ? file.Length : 0,
     };
-
-
 }
 
 sealed class CharMemComparator : IEqualityComparer<ReadOnlyMemory<char>>

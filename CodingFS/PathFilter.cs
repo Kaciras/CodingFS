@@ -14,7 +14,7 @@ public interface PathFilter
 	string MapPath(string path);
 
 	/// <summary>
-	/// Read and filter the contents of the directory.
+	/// Get the contents of the directory.
 	/// </summary>
 	IEnumerable<FileInformation> ListFiles(string directory);
 }
