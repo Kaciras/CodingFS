@@ -422,18 +422,22 @@ abstract partial class RedirectDokan : IDokanOperations
 
 	public virtual NtStatus DeleteFile(string fileName, IDokanFileInfo info)
 	{
-		var filePath = GetPath(fileName);
-
-		if (Directory.Exists(filePath))
-			return DokanResult.AccessDenied;
-
-		if (!File.Exists(filePath))
+		var realPath = GetPath(fileName);
+		try
+		{
+			var attrs = File.GetAttributes(realPath);
+			if ((attrs & FileAttributes.Directory) != 0)
+			{
+				return DokanResult.AccessDenied;
+			}
+		}
+		catch (IOException e)
+		when (e is FileNotFoundException || e is DirectoryNotFoundException)
+		{
 			return DokanResult.FileNotFound;
+		}
 
-		if ((File.GetAttributes(filePath) & FileAttributes.Directory) != 0)
-			return DokanResult.AccessDenied;
-
-		return DokanResult.Success; // The true deletion is in Cleanup()
+		return DokanResult.Success; // The true deletion is in Cleanup().
 	}
 
 	public virtual NtStatus DeleteDirectory(string fileName, IDokanFileInfo info)
