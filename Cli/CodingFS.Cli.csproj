@@ -5,10 +5,10 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <RootNamespace>$(MSBuildProjectName)</RootNamespace>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
-    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
+    <AssemblyName>CodingFS</AssemblyName>
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
 
@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CodingFS\CodingFS.csproj" />
+    <ProjectReference Include="..\Core\CodingFS.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

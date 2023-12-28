@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodingFS", "CodingFS\CodingFS.csproj", "{207E8E66-808C-4026-91D8-62F479792563}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodingFS.Core", "Core\CodingFS.Core.csproj", "{207E8E66-808C-4026-91D8-62F479792563}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodingFS.Benchmark", "CodingFS.Benchmark\CodingFS.Benchmark.csproj", "{EB96C8FC-FF7A-4D8D-ADB0-96ACA9640A98}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodingFS.Benchmark", "Benchmark\CodingFS.Benchmark.csproj", "{EB96C8FC-FF7A-4D8D-ADB0-96ACA9640A98}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodingFS.Test", "CodingFS.Test\CodingFS.Test.csproj", "{2B01CF31-C759-49AD-B765-B38274D8A95E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodingFS.Test", "Test\CodingFS.Test.csproj", "{2B01CF31-C759-49AD-B765-B38274D8A95E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodingFS.Cli", "CodingFS.Cli\CodingFS.Cli.csproj", "{1E1D48D3-8397-44C8-B77F-AED458BF0EDA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodingFS.Cli", "Cli\CodingFS.Cli.csproj", "{1E1D48D3-8397-44C8-B77F-AED458BF0EDA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

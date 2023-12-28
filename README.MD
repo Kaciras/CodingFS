@@ -34,7 +34,7 @@ Gitignore = "NotCare"
 ## Mount
 
 ```
-CodingFS.Cli mount <MountPoint> [--config=<config.toml>] [--type=<Source>] [--label=<SourceView>] [--readonly=<bool>]
+CodingFS mount <MountPoint> [--config=<config.toml>] [--type=<Source>] [--label=<SourceView>] [--readonly=<bool>]
 ```
 
 Map a directory to a virtual drive, containing only files of the specified type. You must install [Dokan](https://github.com/dokan-dev/dokany) driver to run this command.
@@ -53,7 +53,7 @@ CodingFS does not watch files, changes made after mounting may not be reflected 
 ## List
 
 ```
-CodingFS.Cli list [--config=<config.toml>] [--type=<Source>] [--name-only]
+CodingFS list [--config=<config.toml>] [--type=<Source>] [--name-only]
 ```
 
 List files in root directory of the specific type.
@@ -65,7 +65,7 @@ List files in root directory of the specific type.
 ## Inspect
 
 ```
-CodingFS.Cli inspect [D:\path\to\inspect]
+CodingFS inspect [D:\path\to\inspect]
 ```
 
-Show workspaces and their recognize result for the specific path.
+Show workspaces and their recognize result for the specific path. Useful for debug.
