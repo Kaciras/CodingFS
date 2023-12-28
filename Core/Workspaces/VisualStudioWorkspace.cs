@@ -1,8 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CodingFS.Helper;
-using Microsoft.Build.Construction;
 
 namespace CodingFS.Workspaces;
 
@@ -42,18 +42,27 @@ public sealed class VisualStudioWorkspace : Workspace
 	static void ParseSln(DetectContxt ctx, string file, out VisualStudioWorkspace sln)
 	{
 		var projects = new Dictionary<string, string>();
-		var solution = SolutionFile.Parse(file);
+		var solution = File.ReadLines(file);
 		var hasCsharpProject = false;
 
-		foreach (var project in solution.ProjectsInOrder)
+		// Project("<GUID>") = "<name>", "<proj file>", "<GUID>"
+		foreach (var line in solution)
 		{
+			if (!line.StartsWith("Project("))
+			{
+				continue;
+			}
+			var offset = line.IndexOfNth('"', 5) + 1;
+			var end = line.IndexOf('"', offset);
+			var projFile = line[offset..end];
+
 			if (!hasCsharpProject)
 			{
-				hasCsharpProject = project.RelativePath.EndsWith(".csproj");
+				hasCsharpProject = projFile.EndsWith(".csproj");
 			}
 
-			var folder = Path.GetDirectoryName(project.AbsolutePath)!;
-			projects[folder] = project.AbsolutePath;
+			var dir = Path.GetDirectoryName(projFile.AsSpan());
+			projects[Path.Join(ctx.Path, dir)] = projFile;
 		}
 
 		if (hasCsharpProject)

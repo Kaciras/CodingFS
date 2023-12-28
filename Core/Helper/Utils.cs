@@ -36,6 +36,16 @@ static class Utils
         }
     }
 
+    public static int IndexOfNth(this string s, char c, int n)
+    {
+        var position = 0;
+        while (n-- > 0 && position != -1)
+        {
+            position = s.IndexOf(c, position + 1);
+        }
+        return position;
+    }
+
     public static bool IsFile(string p0, string p1)
     {
         return File.Exists(Path.Join(p0, p1));
