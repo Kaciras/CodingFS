@@ -38,12 +38,12 @@ static class Utils
 
     public static int IndexOfNth(this string s, char c, int n)
     {
-        var position = 0;
-        while (n-- > 0 && position != -1)
+        for (var i = 0; i < s.Length; i++)
         {
-            position = s.IndexOf(c, position + 1);
+            if (s[i] == c && (--n) == 0)
+                return i;
         }
-        return position;
+        return -1;
     }
 
     public static bool IsFile(string p0, string p1)

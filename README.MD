@@ -2,6 +2,8 @@
 
 Filter files by its type (source, dependency, generated). The type is detected by coding workspaces.
 
+Requirement: .NET >= 8
+
 All supported workspaces: [CodingFS/Workspaces](CodingFS/Workspaces).
 
 # Cli

@@ -40,14 +40,16 @@ namespace CodingFS.FUSE;
 /// </summary>
 abstract partial class RedirectDokan : IDokanOperations
 {
-	const FileAccess DataAccess = FileAccess.Execute | FileAccess.GenericExecute
+	const FileAccess DATA_ACCESS = FileAccess.Execute | FileAccess.GenericExecute
 								| FileAccess.GenericWrite | FileAccess.GenericRead
 								| FileAccess.ReadData | FileAccess.WriteData | FileAccess.AppendData;
 
-	const FileAccess DataWriteAccess = FileAccess.WriteData | FileAccess.AppendData
-									 | FileAccess.Delete | FileAccess.GenericWrite;
+	const FileAccess WRITE_ACCESS = FileAccess.WriteData | FileAccess.AppendData
+								| FileAccess.Delete | FileAccess.GenericWrite;
 
 	const long FREE_SPACE = 10 * 1024 * 1024 * 1024L;
+
+	const int BUFFER_SIZE = 4096;
 
 	protected string mountPoint = null!;
 
@@ -125,20 +127,19 @@ abstract partial class RedirectDokan : IDokanOperations
 					return DokanResult.FileNotFound;
 
 				case (FileMode.Open, true):
-					var readWriteAttributes = (access & DataAccess) == 0;
-					var pathIsDirectory = (attrs & FileAttributes.Directory) != 0;
+					var attributesOnly = (access & DATA_ACCESS) == 0;
+					var isDir = (attrs & FileAttributes.Directory) != 0;
 
 					// check if driver only wants to read newAttrs, security info, or open directory
-					if (readWriteAttributes || pathIsDirectory)
+					if (attributesOnly || isDir)
 					{
-						if (pathIsDirectory && (access & SYNC_DELETE) == FileAccess.Delete)
+						if (isDir && (access & SYNC_DELETE) == FileAccess.Delete)
 							// It is a DeleteFile request on a directory
 							return DokanResult.AccessDenied;
 
 						// must set it to something if you return DokanError.Success
 						info.Context = new object();
-						info.IsDirectory = pathIsDirectory;
-
+						info.IsDirectory = isDir;
 						return DokanResult.Success;
 					}
 					break;
@@ -152,14 +153,14 @@ abstract partial class RedirectDokan : IDokanOperations
 
 			try
 			{
-				var readAccess = (access & DataWriteAccess) == 0;
+				var readAccess = (access & WRITE_ACCESS) == 0;
 				var streamAccess = readAccess ? AccessType.Read : AccessType.ReadWrite;
 
 				if (mode == FileMode.CreateNew && readAccess)
 					streamAccess = AccessType.ReadWrite;
 
 				info.Context = new FileStream(realPath, mode,
-					streamAccess, share, 4096, options);
+					streamAccess, share, BUFFER_SIZE, options);
 
 				if (exists && (mode == FileMode.OpenOrCreate || mode == FileMode.Create))
 					result = DokanResult.AlreadyExists;

@@ -24,4 +24,12 @@ public sealed class UtilsTest
 	{
 		Assert.Equal(expected, input.ToFileType());
 	}
+
+	[InlineData(".A.A.A", 2, 3)]
+	[InlineData("", 2, -1)]
+	[Theory]
+	public void IndexOfNth(string text, int n, int expected)
+	{
+		Assert.Equal(expected, text.IndexOfNth('A', n));
+	}
 }
