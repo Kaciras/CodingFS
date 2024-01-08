@@ -13,7 +13,7 @@ public sealed class MountCommand : Command
 	public string? VolumeLabel { get; set; }
 
 	[Option('r', "readonly", HelpText = "Mount the volume as read-only.")]
-	public bool Readonly { get; set; } = true;
+	public bool Readonly { get; set; } = false;
 
 	[Option('t', "type", HelpText = "Which type of files should be included in the file system. " +
 		"Avaliable values: Source, Dependency, Generated, use comma to separate flags.")]

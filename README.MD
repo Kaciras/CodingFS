@@ -45,7 +45,7 @@ Map a directory to a virtual drive, containing only files of the specified type.
 * `--config`: Path of the config file to use.
 * `--type`: Which type of files should be included in the file system. Avaliable values: Source, Dependency, Generated. Use comma to separate flags.
 * `--label`: Volume label on Windows.
-* `--readonly`: Mount the volume as read-only. Default true.
+* `--readonly`: Mount the volume as read-only. Default false.
 
 CodingFS does not watch files, changes made after mounting may not be reflected on the virtual volume.
 
