@@ -4,7 +4,7 @@ Filter files by its type (source, dependency, generated). The type is detected b
 
 Requirement: .NET >= 8
 
-All supported workspaces: [CodingFS/Workspaces](CodingFS/Workspaces).
+![Three type of files](https://github.com/Kaciras/CodingFS/raw/master/MountViews.png)
 
 # Cli
 
