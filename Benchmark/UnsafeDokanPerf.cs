@@ -2,6 +2,7 @@ using System.IO;
 using System.Threading;
 using BenchmarkDotNet.Attributes;
 using CodingFS.FUSE;
+using CodingFS.Test.FUSE;
 using DokanNet;
 using DokanNet.Logging;
 
@@ -24,51 +25,39 @@ file sealed class UnsafeImpl : UnsafeRedirectDokan
 }
 
 /*
- * |      Method |      Mean |     Error |    StdDev |    Median |
- * |------------ |----------:|----------:|----------:|----------:|
- * |  ReadUnsafe |  7.851 ms | 0.1558 ms | 0.1971 ms |  7.783 ms |
- * | ReadDefault | 10.171 ms | 0.2009 ms | 0.3570 ms | 10.335 ms |
+ * | Method     | Mean      | Error     | StdDev    | Median    |
+ * |----------- |----------:|----------:|----------:|----------:|
+ * | Read       | 11.192 ms | 0.2116 ms | 0.3167 ms | 11.102 ms |
+ * | ReadUnsafe |  7.940 ms | 0.1551 ms | 0.1787 ms |  7.822 ms |
  */
 [ReturnValueValidator]
 public class UnsafeDokanPerf
 {
-	Dokan dokan;
-	DokanInstance unsafeFS;
-	DokanInstance safeFS;
+	DokanMounter unsafeFS;
+	DokanMounter safeFS;
 
 	[GlobalSetup]
-	public void MountFileSystem()
+	public void Mount()
 	{
-		dokan = new Dokan(new NullLogger());
-
-		unsafeFS = new DokanInstanceBuilder(dokan)
-			.ConfigureOptions(options => options.MountPoint = $"v:\\")
-			.Build(new UnsafeImpl());
-
-		safeFS = new DokanInstanceBuilder(dokan)
-			.ConfigureOptions(options => options.MountPoint = $"w:\\")
-			.Build(new SafeImpl());
+		safeFS = new DokanMounter(@"w:", new SafeImpl());
+		unsafeFS = new DokanMounter(@"v:", new UnsafeImpl());
 
 		File.WriteAllBytes("unsafe-perf.data", new byte[10 * 1024 * 1024]);
 
-		var driveV = new DriveInfo($"v:\\");
-		var driveW = new DriveInfo($"w:\\");
-
-		do { Thread.Sleep(50); }
-		while (!driveV.IsReady || !driveW.IsReady);
+		safeFS.WaitForReady();
+		unsafeFS.WaitForReady();
 	}
 
 	[GlobalCleanup]
-	public void UnmountFileSystem()
+	public void Unmount()
 	{
 		safeFS.Dispose();
 		unsafeFS.Dispose();
-		dokan.Dispose();
 	}
 
 	[Benchmark]
-	public byte[] ReadUnsafe() => File.ReadAllBytes(@"v:\\data");
+	public byte[] Read() => File.ReadAllBytes(@"w:\data");
 
 	[Benchmark]
-	public byte[] ReadDefault() => File.ReadAllBytes(@"w:\\data");
+	public byte[] ReadUnsafe() => File.ReadAllBytes(@"v:\data");
 }

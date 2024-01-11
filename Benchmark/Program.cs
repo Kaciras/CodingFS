@@ -7,4 +7,4 @@ using CodingFS.Benchmark;
 
 [module: SkipLocalsInit]
 
-BenchmarkRunner.Run<CharMemoryHashPerf>();
+BenchmarkRunner.Run<UnsafeDokanPerf>();
