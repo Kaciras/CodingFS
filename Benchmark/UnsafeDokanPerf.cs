@@ -1,10 +1,7 @@
 using System.IO;
-using System.Threading;
 using BenchmarkDotNet.Attributes;
 using CodingFS.FUSE;
 using CodingFS.Test.FUSE;
-using DokanNet;
-using DokanNet.Logging;
 
 namespace CodingFS.Benchmark;
 
@@ -25,10 +22,11 @@ file sealed class UnsafeImpl : UnsafeRedirectDokan
 }
 
 /*
- * | Method     | Mean      | Error     | StdDev    | Median    |
- * |----------- |----------:|----------:|----------:|----------:|
- * | Read       | 11.192 ms | 0.2116 ms | 0.3167 ms | 11.102 ms |
- * | ReadUnsafe |  7.940 ms | 0.1551 ms | 0.1787 ms |  7.822 ms |
+ * | Method     | Mean      | Error     | StdDev    | Ratio | RatioSD |
+ * |----------- |----------:|----------:|----------:|------:|--------:|
+ * | Direct     |  2.656 ms | 0.0307 ms | 0.0287 ms |  1.00 |    0.00 |
+ * | Read       | 10.676 ms | 0.2119 ms | 0.4469 ms |  3.93 |    0.13 |
+ * | ReadUnsafe |  7.807 ms | 0.0284 ms | 0.0237 ms |  2.94 |    0.03 |
  */
 [ReturnValueValidator]
 public class UnsafeDokanPerf
@@ -54,6 +52,9 @@ public class UnsafeDokanPerf
 		safeFS.Dispose();
 		unsafeFS.Dispose();
 	}
+
+	[Benchmark(Baseline = true)]
+	public byte[] Direct() => File.ReadAllBytes("unsafe-perf.data");
 
 	[Benchmark]
 	public byte[] Read() => File.ReadAllBytes(@"w:\data");
