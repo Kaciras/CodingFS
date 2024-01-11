@@ -26,10 +26,9 @@ public struct VirtualFSOptions
 	public bool Debug;
 
 	/// <summary>
-	/// The mount point of the file system.
-	/// If is null, VirtualFS will auto decision on mount.
+	/// The mount point of the file system (Required).
 	/// </summary>
-	public string? MountPoint;
+	public string MountPoint;
 }
 
 public sealed class VirtualFS : IDisposable
@@ -61,18 +60,19 @@ public sealed class VirtualFS : IDisposable
 	void InitDokan(PathFilter filter, in VirtualFSOptions o)
 	{
 		var vfs = new FilteredDokan(o.Name ?? "CodingFS", filter);
-		DokanOptions mountOptions = default;
+		var mountPoint = o.MountPoint;
 		ILogger dokanLogger;
+		DokanOptions mountFlags = default;
 
 		if (o.Readonly)
 		{
-			mountOptions |= DokanOptions.WriteProtection;
+			mountFlags |= DokanOptions.WriteProtection;
 		}
 
 		if (o.Debug)
 		{
 			dokanLogger = new ConsoleLogger("[Dokan] ");
-			mountOptions |= DokanOptions.DebugMode | DokanOptions.StderrOutput;
+			mountFlags |= DokanOptions.DebugMode | DokanOptions.StderrOutput;
 			disposables.Add(Unsafe.As<IDisposable>(dokanLogger));
 		}
 		else
@@ -80,14 +80,14 @@ public sealed class VirtualFS : IDisposable
 			dokanLogger = new NullLogger();
 		}
 
-		var mountPoint = o.MountPoint ?? "";
 		var dokan = new Dokan(dokanLogger);
-		var builder = new DokanInstanceBuilder(dokan)
-			.ConfigureOptions(options =>
-			{
-				options.MountPoint = mountPoint;
-				options.Options = mountOptions;
-			});
+
+		// Why Dokan doesn't expose the options just as a property?
+		var builder = new DokanInstanceBuilder(dokan).ConfigureOptions(options =>
+		{
+			options.MountPoint = mountPoint;
+			options.Options = mountFlags;
+		});
 
 		disposables.Add(dokan);
 		disposables.Add(builder.Build(new DokanExceptionWrapper(vfs)));
