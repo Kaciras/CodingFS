@@ -119,7 +119,8 @@ abstract partial class RedirectDokan : IDokanOperations
 		}
 		else
 		{
-			const FileAccess SYNC_DELETE = FileAccess.Delete & FileAccess.Synchronize;
+			// Operations that not allowed for directory.
+			const FileAccess SYNC_FILEOPS = FileAccess.GenericRead | FileAccess.Delete;
 
 			switch (mode, exists)
 			{
@@ -133,15 +134,19 @@ abstract partial class RedirectDokan : IDokanOperations
 					// check if driver only wants to read newAttrs, security info, or open directory
 					if (attributesOnly || isDir)
 					{
-						if (isDir && (access & SYNC_DELETE) == FileAccess.Delete)
-							// It is a DeleteFile request on a directory
+						if (isDir && 
+							(access & FileAccess.Synchronize) == 0 && 
+							(access & SYNC_FILEOPS) != 0)
+						{
 							return DokanResult.AccessDenied;
+						}
 
 						// must set it to something if you return DokanError.Success
 						info.Context = new object();
 						info.IsDirectory = isDir;
 						return DokanResult.Success;
 					}
+
 					break;
 
 				case (FileMode.CreateNew,true):

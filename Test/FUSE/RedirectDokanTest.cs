@@ -1,12 +1,13 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using CodingFS.FUSE;
 using Xunit;
 
 namespace CodingFS.Test.FUSE;
 
-sealed class DokanImpl : RedirectDokan
+file sealed class DokanImpl : RedirectDokan
 {
 	const string PREFIX = "CodingFS-Test-";
 
@@ -25,7 +26,7 @@ sealed class DokanImpl : RedirectDokan
 
 public sealed class RedirectVolume : DokanMounter
 {
-	readonly DirectoryInfo directory;
+	public readonly DirectoryInfo directory;
 
 	public RedirectVolume() : base("v:", new DokanExceptionWrapper(new DokanImpl()), true)
 	{
@@ -41,14 +42,19 @@ public sealed class RedirectVolume : DokanMounter
 		directory.Delete(true);
 	}
 
-	public void CreateDirectory(string fileName)
+	public string MapPath(string fileName)
 	{
-		directory.CreateSubdirectory(fileName);
+		return Path.Join(directory.FullName, fileName);
+	}
+
+	public DirectoryInfo CreateDirectory(string fileName)
+	{
+		return directory.CreateSubdirectory(fileName);
 	}
 
 	public void CreateFile(string fileName, string text)
 	{
-		File.WriteAllText(Path.Join(directory.FullName, fileName), text);
+		File.WriteAllText(MapPath(fileName), text);
 	}
 }
 
@@ -62,12 +68,53 @@ public sealed class RedirectDokanTest : IClassFixture<RedirectVolume>
 	public RedirectDokanTest(RedirectVolume mock)
 	{
 		this.mock = mock;
+		mock.directory.Delete(true);
+		mock.directory.Create();
+		mock.CreateDirectory("foo");
 	}
 
 	[Fact]
 	public void ReadDirectoryAsFile()
 	{
-		mock.CreateDirectory("foo");
 		Assert.Throws<UnauthorizedAccessException>(() => File.ReadAllBytes(@"v:\foo"));
+	}
+
+	[Fact]
+	public void WriteDirectoryAsFile()
+	{
+		Assert.Throws<UnauthorizedAccessException>(() => File.WriteAllBytes(@"v:\foo", []));
+	}
+
+	[Fact]
+	public void DeleteDirectoryAsFile()
+	{
+		Assert.Throws<UnauthorizedAccessException>(() => File.Delete(@"v:\foo"));
+	}
+
+	[Fact]
+	public void MoveDirectoryAsFile()
+	{
+		Assert.Throws<FileNotFoundException>(() => File.Move(@"v:\foo", @"v:\bar"));
+	}
+
+	[Fact]
+	public void DeleteDirectory()
+	{
+		Directory.Delete(@"v:\foo");
+		Assert.False(Directory.Exists(mock.MapPath("foo")));
+	}
+
+	[Fact]
+	public void ListDirectory()
+	{
+		var list = Directory.EnumerateFileSystemEntries("v:").ToList();
+		Assert.Equal(@"v:\foo", Assert.Single(list));
+	}
+
+	[Fact]
+	public void WriteFile()
+	{
+		File.WriteAllText(@"v:\wf.txt", "123");
+		Assert.Equal("123", File.ReadAllText(mock.MapPath("wf.txt")));
 	}
 }
