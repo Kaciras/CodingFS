@@ -27,6 +27,7 @@ using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using CodingFS.Helper;
 using DokanNet;
+using LibGit2Sharp;
 using Microsoft.Win32.SafeHandles;
 using AccessType = System.IO.FileAccess;
 using FileAccess = DokanNet.FileAccess;
@@ -72,124 +73,133 @@ abstract partial class RedirectDokan : IDokanOperations
 
 	#region Implementation of IDokanOperations
 
+	static FileAttributes AttrsOrDefault(string path)
+	{
+		try
+		{
+			return File.GetAttributes(path);
+		}
+		catch (IOException)
+		{
+			// Does an existing file always have attributes?
+			return FileAttributes.None;
+		}
+	}
+
 	public virtual NtStatus CreateFile(
 		string fileName, FileAccess access, FileShare share, FileMode mode,
 		FileOptions options, FileAttributes newAttrs, IDokanFileInfo info)
 	{
-		var result = DokanResult.Success;
 		var realPath = GetPath(fileName);
-		var attrs = FileAttributes.None;
-		var exists = true;
+		if (info.IsDirectory)
+		{
+			return CreateDirectory(realPath, mode);
+		}
+
+		// Operations that not allowed for directory.
+		const FileAccess SYNC_FILEOPS = FileAccess.GenericRead | FileAccess.Delete;
+
+		var attrs = AttrsOrDefault(realPath);
+		var exists = attrs != FileAttributes.None;
+
+		switch (mode, exists)
+		{
+			case (FileMode.Open, false):
+				return DokanResult.FileNotFound;
+
+			case (FileMode.Open, true):
+				var attributesOnly = (access & DATA_ACCESS) == 0;
+				var isDir = (attrs & FileAttributes.Directory) != 0;
+
+				// check if driver only wants to read newAttrs, security info, or open directory
+				if (attributesOnly || isDir)
+				{
+					if (isDir &&
+						(access & FileAccess.Synchronize) == 0 &&
+						(access & SYNC_FILEOPS) != 0)
+					{
+						return DokanResult.AccessDenied;
+					}
+
+					// must set it to something if you return DokanError.Success
+					info.Context = new object();
+					info.IsDirectory = isDir;
+					return DokanResult.Success;
+				}
+
+				break;
+
+			case (FileMode.CreateNew, true):
+				return DokanResult.FileExists;
+
+			case (FileMode.Truncate, false):
+				return DokanResult.FileNotFound;
+		}
 
 		try
 		{
-			attrs = File.GetAttributes(realPath);
+			var readAccess = (access & WRITE_ACCESS) == 0;
+			var streamAccess = readAccess ? AccessType.Read : AccessType.ReadWrite;
+			var result = DokanResult.Success;
+
+			if (mode == FileMode.CreateNew && readAccess)
+				streamAccess = AccessType.ReadWrite;
+
+			info.Context = new FileStream(realPath, mode,
+				streamAccess, share, BUFFER_SIZE, options);
+
+			if (exists && (mode == FileMode.OpenOrCreate || mode == FileMode.Create))
+				result = DokanResult.AlreadyExists;
+
+			var fileCreated = mode == FileMode.CreateNew
+				|| mode == FileMode.Create
+				|| (!exists && mode == FileMode.OpenOrCreate);
+
+			if (fileCreated)
+			{
+				newAttrs |= FileAttributes.Archive; // Files are always created as Archive
+				newAttrs &= ~FileAttributes.Normal; // FILE_ATTRIBUTE_NORMAL is override if any other attribute is set.
+				File.SetAttributes(realPath, newAttrs);
+			}
+			return result;
 		}
-		catch (IOException)
+		catch (UnauthorizedAccessException)
 		{
-			exists = false;
+			// returning AccessDenied cleanup and close won't be called,
+			// so we have to take care of the stream now.
+			CloseFile(fileName, info);
+			return DokanResult.AccessDenied;
 		}
+	}
 
-		if (info.IsDirectory)
+	NtStatus CreateDirectory(string realPath, FileMode mode)
+	{
+		var attrs = AttrsOrDefault(realPath);
+		switch (mode, attrs != FileAttributes.None)
 		{
-			switch (mode, exists)
-			{
-				case (FileMode.Open, false):
-					return DokanResult.FileNotFound;
+			case (FileMode.CreateNew, false):
+				Directory.CreateDirectory(realPath);
+				return DokanResult.Success;
 
-				case (FileMode.Open, true):
-					if ((attrs & FileAttributes.Directory) == 0)
-					{
-						return DokanResult.NotADirectory;
-					}
+			case (FileMode.CreateNew, true):
+				return (attrs & FileAttributes.Directory) != 0
+					? DokanResult.FileExists
+					: DokanResult.AlreadyExists;
 
-					// Check you can list the directory.
-					_ = new DirectoryInfo(realPath).EnumerateFileSystemInfos().Any();
-					break;
+			case (FileMode.Open, false):
+				return DokanResult.FileNotFound;
 
-				case (FileMode.CreateNew, true):
-					return (attrs & FileAttributes.Directory) != 0
-						? DokanResult.FileExists
-						: DokanResult.AlreadyExists;
+			case (FileMode.Open, true):
+				if ((attrs & FileAttributes.Directory) == 0)
+					return DokanResult.NotADirectory;
 
-				case (FileMode.CreateNew, false):
-					Directory.CreateDirectory(realPath);
-					break;
-			}
+				// Check you can list the directory.
+				_ = Directory.EnumerateFileSystemEntries(realPath).Any();
+				return DokanResult.Success;
+
+			default:
+				return DokanResult.Success;
 		}
-		else
-		{
-			// Operations that not allowed for directory.
-			const FileAccess SYNC_FILEOPS = FileAccess.GenericRead | FileAccess.Delete;
-
-			switch (mode, exists)
-			{
-				case (FileMode.Open, false):
-					return DokanResult.FileNotFound;
-
-				case (FileMode.Open, true):
-					var attributesOnly = (access & DATA_ACCESS) == 0;
-					var isDir = (attrs & FileAttributes.Directory) != 0;
-
-					// check if driver only wants to read newAttrs, security info, or open directory
-					if (attributesOnly || isDir)
-					{
-						if (isDir && 
-							(access & FileAccess.Synchronize) == 0 && 
-							(access & SYNC_FILEOPS) != 0)
-						{
-							return DokanResult.AccessDenied;
-						}
-
-						// must set it to something if you return DokanError.Success
-						info.Context = new object();
-						info.IsDirectory = isDir;
-						return DokanResult.Success;
-					}
-
-					break;
-
-				case (FileMode.CreateNew,true):
-					return DokanResult.FileExists;
-
-				case (FileMode.Truncate, false):
-					return DokanResult.FileNotFound;
-			}
-
-			try
-			{
-				var readAccess = (access & WRITE_ACCESS) == 0;
-				var streamAccess = readAccess ? AccessType.Read : AccessType.ReadWrite;
-
-				if (mode == FileMode.CreateNew && readAccess)
-					streamAccess = AccessType.ReadWrite;
-
-				info.Context = new FileStream(realPath, mode,
-					streamAccess, share, BUFFER_SIZE, options);
-
-				if (exists && (mode == FileMode.OpenOrCreate || mode == FileMode.Create))
-					result = DokanResult.AlreadyExists;
-
-				var fileCreated = mode == FileMode.CreateNew
-					|| mode == FileMode.Create
-					|| (!exists && mode == FileMode.OpenOrCreate);
-
-				if (fileCreated)
-				{
-					newAttrs |= FileAttributes.Archive; // Files are always created as Archive
-					newAttrs &= ~FileAttributes.Normal; // FILE_ATTRIBUTE_NORMAL is override if any other attribute is set.
-					File.SetAttributes(realPath, newAttrs);
-				}
-			}
-			catch (UnauthorizedAccessException)
-			{
-				// returning AccessDenied cleanup and close won't be called,
-				// so we have to take care of the stream now.
-				CloseFile(fileName, info);
-				return DokanResult.AccessDenied;
-			}
-		}
-		return result;
 	}
 
 	public virtual void Cleanup(string fileName, IDokanFileInfo info)
