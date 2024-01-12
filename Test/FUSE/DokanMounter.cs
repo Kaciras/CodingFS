@@ -6,30 +6,39 @@ using DokanNet.Logging;
 
 namespace CodingFS.Test.FUSE;
 
-public sealed class DokanMounter : IDisposable
+public class DokanMounter : IDisposable
 {
-	readonly string mountPoint;
-	Dokan dokan;
-	DokanInstance instance;
+	public readonly string MountPoint;
+	public readonly IDokanOperations VFS;
 
-	public DokanMounter(string point, IDokanOperations vfs)
+	readonly Dokan dokan;
+	readonly DokanInstance instance;
+
+	public DokanMounter(string point, IDokanOperations vfs, bool singleThread = false)
 	{
-		mountPoint = point;
+		MountPoint = point;
+		VFS = vfs;
+
 		dokan = new Dokan(new NullLogger());
 		instance = new DokanInstanceBuilder(dokan)
-			.ConfigureOptions(options => options.MountPoint = point)
+			.ConfigureOptions(options =>
+			{
+				options.MountPoint = point;
+				options.SingleThread = singleThread;
+			})
 			.Build(vfs);
 	}
 
-	public void Dispose()
+	public virtual void Dispose()
 	{
 		instance.Dispose();
 		dokan.Dispose();
+		GC.SuppressFinalize(this);
 	}
 
 	public void WaitForReady()
 	{
-		var drive = new DriveInfo(mountPoint);
+		var drive = new DriveInfo(MountPoint);
 		for (int i = 0; i < 3000; i += 50)
 		{
 			Thread.Sleep(50);
