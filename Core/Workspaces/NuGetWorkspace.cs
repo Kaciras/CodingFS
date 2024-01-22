@@ -15,10 +15,10 @@ public sealed class NuGetWorkspace : PackageManager
 
 	public string[] ConfigFiles => (legacy, Root == this) switch
 	{
-		(false, true) => [csproj!],
-		(false, false) => [],
-		(true, true) => CACHE_STORE,
 		(true, false) => PACKAGES_CONFIG,
+		(true, true) => CACHE_STORE,
+		(false, false) => [],
+		(false, true) => csproj == null ? [] : [csproj],
 	};
 
 	public PackageManager Root { get; }
