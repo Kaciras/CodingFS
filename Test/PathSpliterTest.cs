@@ -84,12 +84,12 @@ public sealed class PathSpliterTest
 	}
 
 	[Fact]
-	public void RightWhenDrained() => Assert.Throws<ArgumentOutOfRangeException>(() =>
+	public void RightWhenDrained()
 	{
 		var s = new PathSpliter("foo");
 		s.SplitNext();
-		return s.Right;
-	});
+		Assert.Equal(ReadOnlyMemory<char>.Empty, s.Right);
+	}
 
 	[InlineData("a/bar/c", "", "a/bar/c")]
 	[InlineData("a/bar/c", "a/bar", "c")]

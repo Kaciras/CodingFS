@@ -86,8 +86,6 @@ public ref struct PathSpliter
     /// <exception cref="ArgumentException">If the path is not relative to the base</exception>
     public PathSpliter(ReadOnlyMemory<char> path, ReadOnlySpan<char> relativeTo = default)
     {
-        this.path = path;
-
         root = path.Span switch
         {
             ['/', ..] => 0,         // POSIX absoulate.
@@ -95,7 +93,8 @@ public ref struct PathSpliter
             _ => -1,
         };
 
-        Index = RelativePosition(path.Span, relativeTo);
+		this.path = path;
+		Index = RelativePosition(path.Span, relativeTo);
     }
 
     /// <summary>
@@ -128,14 +127,13 @@ public ref struct PathSpliter
         }
     }
 
-    public readonly ReadOnlyMemory<char> Left
-    {
-        get => Index == root ? path[..(root + 1)] : path[..Index];
-    }
+    public readonly ReadOnlyMemory<char> Left 
+        => Index == root ? path[..(root + 1)] : path[..Index];
 
     /// <summary>
     /// The slice after the current index, only available if there are remaining components.
     /// </summary>
     /// <exception cref="ArgumentOutOfRangeException">If HasNext == false</exception>
-    public readonly ReadOnlyMemory<char> Right => path[(Index + 1)..];
+    public readonly ReadOnlyMemory<char> Right 
+        => HasNext ? path[(Index + 1)..] : ReadOnlyMemory<char>.Empty;
 }
