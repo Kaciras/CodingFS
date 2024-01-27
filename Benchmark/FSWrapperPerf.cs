@@ -19,7 +19,7 @@ public class FSWrapperPerf
 	}
 
 	readonly IDokanOperations staticProxy = new DokanExceptionWrapper(new TestFS());
-	readonly IDokanOperations dynamicProxy = AopFSWrapper.Create(new TestFS());
+	readonly IDokanOperations dynamicProxy = AopDokanWrapper.Create(new TestFS());
 
 	[Benchmark]
 	public NtStatus Static_Throws()

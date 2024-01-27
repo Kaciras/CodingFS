@@ -48,8 +48,10 @@ abstract partial class RedirectDokan : IDokanOperations
 	const FileAccess WRITE_ACCESS = FileAccess.WriteData | FileAccess.AppendData
 								| FileAccess.Delete | FileAccess.GenericWrite;
 
-	const long FREE_SPACE = 10 * 1024 * 1024 * 1024L;
+	// Operations that not allowed for directory.
+	const FileAccess SYNC_FILEOPS = FileAccess.GenericRead | FileAccess.Delete;
 
+	const long FREE_SPACE = 10 * 1024 * 1024 * 1024L;
 	const int BUFFER_SIZE = 4096;
 
 	protected string mountPoint = null!;
@@ -90,18 +92,15 @@ abstract partial class RedirectDokan : IDokanOperations
 		string fileName, FileAccess access, FileShare share, FileMode mode,
 		FileOptions options, FileAttributes newAttrs, IDokanFileInfo info)
 	{
-		var realPath = GetPath(fileName);
+		fileName = GetPath(fileName);
+
 		if (info.IsDirectory)
 		{
-			return CreateDirectory(realPath, mode);
+			return CreateDirectory(fileName, mode);
 		}
 
-		// Operations that not allowed for directory.
-		const FileAccess SYNC_FILEOPS = FileAccess.GenericRead | FileAccess.Delete;
-
-		var attrs = AttrsOrDefault(realPath);
+		var attrs = AttrsOrDefault(fileName);
 		var exists = attrs != FileAttributes.None;
-
 		switch (mode, exists)
 		{
 			case (FileMode.Open, false):
@@ -111,7 +110,7 @@ abstract partial class RedirectDokan : IDokanOperations
 				var attributesOnly = (access & DATA_ACCESS) == 0;
 				var isDir = (attrs & FileAttributes.Directory) != 0;
 
-				// check if driver only wants to read newAttrs, security info, or open directory
+				// Only wants to read attrs, security info, or open directory.
 				if (attributesOnly || isDir)
 				{
 					if (isDir &&
@@ -126,7 +125,6 @@ abstract partial class RedirectDokan : IDokanOperations
 					info.IsDirectory = isDir;
 					return DokanResult.Success;
 				}
-
 				break;
 
 			case (FileMode.CreateNew, true):
@@ -145,7 +143,7 @@ abstract partial class RedirectDokan : IDokanOperations
 			if (mode == FileMode.CreateNew && readAccess)
 				streamAccess = AccessType.ReadWrite;
 
-			info.Context = new FileStream(realPath, mode,
+			info.Context = new FileStream(fileName, mode,
 				streamAccess, share, BUFFER_SIZE, options);
 
 			if (exists && (mode == FileMode.OpenOrCreate || mode == FileMode.Create))
@@ -158,8 +156,8 @@ abstract partial class RedirectDokan : IDokanOperations
 			if (fileCreated)
 			{
 				newAttrs |= FileAttributes.Archive; // Files are always created as Archive
-				newAttrs &= ~FileAttributes.Normal; // FILE_ATTRIBUTE_NORMAL is override if any other attribute is set.
-				File.SetAttributes(realPath, newAttrs);
+				newAttrs &= ~FileAttributes.Normal; // Normal is override if any other attribute is set.
+				File.SetAttributes(fileName, newAttrs);
 			}
 			return result;
 		}
@@ -172,13 +170,13 @@ abstract partial class RedirectDokan : IDokanOperations
 		}
 	}
 
-	NtStatus CreateDirectory(string realPath, FileMode mode)
+	NtStatus CreateDirectory(string fileName, FileMode mode)
 	{
-		var attrs = AttrsOrDefault(realPath);
+		var attrs = AttrsOrDefault(fileName);
 		switch (mode, attrs != FileAttributes.None)
 		{
 			case (FileMode.CreateNew, false):
-				Directory.CreateDirectory(realPath);
+				Directory.CreateDirectory(fileName);
 				return DokanResult.Success;
 
 			case (FileMode.CreateNew, true):
@@ -194,7 +192,7 @@ abstract partial class RedirectDokan : IDokanOperations
 					return DokanResult.NotADirectory;
 
 				// Check you can list the directory.
-				_ = Directory.EnumerateFileSystemEntries(realPath).Any();
+				_ = Directory.EnumerateFileSystemEntries(fileName).Any();
 				return DokanResult.Success;
 
 			default:
@@ -336,8 +334,8 @@ abstract partial class RedirectDokan : IDokanOperations
 		else
 		{
 			// 哪个傻逼想出来的文件和目录分开的 API？
-			var rawPath = GetPath(fileName);
-			FileSystemInfo rawInfo = new FileInfo(rawPath);
+			var realPath = GetPath(fileName);
+			FileSystemInfo rawInfo = new FileInfo(realPath);
 
 			if (rawInfo.Exists)
 			{
@@ -345,7 +343,7 @@ abstract partial class RedirectDokan : IDokanOperations
 			}
 			else
 			{
-				rawInfo = new DirectoryInfo(rawPath);
+				rawInfo = new DirectoryInfo(realPath);
 				if (rawInfo.Exists)
 				{
 					fileInfo = Utils.ConvertFSInfo(rawInfo);
@@ -424,24 +422,24 @@ abstract partial class RedirectDokan : IDokanOperations
 			throw Marshal.GetExceptionForHR(Marshal.GetLastWin32Error())!;
 		}
 
-		var filePath = GetPath(fileName);
+		fileName = GetPath(fileName);
 
 		if (creationTime.HasValue)
-			File.SetCreationTime(filePath, creationTime.Value);
+			File.SetCreationTime(fileName, creationTime.Value);
 		if (lastAccessTime.HasValue)
-			File.SetLastAccessTime(filePath, lastAccessTime.Value);
+			File.SetLastAccessTime(fileName, lastAccessTime.Value);
 		if (lastWriteTime.HasValue)
-			File.SetLastWriteTime(filePath, lastWriteTime.Value);
+			File.SetLastWriteTime(fileName, lastWriteTime.Value);
 
 		return DokanResult.Success;
 	}
 
 	public virtual NtStatus DeleteFile(string fileName, IDokanFileInfo info)
 	{
-		var realPath = GetPath(fileName);
+		fileName = GetPath(fileName);
 		try
 		{
-			var attrs = File.GetAttributes(realPath);
+			var attrs = File.GetAttributes(fileName);
 			if ((attrs & FileAttributes.Directory) != 0)
 			{
 				return DokanResult.AccessDenied;
@@ -469,23 +467,22 @@ abstract partial class RedirectDokan : IDokanOperations
 		bool replace,
 		IDokanFileInfo info)
 	{
-		var oldpath = GetPath(oldName);
-		var newpath = GetPath(newName);
-
 		CloseFile(oldName, info);
+		oldName = GetPath(oldName);
+		newName = GetPath(newName);
 
 		var exist = info.IsDirectory 
-			? Directory.Exists(newpath) 
-			: File.Exists(newpath);
+			? Directory.Exists(newName) 
+			: File.Exists(newName);
 
 		if (!exist)
 		{
 			info.Context = null;
 
 			if (info.IsDirectory)
-				Directory.Move(oldpath, newpath);
+				Directory.Move(oldName, newName);
 			else
-				File.Move(oldpath, newpath);
+				File.Move(oldName, newName);
 			return DokanResult.Success;
 		}
 		else if (replace)
@@ -496,8 +493,7 @@ abstract partial class RedirectDokan : IDokanOperations
 			if (info.IsDirectory)
 				return DokanResult.AccessDenied;
 
-			File.Delete(newpath);
-			File.Move(oldpath, newpath);
+			File.Move(oldName, newName, true);
 			return DokanResult.Success;
 		}
 
@@ -606,9 +602,10 @@ abstract partial class RedirectDokan : IDokanOperations
 		AccessControlSections sections,
 		IDokanFileInfo info)
 	{
+		fileName = GetPath(fileName);
 		security = info.IsDirectory
-			? new DirectoryInfo(GetPath(fileName)).GetAccessControl()
-			: new FileInfo(GetPath(fileName)).GetAccessControl();
+			? new DirectoryInfo(fileName).GetAccessControl()
+			: new FileInfo(fileName).GetAccessControl();
 		return DokanResult.Success;
 	}
 
@@ -618,14 +615,15 @@ abstract partial class RedirectDokan : IDokanOperations
 		AccessControlSections sections,
 		IDokanFileInfo info)
 	{
+		fileName = GetPath(fileName);
 		if (info.IsDirectory)
 		{
-			new DirectoryInfo(GetPath(fileName))
+			new DirectoryInfo(fileName)
 				.SetAccessControl((DirectorySecurity)security);
 		}
 		else
 		{
-			new FileInfo(GetPath(fileName))
+			new FileInfo(fileName)
 				.SetAccessControl((FileSecurity)security);
 		}
 		return DokanResult.Success;

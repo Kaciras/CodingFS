@@ -85,8 +85,8 @@ public sealed class VirtualFS : IDisposable
 		// Why Dokan doesn't expose the options just as a property?
 		var builder = new DokanInstanceBuilder(dokan).ConfigureOptions(options =>
 		{
-			options.MountPoint = mountPoint;
 			options.Options = mountFlags;
+			options.MountPoint = mountPoint;
 		});
 
 		disposables.Add(dokan);

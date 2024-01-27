@@ -4,7 +4,7 @@ using DokanNet;
 
 namespace CodingFS.Benchmark.Legacy;
 
-public class AopFSWrapper : DispatchProxy
+public class AopDokanWrapper : DispatchProxy
 {
 	public IDokanOperations? Native { get; set; }
 
@@ -23,8 +23,8 @@ public class AopFSWrapper : DispatchProxy
 
 	public static IDokanOperations Create(IDokanOperations fs)
 	{
-		var instance = Create<IDokanOperations, AopFSWrapper>();
-		((AopFSWrapper)instance).Native = fs;
+		var instance = Create<IDokanOperations, AopDokanWrapper>();
+		((AopDokanWrapper)instance).Native = fs;
 		return instance; // 创建的代理实例同时属于 Create 的两个泛型参数的类型
 	}
 }

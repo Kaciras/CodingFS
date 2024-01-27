@@ -7,7 +7,6 @@ namespace CodingFS.Benchmark;
 /**
  * |          Method |       Mean |    Error |   StdDev | Ratio | RatioSD |   Gen0 |   Gen1 | Allocated | Alloc Ratio |
  * |---------------- |-----------:|---------:|---------:|------:|--------:|-------:|-------:|----------:|------------:|
- * | V1_ThreadUnsafe | 2,596.8 ns | 19.25 ns | 18.00 ns |  2.14 |    0.02 | 0.7744 | 0.0076 |   6.33 KB |        1.80 |
  * | V2_ThreadUnsafe |   741.2 ns |  4.16 ns |  3.69 ns |  0.61 |    0.00 | 0.3233 | 0.0010 |   2.65 KB |        0.75 |
  * |              V3 | 1,878.6 ns | 18.49 ns | 17.30 ns |  1.55 |    0.02 | 1.5469 | 0.0629 |  12.64 KB |        3.60 |
  * |         Current | 1,210.7 ns |  9.38 ns |  8.78 ns |  1.00 |    0.00 | 0.4292 | 0.0019 |   3.52 KB |        1.00 |
@@ -20,11 +19,6 @@ public class CodingScannerPerf
 	static void Fac1(DetectContxt ctx) { }
 
 	readonly Detector[] detectors = [Fac1];
-
-	FileClassifierV1 NewV1()
-	{
-		return new FileClassifierV1("/foo", [], detectors);
-	}
 
 	CodingScannerV2 NewV2()
 	{
@@ -39,12 +33,6 @@ public class CodingScannerPerf
 	CodingScanner NewCurrent()
 	{
 		return new CodingScanner("/foo", [], detectors);
-	}
-
-	[Benchmark]
-	public WorkspacesInfo V1_ThreadUnsafe()
-	{
-		return NewV1().GetWorkspaces(DIR);
 	}
 
 	[Benchmark]
