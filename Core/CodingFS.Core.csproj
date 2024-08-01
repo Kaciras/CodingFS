@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <PackageReference Include="DokanNet" Version="2.1.0" />
-    <PackageReference Include="LibGit2Sharp" Version="0.29.0" />
+    <PackageReference Include="LibGit2Sharp" Version="0.30.0" />
     <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="8.0.0" />
   </ItemGroup>
 
