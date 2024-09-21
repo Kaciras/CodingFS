@@ -7,13 +7,15 @@ public sealed class Config
 {
 	public string Root { get; set; } = Environment.CurrentDirectory;
 
-	public BuiltinDetectorOptions Detector { get; set; }
-
 	public int MaxDepth { get; set; } = int.MaxValue;
 
 	public List<string> Deps { get; set; } = [];
 
 	public List<string> Ingores { get; set; } = [];
+
+	public MountOptions Mount { get; set; } = new();
+
+	public BuiltinDetectorOptions Detector { get; set; } = new();
 
 	public CodingScanner CreateScanner()
 	{
