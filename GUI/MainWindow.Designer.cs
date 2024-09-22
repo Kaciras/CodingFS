@@ -71,10 +71,19 @@
 			label2.TabIndex = 10;
 			label2.Text = "Scan depth";
 			// 
+			// label3
+			// 
+			label3.AutoSize = true;
+			label3.Location = new Point(8, 32);
+			label3.Name = "label3";
+			label3.Size = new Size(106, 20);
+			label3.TabIndex = 15;
+			label3.Text = "Root Directory";
+			// 
 			// selectRootButton
 			// 
 			selectRootButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			selectRootButton.Location = new Point(488, 28);
+			selectRootButton.Location = new Point(556, 28);
 			selectRootButton.Name = "selectRootButton";
 			selectRootButton.Size = new Size(94, 29);
 			selectRootButton.TabIndex = 0;
@@ -87,14 +96,14 @@
 			rootBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			rootBox.Location = new Point(120, 28);
 			rootBox.Name = "rootBox";
-			rootBox.Size = new Size(362, 27);
+			rootBox.Size = new Size(430, 27);
 			rootBox.TabIndex = 1;
 			// 
 			// readonlyCheck
 			// 
 			readonlyCheck.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			readonlyCheck.AutoSize = true;
-			readonlyCheck.Location = new Point(389, 97);
+			readonlyCheck.Location = new Point(388, 97);
 			readonlyCheck.Name = "readonlyCheck";
 			readonlyCheck.Size = new Size(93, 24);
 			readonlyCheck.TabIndex = 2;
@@ -104,7 +113,7 @@
 			// mountButton
 			// 
 			mountButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-			mountButton.Location = new Point(508, 194);
+			mountButton.Location = new Point(576, 194);
 			mountButton.Margin = new Padding(5);
 			mountButton.Name = "mountButton";
 			mountButton.Size = new Size(94, 29);
@@ -117,7 +126,7 @@
 			// 
 			unmountButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
 			unmountButton.Enabled = false;
-			unmountButton.Location = new Point(404, 194);
+			unmountButton.Location = new Point(472, 194);
 			unmountButton.Margin = new Padding(5);
 			unmountButton.Name = "unmountButton";
 			unmountButton.Size = new Size(94, 29);
@@ -151,7 +160,7 @@
 			optionsGroup.Location = new Point(12, 47);
 			optionsGroup.Name = "optionsGroup";
 			optionsGroup.Padding = new Padding(5);
-			optionsGroup.Size = new Size(590, 138);
+			optionsGroup.Size = new Size(658, 138);
 			optionsGroup.TabIndex = 11;
 			optionsGroup.TabStop = false;
 			optionsGroup.Text = "Options";
@@ -214,12 +223,12 @@
 			configFileBox.Location = new Point(12, 14);
 			configFileBox.Name = "configFileBox";
 			configFileBox.ReadOnly = true;
-			configFileBox.Size = new Size(390, 27);
+			configFileBox.Size = new Size(458, 27);
 			configFileBox.TabIndex = 13;
 			// 
 			// selectConfigButton
 			// 
-			selectConfigButton.Location = new Point(408, 12);
+			selectConfigButton.Location = new Point(476, 14);
 			selectConfigButton.Name = "selectConfigButton";
 			selectConfigButton.Size = new Size(94, 29);
 			selectConfigButton.TabIndex = 14;
@@ -229,7 +238,7 @@
 			// 
 			// saveConfigButton
 			// 
-			saveConfigButton.Location = new Point(508, 12);
+			saveConfigButton.Location = new Point(576, 14);
 			saveConfigButton.Name = "saveConfigButton";
 			saveConfigButton.Size = new Size(94, 29);
 			saveConfigButton.TabIndex = 15;
@@ -237,20 +246,11 @@
 			saveConfigButton.UseVisualStyleBackColor = true;
 			saveConfigButton.Click += SaveConfigButton_Click;
 			// 
-			// label3
-			// 
-			label3.AutoSize = true;
-			label3.Location = new Point(8, 32);
-			label3.Name = "label3";
-			label3.Size = new Size(106, 20);
-			label3.TabIndex = 15;
-			label3.Text = "Root Directory";
-			// 
 			// MainWindow
 			// 
 			AutoScaleDimensions = new SizeF(8F, 20F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(614, 233);
+			ClientSize = new Size(682, 233);
 			Controls.Add(saveConfigButton);
 			Controls.Add(selectConfigButton);
 			Controls.Add(configFileBox);
@@ -258,6 +258,8 @@
 			Controls.Add(optionsGroup);
 			Controls.Add(unmountButton);
 			Controls.Add(mountButton);
+			FormBorderStyle = FormBorderStyle.FixedSingle;
+			MaximizeBox = false;
 			Name = "MainWindow";
 			StartPosition = FormStartPosition.CenterScreen;
 			Text = "CodingFS";
