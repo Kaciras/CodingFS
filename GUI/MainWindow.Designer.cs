@@ -37,10 +37,11 @@
 			unmountButton = new Button();
 			driveSelect = new ComboBox();
 			optionsGroup = new GroupBox();
-			depthInput = new NumericUpDown();
-			sourceCheck = new CheckBox();
-			generatedCheck = new CheckBox();
 			dependencyCheck = new CheckBox();
+			generatedCheck = new CheckBox();
+			sourceCheck = new CheckBox();
+			depthInput = new NumericUpDown();
+			mountedLabel = new Label();
 			label1 = new Label();
 			label2 = new Label();
 			optionsGroup.SuspendLayout();
@@ -55,6 +56,15 @@
 			label1.Size = new Size(70, 20);
 			label1.TabIndex = 9;
 			label1.Text = "Mount to";
+			// 
+			// label2
+			// 
+			label2.AutoSize = true;
+			label2.Location = new Point(172, 99);
+			label2.Name = "label2";
+			label2.Size = new Size(83, 20);
+			label2.TabIndex = 10;
+			label2.Text = "Scan depth";
 			// 
 			// selectRootButton
 			// 
@@ -140,32 +150,16 @@
 			optionsGroup.TabStop = false;
 			optionsGroup.Text = "Options";
 			// 
-			// label2
+			// dependencyCheck
 			// 
-			label2.AutoSize = true;
-			label2.Location = new Point(172, 99);
-			label2.Name = "label2";
-			label2.Size = new Size(83, 20);
-			label2.TabIndex = 10;
-			label2.Text = "Scan depth";
-			// 
-			// depthInput
-			// 
-			depthInput.Location = new Point(261, 95);
-			depthInput.Name = "depthInput";
-			depthInput.Size = new Size(107, 27);
-			depthInput.TabIndex = 11;
-			// 
-			// sourceCheck
-			// 
-			sourceCheck.AutoSize = true;
-			sourceCheck.Location = new Point(8, 63);
-			sourceCheck.Margin = new Padding(5);
-			sourceCheck.Name = "sourceCheck";
-			sourceCheck.Size = new Size(109, 24);
-			sourceCheck.TabIndex = 12;
-			sourceCheck.Text = "Source Files";
-			sourceCheck.UseVisualStyleBackColor = true;
+			dependencyCheck.AutoSize = true;
+			dependencyCheck.Location = new Point(123, 63);
+			dependencyCheck.Margin = new Padding(5);
+			dependencyCheck.Name = "dependencyCheck";
+			dependencyCheck.Size = new Size(126, 24);
+			dependencyCheck.TabIndex = 14;
+			dependencyCheck.Text = "Depdndencies";
+			dependencyCheck.UseVisualStyleBackColor = true;
 			// 
 			// generatedCheck
 			// 
@@ -178,22 +172,42 @@
 			generatedCheck.Text = "Generated Files";
 			generatedCheck.UseVisualStyleBackColor = true;
 			// 
-			// dependencyCheck
+			// sourceCheck
 			// 
-			dependencyCheck.AutoSize = true;
-			dependencyCheck.Location = new Point(123, 63);
-			dependencyCheck.Margin = new Padding(5);
-			dependencyCheck.Name = "dependencyCheck";
-			dependencyCheck.Size = new Size(126, 24);
-			dependencyCheck.TabIndex = 14;
-			dependencyCheck.Text = "Depdndencies";
-			dependencyCheck.UseVisualStyleBackColor = true;
+			sourceCheck.AutoSize = true;
+			sourceCheck.Location = new Point(8, 63);
+			sourceCheck.Margin = new Padding(5);
+			sourceCheck.Name = "sourceCheck";
+			sourceCheck.Size = new Size(109, 24);
+			sourceCheck.TabIndex = 12;
+			sourceCheck.Text = "Source Files";
+			sourceCheck.UseVisualStyleBackColor = true;
+			// 
+			// depthInput
+			// 
+			depthInput.Location = new Point(261, 95);
+			depthInput.Name = "depthInput";
+			depthInput.Size = new Size(107, 27);
+			depthInput.TabIndex = 11;
+			// 
+			// mountedLabel
+			// 
+			mountedLabel.AutoSize = true;
+			mountedLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+			mountedLabel.ForeColor = Color.ForestGreen;
+			mountedLabel.Location = new Point(12, 164);
+			mountedLabel.Name = "mountedLabel";
+			mountedLabel.Size = new Size(165, 20);
+			mountedLabel.TabIndex = 12;
+			mountedLabel.Text = "Virtual Drive Mounted";
+			mountedLabel.Visible = false;
 			// 
 			// MainWindow
 			// 
 			AutoScaleDimensions = new SizeF(8F, 20F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(614, 199);
+			Controls.Add(mountedLabel);
 			Controls.Add(optionsGroup);
 			Controls.Add(unmountButton);
 			Controls.Add(mountButton);
@@ -205,6 +219,7 @@
 			optionsGroup.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)depthInput).EndInit();
 			ResumeLayout(false);
+			PerformLayout();
 		}
 
 		#endregion
@@ -221,5 +236,6 @@
 		private CheckBox dependencyCheck;
 		private CheckBox generatedCheck;
 		private CheckBox sourceCheck;
+		private Label mountedLabel;
 	}
 }

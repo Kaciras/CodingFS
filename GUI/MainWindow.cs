@@ -85,6 +85,7 @@ public sealed partial class MainWindow : Form
 		optionsGroup.Enabled = false;
 		mountButton.Enabled = false;
 		unmountButton.Enabled = true;
+		mountedLabel.Visible = true;
 	}
 
 	void UnmountButton_Click(object sender, EventArgs e)
@@ -94,5 +95,6 @@ public sealed partial class MainWindow : Form
 		optionsGroup.Enabled = true;
 		mountButton.Enabled = true;
 		unmountButton.Enabled = false;
+		mountedLabel.Visible = false;
 	}
 }
