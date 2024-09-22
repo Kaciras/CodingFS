@@ -16,7 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodingFS.GUI", "CodingFS.GUI\CodingFS.GUI.csproj", "{1FD0851B-9AE7-4EB3-BDFA-15D14D70E164}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodingFS.GUI", "GUI\CodingFS.GUI.csproj", "{1FD0851B-9AE7-4EB3-BDFA-15D14D70E164}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

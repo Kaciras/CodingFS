@@ -1,17 +1,15 @@
-namespace GUI
+using System.Runtime.CompilerServices;
+
+[module: SkipLocalsInit]
+
+namespace CodingFS.GUI;
+
+static class Program
 {
-	internal static class Program
+	[STAThread]
+	static void Main(string[] args)
 	{
-		/// <summary>
-		///  The main entry point for the application.
-		/// </summary>
-		[STAThread]
-		static void Main()
-		{
-			// To customize application configuration such as set high DPI settings or default font,
-			// see https://aka.ms/applicationconfiguration.
-			ApplicationConfiguration.Initialize();
-			Application.Run(new MainWindow());
-		}
+		ApplicationConfiguration.Initialize();
+		Application.Run(new MainWindow(args.FirstOrDefault()));
 	}
 }
