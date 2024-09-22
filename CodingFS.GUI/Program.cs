@@ -7,9 +7,9 @@ namespace CodingFS.GUI;
 static class Program
 {
 	[STAThread]
-	static void Main()
+	static void Main(string[] args)
 	{
 		ApplicationConfiguration.Initialize();
-		Application.Run(new MainWindow());
+		Application.Run(new MainWindow(args.FirstOrDefault()));
 	}
 }

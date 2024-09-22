@@ -36,17 +36,17 @@
 			mountButton = new Button();
 			unmountButton = new Button();
 			typeSelect = new ComboBox();
-			listButton = new Button();
-			commandBox = new TextBox();
 			driveSelect = new ComboBox();
+			optionsGroup = new GroupBox();
 			label1 = new Label();
 			label2 = new Label();
+			optionsGroup.SuspendLayout();
 			SuspendLayout();
 			// 
 			// label1
 			// 
 			label1.AutoSize = true;
-			label1.Location = new Point(12, 50);
+			label1.Location = new Point(6, 62);
 			label1.Name = "label1";
 			label1.Size = new Size(70, 20);
 			label1.TabIndex = 9;
@@ -55,7 +55,7 @@
 			// label2
 			// 
 			label2.AutoSize = true;
-			label2.Location = new Point(215, 50);
+			label2.Location = new Point(187, 62);
 			label2.Name = "label2";
 			label2.Size = new Size(73, 20);
 			label2.TabIndex = 10;
@@ -64,7 +64,7 @@
 			// selectRootButton
 			// 
 			selectRootButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			selectRootButton.Location = new Point(456, 10);
+			selectRootButton.Location = new Point(490, 24);
 			selectRootButton.Name = "selectRootButton";
 			selectRootButton.Size = new Size(94, 29);
 			selectRootButton.TabIndex = 0;
@@ -75,16 +75,16 @@
 			// rootBox
 			// 
 			rootBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			rootBox.Location = new Point(12, 12);
+			rootBox.Location = new Point(6, 26);
 			rootBox.Name = "rootBox";
-			rootBox.Size = new Size(438, 27);
+			rootBox.Size = new Size(478, 27);
 			rootBox.TabIndex = 1;
 			// 
 			// readonlyCheck
 			// 
 			readonlyCheck.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			readonlyCheck.AutoSize = true;
-			readonlyCheck.Location = new Point(457, 49);
+			readonlyCheck.Location = new Point(491, 62);
 			readonlyCheck.Name = "readonlyCheck";
 			readonlyCheck.Size = new Size(93, 24);
 			readonlyCheck.TabIndex = 2;
@@ -94,7 +94,7 @@
 			// mountButton
 			// 
 			mountButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-			mountButton.Location = new Point(456, 119);
+			mountButton.Location = new Point(508, 149);
 			mountButton.Name = "mountButton";
 			mountButton.Size = new Size(94, 29);
 			mountButton.TabIndex = 3;
@@ -106,7 +106,7 @@
 			// 
 			unmountButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
 			unmountButton.Enabled = false;
-			unmountButton.Location = new Point(356, 119);
+			unmountButton.Location = new Point(408, 149);
 			unmountButton.Name = "unmountButton";
 			unmountButton.Size = new Size(94, 29);
 			unmountButton.TabIndex = 4;
@@ -118,61 +118,51 @@
 			// 
 			typeSelect.DropDownStyle = ComboBoxStyle.DropDownList;
 			typeSelect.FormattingEnabled = true;
-			typeSelect.Location = new Point(294, 45);
+			typeSelect.Location = new Point(266, 59);
 			typeSelect.Name = "typeSelect";
 			typeSelect.Size = new Size(156, 28);
 			typeSelect.TabIndex = 5;
-			// 
-			// listButton
-			// 
-			listButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-			listButton.Location = new Point(256, 119);
-			listButton.Name = "listButton";
-			listButton.Size = new Size(94, 29);
-			listButton.TabIndex = 6;
-			listButton.Text = "List Files";
-			listButton.UseVisualStyleBackColor = true;
-			listButton.Click += ListButton_Click;
-			// 
-			// commandBox
-			// 
-			commandBox.Location = new Point(12, 81);
-			commandBox.Margin = new Padding(5);
-			commandBox.Name = "commandBox";
-			commandBox.ReadOnly = true;
-			commandBox.Size = new Size(538, 27);
-			commandBox.TabIndex = 7;
 			// 
 			// driveSelect
 			// 
 			driveSelect.DropDownStyle = ComboBoxStyle.DropDownList;
 			driveSelect.FormattingEnabled = true;
-			driveSelect.Location = new Point(88, 45);
+			driveSelect.Location = new Point(82, 59);
 			driveSelect.Name = "driveSelect";
 			driveSelect.Size = new Size(82, 28);
 			driveSelect.TabIndex = 8;
+			// 
+			// optionsGroup
+			// 
+			optionsGroup.Controls.Add(rootBox);
+			optionsGroup.Controls.Add(label2);
+			optionsGroup.Controls.Add(selectRootButton);
+			optionsGroup.Controls.Add(readonlyCheck);
+			optionsGroup.Controls.Add(label1);
+			optionsGroup.Controls.Add(typeSelect);
+			optionsGroup.Controls.Add(driveSelect);
+			optionsGroup.Location = new Point(12, 12);
+			optionsGroup.Name = "optionsGroup";
+			optionsGroup.Size = new Size(590, 125);
+			optionsGroup.TabIndex = 11;
+			optionsGroup.TabStop = false;
+			optionsGroup.Text = "Options";
 			// 
 			// MainWindow
 			// 
 			AutoScaleDimensions = new SizeF(8F, 20F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(562, 160);
-			Controls.Add(label2);
-			Controls.Add(label1);
-			Controls.Add(driveSelect);
-			Controls.Add(commandBox);
-			Controls.Add(listButton);
-			Controls.Add(typeSelect);
+			ClientSize = new Size(614, 190);
+			Controls.Add(optionsGroup);
 			Controls.Add(unmountButton);
 			Controls.Add(mountButton);
-			Controls.Add(readonlyCheck);
-			Controls.Add(rootBox);
-			Controls.Add(selectRootButton);
 			Name = "MainWindow";
 			StartPosition = FormStartPosition.CenterScreen;
 			Text = "CodingFS";
+			FormClosing += MainWindow_FormClosing;
+			optionsGroup.ResumeLayout(false);
+			optionsGroup.PerformLayout();
 			ResumeLayout(false);
-			PerformLayout();
 		}
 
 		#endregion
@@ -183,9 +173,8 @@
 		private Button mountButton;
 		private Button unmountButton;
 		private ComboBox typeSelect;
-		private Button listButton;
-		private TextBox commandBox;
 		private ComboBox driveSelect;
 		private Label label1;
+		private GroupBox optionsGroup;
 	}
 }

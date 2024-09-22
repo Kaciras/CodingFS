@@ -37,29 +37,26 @@ public sealed class MountCommand : Command
 
 	protected override void Execute(Config config)
 	{
-		// Apply default options, the command line takes precedence.
+		// Command line arguments takes precedence.
 		var mountOptions = config.Mount;
-		Point ??= mountOptions.Point;
-		VolumeLabel ??= mountOptions.VolumeLabel;
-		Type ??= mountOptions.Type;
-		Readonly ??= mountOptions.Readonly;
-
-		config.Mount.VolumeLabel = "";
-
-		// Create the vitrual directory.
-		CreatePathFilter(config, out var filter);
-
-		virtualFS = new VirtualFS(filter, new()
+		if (Point != null)
 		{
-#if DEBUG
-			Debug = true,
-#else
-			Debug = false,
-#endif
-			MountPoint = Point,
-			Name = VolumeLabel,
-			Readonly = Readonly.Value,
-		});
+			mountOptions.Point = Point;
+		}
+		if (VolumeLabel != null)
+		{
+			mountOptions.VolumeLabel = VolumeLabel;
+		}
+		if (Type.HasValue)
+		{
+			mountOptions.Type = Type.Value;
+		}
+		if (Readonly.HasValue)
+		{
+			mountOptions.Readonly = Readonly.Value;
+		}
+
+		virtualFS = CreateVirtualFS(config);
 
 #if !DEBUG
 		Console.WriteLine($"Mouted to {Point}");
@@ -70,27 +67,40 @@ public sealed class MountCommand : Command
 		blockMainThreadEvent.WaitOne();
 	}
 
-	void CreatePathFilter(Config config, out MappedPathFilter filter)
+	public static VirtualFS CreateVirtualFS(Config config)
 	{
 		var scanner = config.CreateScanner();
 		var top = Path.GetFileName(scanner.Root);
+		var type = config.Mount.Type;
+		var filter = new MappedPathFilter();
 
-		filter = new MappedPathFilter();
-
-		if ((Type & FileType.Source) == 0)
+		if ((type & FileType.Source) == 0)
 		{
-			Console.Write($"Type does not contain Source, requires pre-scan files...");
+			Console.Write("Pre-scan files...");
 			var watch = new Stopwatch();
 			watch.Start();
-			filter.Set(top, new PrebuiltPathFilter(scanner, Type!.Value));
+			filter.Set(top, new PrebuiltPathFilter(scanner, type));
 
 			Console.ForegroundColor = ConsoleColor.Green;
-			Console.WriteLine($"Completed in {watch.ElapsedMilliseconds}ms.\n");
+			Console.WriteLine($"{watch.ElapsedMilliseconds}ms.\n");
 			Console.ForegroundColor = ConsoleColor.Gray;
 		}
 		else
 		{
-			filter.Set(top, new CodingPathFilter(scanner, Type!.Value));
+			filter.Set(top, new CodingPathFilter(scanner, type));
 		}
+
+		var mountOptions = config.Mount;
+		return new VirtualFS(filter, new()
+		{
+#if DEBUG
+			Debug = true,
+#else
+			Debug = false,
+#endif
+			MountPoint = mountOptions.Point,
+			Name = mountOptions.VolumeLabel,
+			Readonly = mountOptions.Readonly,
+		});
 	}
 }
