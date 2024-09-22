@@ -60,7 +60,6 @@ public sealed partial class JetBrainsDetector
 		builder.Append(Path.DirectorySeparatorChar);
 		builder.Append("external_build_system");
 		builder.Append(Path.DirectorySeparatorChar);
-		builder.Append("modules");
 
 		return builder.ToString();
 	}
