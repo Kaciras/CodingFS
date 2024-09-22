@@ -35,36 +35,31 @@
 			readonlyCheck = new CheckBox();
 			mountButton = new Button();
 			unmountButton = new Button();
-			typeSelect = new ComboBox();
 			driveSelect = new ComboBox();
 			optionsGroup = new GroupBox();
+			depthInput = new NumericUpDown();
+			sourceCheck = new CheckBox();
+			generatedCheck = new CheckBox();
+			dependencyCheck = new CheckBox();
 			label1 = new Label();
 			label2 = new Label();
 			optionsGroup.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)depthInput).BeginInit();
 			SuspendLayout();
 			// 
 			// label1
 			// 
 			label1.AutoSize = true;
-			label1.Location = new Point(6, 62);
+			label1.Location = new Point(8, 99);
 			label1.Name = "label1";
 			label1.Size = new Size(70, 20);
 			label1.TabIndex = 9;
 			label1.Text = "Mount to";
 			// 
-			// label2
-			// 
-			label2.AutoSize = true;
-			label2.Location = new Point(187, 62);
-			label2.Name = "label2";
-			label2.Size = new Size(73, 20);
-			label2.TabIndex = 10;
-			label2.Text = "With type";
-			// 
 			// selectRootButton
 			// 
 			selectRootButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			selectRootButton.Location = new Point(490, 24);
+			selectRootButton.Location = new Point(488, 28);
 			selectRootButton.Name = "selectRootButton";
 			selectRootButton.Size = new Size(94, 29);
 			selectRootButton.TabIndex = 0;
@@ -75,16 +70,16 @@
 			// rootBox
 			// 
 			rootBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			rootBox.Location = new Point(6, 26);
+			rootBox.Location = new Point(8, 28);
 			rootBox.Name = "rootBox";
-			rootBox.Size = new Size(478, 27);
+			rootBox.Size = new Size(474, 27);
 			rootBox.TabIndex = 1;
 			// 
 			// readonlyCheck
 			// 
 			readonlyCheck.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			readonlyCheck.AutoSize = true;
-			readonlyCheck.Location = new Point(491, 62);
+			readonlyCheck.Location = new Point(389, 98);
 			readonlyCheck.Name = "readonlyCheck";
 			readonlyCheck.Size = new Size(93, 24);
 			readonlyCheck.TabIndex = 2;
@@ -94,7 +89,8 @@
 			// mountButton
 			// 
 			mountButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-			mountButton.Location = new Point(508, 149);
+			mountButton.Location = new Point(508, 160);
+			mountButton.Margin = new Padding(5);
 			mountButton.Name = "mountButton";
 			mountButton.Size = new Size(94, 29);
 			mountButton.TabIndex = 3;
@@ -106,7 +102,8 @@
 			// 
 			unmountButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
 			unmountButton.Enabled = false;
-			unmountButton.Location = new Point(408, 149);
+			unmountButton.Location = new Point(404, 160);
+			unmountButton.Margin = new Padding(5);
 			unmountButton.Name = "unmountButton";
 			unmountButton.Size = new Size(94, 29);
 			unmountButton.TabIndex = 4;
@@ -114,45 +111,89 @@
 			unmountButton.UseVisualStyleBackColor = true;
 			unmountButton.Click += UnmountButton_Click;
 			// 
-			// typeSelect
-			// 
-			typeSelect.DropDownStyle = ComboBoxStyle.DropDownList;
-			typeSelect.FormattingEnabled = true;
-			typeSelect.Location = new Point(266, 59);
-			typeSelect.Name = "typeSelect";
-			typeSelect.Size = new Size(156, 28);
-			typeSelect.TabIndex = 5;
-			// 
 			// driveSelect
 			// 
 			driveSelect.DropDownStyle = ComboBoxStyle.DropDownList;
 			driveSelect.FormattingEnabled = true;
-			driveSelect.Location = new Point(82, 59);
+			driveSelect.Location = new Point(84, 96);
 			driveSelect.Name = "driveSelect";
 			driveSelect.Size = new Size(82, 28);
 			driveSelect.TabIndex = 8;
 			// 
 			// optionsGroup
 			// 
+			optionsGroup.Controls.Add(dependencyCheck);
+			optionsGroup.Controls.Add(generatedCheck);
+			optionsGroup.Controls.Add(sourceCheck);
+			optionsGroup.Controls.Add(depthInput);
 			optionsGroup.Controls.Add(rootBox);
 			optionsGroup.Controls.Add(label2);
 			optionsGroup.Controls.Add(selectRootButton);
 			optionsGroup.Controls.Add(readonlyCheck);
 			optionsGroup.Controls.Add(label1);
-			optionsGroup.Controls.Add(typeSelect);
 			optionsGroup.Controls.Add(driveSelect);
 			optionsGroup.Location = new Point(12, 12);
 			optionsGroup.Name = "optionsGroup";
-			optionsGroup.Size = new Size(590, 125);
+			optionsGroup.Padding = new Padding(5);
+			optionsGroup.Size = new Size(590, 138);
 			optionsGroup.TabIndex = 11;
 			optionsGroup.TabStop = false;
 			optionsGroup.Text = "Options";
+			// 
+			// label2
+			// 
+			label2.AutoSize = true;
+			label2.Location = new Point(172, 99);
+			label2.Name = "label2";
+			label2.Size = new Size(83, 20);
+			label2.TabIndex = 10;
+			label2.Text = "Scan depth";
+			// 
+			// depthInput
+			// 
+			depthInput.Location = new Point(261, 95);
+			depthInput.Name = "depthInput";
+			depthInput.Size = new Size(107, 27);
+			depthInput.TabIndex = 11;
+			// 
+			// sourceCheck
+			// 
+			sourceCheck.AutoSize = true;
+			sourceCheck.Location = new Point(8, 63);
+			sourceCheck.Margin = new Padding(5);
+			sourceCheck.Name = "sourceCheck";
+			sourceCheck.Size = new Size(109, 24);
+			sourceCheck.TabIndex = 12;
+			sourceCheck.Text = "Source Files";
+			sourceCheck.UseVisualStyleBackColor = true;
+			// 
+			// generatedCheck
+			// 
+			generatedCheck.AutoSize = true;
+			generatedCheck.Location = new Point(255, 63);
+			generatedCheck.Margin = new Padding(5);
+			generatedCheck.Name = "generatedCheck";
+			generatedCheck.Size = new Size(133, 24);
+			generatedCheck.TabIndex = 13;
+			generatedCheck.Text = "Generated Files";
+			generatedCheck.UseVisualStyleBackColor = true;
+			// 
+			// dependencyCheck
+			// 
+			dependencyCheck.AutoSize = true;
+			dependencyCheck.Location = new Point(123, 63);
+			dependencyCheck.Margin = new Padding(5);
+			dependencyCheck.Name = "dependencyCheck";
+			dependencyCheck.Size = new Size(126, 24);
+			dependencyCheck.TabIndex = 14;
+			dependencyCheck.Text = "Depdndencies";
+			dependencyCheck.UseVisualStyleBackColor = true;
 			// 
 			// MainWindow
 			// 
 			AutoScaleDimensions = new SizeF(8F, 20F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(614, 190);
+			ClientSize = new Size(614, 199);
 			Controls.Add(optionsGroup);
 			Controls.Add(unmountButton);
 			Controls.Add(mountButton);
@@ -162,6 +203,7 @@
 			FormClosing += MainWindow_FormClosing;
 			optionsGroup.ResumeLayout(false);
 			optionsGroup.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)depthInput).EndInit();
 			ResumeLayout(false);
 		}
 
@@ -172,9 +214,12 @@
 		private CheckBox readonlyCheck;
 		private Button mountButton;
 		private Button unmountButton;
-		private ComboBox typeSelect;
 		private ComboBox driveSelect;
 		private Label label1;
 		private GroupBox optionsGroup;
+		private NumericUpDown depthInput;
+		private CheckBox dependencyCheck;
+		private CheckBox generatedCheck;
+		private CheckBox sourceCheck;
 	}
 }
