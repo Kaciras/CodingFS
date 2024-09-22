@@ -1,5 +1,6 @@
 using CodingFS.Helper;
 using CodingFS.Workspaces;
+using Moq;
 using Xunit;
 
 namespace CodingFS.Test.Workspaces;
@@ -22,8 +23,9 @@ public sealed class IDEAWorkspaceTest
 	[Fact]
 	public void LoadModules()
 	{
+		var mockDetector = new Mock<JetBrainsDetector>();
 		var dict = new CharsDictionary<RecognizeType>();
-		var instance = new IDEAWorkspace(dict, "Resources", null!);
+		var instance = new IDEAWorkspace(dict, "Resources", mockDetector.Object);
 		instance.LoadModules();
 
 		Assert.Single(dict);

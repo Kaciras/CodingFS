@@ -7,13 +7,13 @@ using SpecialFolder = System.Environment.SpecialFolder;
 
 namespace CodingFS.Workspaces;
 
-public sealed partial class JetBrainsDetector
+public partial class JetBrainsDetector
 {
 	[GeneratedRegex("^.+IntelliJIdea(20[0-9.]+)$")]
 	private static partial Regex JBConfigRE();
 
 	// Config directory of the latest version of IntelliJIdea.
-	string? localConfig;
+	readonly string? localConfig;
 
 	public JetBrainsDetector()
 	{
@@ -40,7 +40,7 @@ public sealed partial class JetBrainsDetector
 	/// How to get the [NAME] of the project：
 	/// https://github.com/JetBrains/intellij-community/blob/734efbef5b75dfda517731ca39fb404404fbe182/platform/platform-api/src/com/intellij/openapi/project/ProjectUtil.kt#L146
 	/// </summary>
-	public string? ExternalBuildSystem(string path)
+	public virtual string? ExternalBuildSystem(string path)
 	{
 		if (localConfig == null)
 		{

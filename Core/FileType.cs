@@ -6,6 +6,9 @@ namespace CodingFS;
 [Flags]
 public enum FileType
 {
+	// Meanless, but enum should have a default value.
+	None = 0,
+
 	Source = 1,
 	Dependency = 2,
 	Generated = 4,
