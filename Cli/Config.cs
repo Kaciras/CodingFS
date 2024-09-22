@@ -5,6 +5,8 @@ namespace CodingFS.Cli;
 
 public sealed class Config
 {
+	const string DEFAULT_CONFIG_FILE = "config.toml";
+
 	public string Root { get; set; } = Environment.CurrentDirectory;
 
 	public int MaxDepth { get; set; } = int.MaxValue;
@@ -38,16 +40,16 @@ public sealed class Config
 		return new(Root, globals, detectors) { MaxDepth = MaxDepth };
 	}
 
+	/// <summary>
+	/// Load config from file, it must exists, default is config.toml.
+	/// </summary>
 	public static Config LoadToml(string? file)
 	{
-		if (file == null)
-		{
-			return new Config();
-		}
 		var options = new TomlModelOptions()
 		{
 			ConvertPropertyName = x => x,
 		};
+		file ??= DEFAULT_CONFIG_FILE;
 		var text = File.ReadAllText(file);
 		return Toml.ToModel<Config>(text, file, options);
 	}

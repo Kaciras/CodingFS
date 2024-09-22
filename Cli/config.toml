@@ -1,0 +1,24 @@
+﻿# The starting directory to traverse, used in Mount and List command.
+Root = "."
+
+# Maximum search depth (include the root).
+MaxDepth = 6
+
+# Additional paths are considered to be dependency.
+Deps = []
+
+# Additional paths are considered to be ignored.
+Ingores = [
+	"C:\\foo\\bar",
+	"C:\\some\\file",
+]
+
+# Addional options used in mount vritual drive.
+[Mount]
+#Point = "x"
+#Type = "Source"
+
+[Detector]
+
+# Set the type of files matched by .gitignore, NotCare, Dependency, or Ignored.
+Gitignore = "NotCare"
