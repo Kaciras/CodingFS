@@ -70,7 +70,7 @@
 			selectRootButton.TabIndex = 0;
 			selectRootButton.Text = "Select";
 			selectRootButton.UseVisualStyleBackColor = true;
-			selectRootButton.Click += selectRootButton_Click;
+			selectRootButton.Click += SelectRootButton_Click;
 			// 
 			// rootBox
 			// 
@@ -100,7 +100,7 @@
 			mountButton.TabIndex = 3;
 			mountButton.Text = "Mount";
 			mountButton.UseVisualStyleBackColor = true;
-			mountButton.Click += mountButton_Click;
+			mountButton.Click += MountButton_Click;
 			// 
 			// unmountButton
 			// 
@@ -112,7 +112,7 @@
 			unmountButton.TabIndex = 4;
 			unmountButton.Text = "Unmount";
 			unmountButton.UseVisualStyleBackColor = true;
-			unmountButton.Click += unmountButton_Click;
+			unmountButton.Click += UnmountButton_Click;
 			// 
 			// typeSelect
 			// 
@@ -132,7 +132,7 @@
 			listButton.TabIndex = 6;
 			listButton.Text = "List Files";
 			listButton.UseVisualStyleBackColor = true;
-			listButton.Click += listButton_Click;
+			listButton.Click += ListButton_Click;
 			// 
 			// commandBox
 			// 

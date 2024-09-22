@@ -2,7 +2,7 @@ using System.Diagnostics;
 
 namespace CodingFS.GUI;
 
-public partial class MainWindow : Form
+public sealed partial class MainWindow : Form
 {
 	VirtualFS virtualFS = null!;
 
@@ -14,19 +14,14 @@ public partial class MainWindow : Form
 		typeSelect.Items.Add(FileType.Dependency);
 		typeSelect.Items.Add(FileType.Generated);
 
-		var usedDrives = DriveInfo.GetDrives();
-		var freeDrives = Enumerable.Range('A', 'Z' - 'A' + 1)
-			.Select(i => (char)i + ":\\")
-			.Except(usedDrives.Select(s => s.Name));
-
-		foreach (var item in freeDrives)
+		foreach (var item in VirtualFS.GetFreeDrives())
 		{
 			driveSelect.Items.Add(item);
 		}
-		driveSelect.SelectedIndex = 25 - usedDrives.Length;
+		driveSelect.SelectedIndex = driveSelect.Items.Count - 1;
 	}
 
-	void selectRootButton_Click(object sender, EventArgs e)
+	void SelectRootButton_Click(object sender, EventArgs e)
 	{
 		using var dialog = new FolderBrowserDialog();
 		dialog.InitialDirectory = rootBox.Text;
@@ -37,7 +32,7 @@ public partial class MainWindow : Form
 		}
 	}
 
-	void mountButton_Click(object sender, EventArgs e)
+	void MountButton_Click(object sender, EventArgs e)
 	{
 		var config = new Cli.Config();
 		var filter = new MappedPathFilter();
@@ -76,14 +71,14 @@ public partial class MainWindow : Form
 		unmountButton.Enabled = true;
 	}
 
-	void unmountButton_Click(object sender, EventArgs e)
+	void UnmountButton_Click(object sender, EventArgs e)
 	{
 		virtualFS.Dispose();
 		mountButton.Enabled = true;
 		unmountButton.Enabled = false;
 	}
 
-	void listButton_Click(object sender, EventArgs e)
+	void ListButton_Click(object sender, EventArgs e)
 	{
 
 	}

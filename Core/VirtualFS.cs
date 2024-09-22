@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using CodingFS.FUSE;
 using DokanNet;
@@ -26,7 +28,7 @@ public struct VirtualFSOptions
 	public bool Debug;
 
 	/// <summary>
-	/// The mount point of the file system (Required).
+	/// The mount point of the file system, empty means choosed by CodingFS.
 	/// </summary>
 	public string MountPoint;
 }
@@ -57,12 +59,25 @@ public sealed class VirtualFS : IDisposable
 	/// </summary>
 	public void Dispose() => disposables.ForEach(x => x.Dispose());
 
+	public static IEnumerable<string> GetFreeDrives()
+	{
+		var usedDrives = DriveInfo.GetDrives();
+		return Enumerable.Range('A', 'Z' - 'A' + 1)
+			.Select(i => (char)i + ":")
+			.Except(usedDrives.Select(s => s.Name));
+	}
+
 	void InitDokan(PathFilter filter, in VirtualFSOptions o)
 	{
 		var vfs = new FilteredDokan(o.Name ?? "CodingFS", filter);
 		var mountPoint = o.MountPoint;
 		ILogger dokanLogger;
 		DokanOptions mountFlags = default;
+
+		if (mountPoint.Length == 0)
+		{
+			mountPoint = GetFreeDrives().First();
+		}
 
 		if (o.Readonly)
 		{
