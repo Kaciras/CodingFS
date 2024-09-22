@@ -4,13 +4,13 @@ namespace CodingFS.GUI;
 
 public sealed partial class MainWindow : Form
 {
-	readonly Config configuration;
-
+	Config configuration;
 	VirtualFS? virtualFS;
 
 	public MainWindow(string? configFile)
 	{
-		configuration = Config.LoadToml(configFile);
+		configFile ??= Config.DEFAULT_CONFIG_FILE;
+		configFile = Path.GetFullPath(configFile);
 
 		InitializeComponent();
 
@@ -18,7 +18,9 @@ public sealed partial class MainWindow : Form
 		{
 			driveSelect.Items.Add(item);
 		}
+		configFileBox.Text = configFile;
 
+		configuration = Config.LoadToml(configFile);
 		SetControlsFromConfiguration();
 	}
 
@@ -64,6 +66,38 @@ public sealed partial class MainWindow : Form
 	void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
 	{
 		virtualFS?.Dispose();
+	}
+
+	void SelectConfigButton_Click(object sender, EventArgs e)
+	{
+		using var dialog = new OpenFileDialog()
+		{
+			Filter = "Toml (*.toml)|*.toml",
+			InitialDirectory = Path.GetDirectoryName(configFileBox.Text),
+		};
+		if (dialog.ShowDialog() == DialogResult.OK)
+		{
+			configFileBox.Text = dialog.FileName;
+			configuration = Config.LoadToml(dialog.FileName);
+			SetControlsFromConfiguration();
+		}
+	}
+
+	void SaveConfigButton_Click(object sender, EventArgs e)
+	{
+		using var dialog = new SaveFileDialog()
+		{
+			Filter = "Toml (*.toml)|*.toml",
+			DefaultExt = "toml",
+			FileName = Path.GetFileName(configFileBox.Text),
+			InitialDirectory = Path.GetDirectoryName(configFileBox.Text),
+		};
+		if (dialog.ShowDialog() == DialogResult.OK)
+		{
+			SetConfigurationFromControls();
+			configFileBox.Text = dialog.FileName;
+			configuration.SaveToml(dialog.FileName);
+		}
 	}
 
 	void SelectRootButton_Click(object sender, EventArgs e)

@@ -30,6 +30,7 @@
 		{
 			Label label1;
 			Label label2;
+			Label label3;
 			selectRootButton = new Button();
 			rootBox = new TextBox();
 			readonlyCheck = new CheckBox();
@@ -42,8 +43,12 @@
 			sourceCheck = new CheckBox();
 			depthInput = new NumericUpDown();
 			mountedLabel = new Label();
+			configFileBox = new TextBox();
+			selectConfigButton = new Button();
+			saveConfigButton = new Button();
 			label1 = new Label();
 			label2 = new Label();
+			label3 = new Label();
 			optionsGroup.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)depthInput).BeginInit();
 			SuspendLayout();
@@ -80,16 +85,16 @@
 			// rootBox
 			// 
 			rootBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			rootBox.Location = new Point(8, 28);
+			rootBox.Location = new Point(120, 28);
 			rootBox.Name = "rootBox";
-			rootBox.Size = new Size(474, 27);
+			rootBox.Size = new Size(362, 27);
 			rootBox.TabIndex = 1;
 			// 
 			// readonlyCheck
 			// 
 			readonlyCheck.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			readonlyCheck.AutoSize = true;
-			readonlyCheck.Location = new Point(389, 98);
+			readonlyCheck.Location = new Point(389, 97);
 			readonlyCheck.Name = "readonlyCheck";
 			readonlyCheck.Size = new Size(93, 24);
 			readonlyCheck.TabIndex = 2;
@@ -99,7 +104,7 @@
 			// mountButton
 			// 
 			mountButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-			mountButton.Location = new Point(508, 160);
+			mountButton.Location = new Point(508, 194);
 			mountButton.Margin = new Padding(5);
 			mountButton.Name = "mountButton";
 			mountButton.Size = new Size(94, 29);
@@ -112,7 +117,7 @@
 			// 
 			unmountButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
 			unmountButton.Enabled = false;
-			unmountButton.Location = new Point(404, 160);
+			unmountButton.Location = new Point(404, 194);
 			unmountButton.Margin = new Padding(5);
 			unmountButton.Name = "unmountButton";
 			unmountButton.Size = new Size(94, 29);
@@ -125,13 +130,14 @@
 			// 
 			driveSelect.DropDownStyle = ComboBoxStyle.DropDownList;
 			driveSelect.FormattingEnabled = true;
-			driveSelect.Location = new Point(84, 96);
+			driveSelect.Location = new Point(84, 95);
 			driveSelect.Name = "driveSelect";
 			driveSelect.Size = new Size(82, 28);
 			driveSelect.TabIndex = 8;
 			// 
 			// optionsGroup
 			// 
+			optionsGroup.Controls.Add(label3);
 			optionsGroup.Controls.Add(dependencyCheck);
 			optionsGroup.Controls.Add(generatedCheck);
 			optionsGroup.Controls.Add(sourceCheck);
@@ -142,7 +148,7 @@
 			optionsGroup.Controls.Add(readonlyCheck);
 			optionsGroup.Controls.Add(label1);
 			optionsGroup.Controls.Add(driveSelect);
-			optionsGroup.Location = new Point(12, 12);
+			optionsGroup.Location = new Point(12, 47);
 			optionsGroup.Name = "optionsGroup";
 			optionsGroup.Padding = new Padding(5);
 			optionsGroup.Size = new Size(590, 138);
@@ -153,7 +159,7 @@
 			// dependencyCheck
 			// 
 			dependencyCheck.AutoSize = true;
-			dependencyCheck.Location = new Point(123, 63);
+			dependencyCheck.Location = new Point(120, 63);
 			dependencyCheck.Margin = new Padding(5);
 			dependencyCheck.Name = "dependencyCheck";
 			dependencyCheck.Size = new Size(126, 24);
@@ -185,28 +191,69 @@
 			// 
 			// depthInput
 			// 
-			depthInput.Location = new Point(261, 95);
+			depthInput.Location = new Point(261, 96);
 			depthInput.Name = "depthInput";
 			depthInput.Size = new Size(107, 27);
 			depthInput.TabIndex = 11;
 			// 
 			// mountedLabel
 			// 
+			mountedLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
 			mountedLabel.AutoSize = true;
 			mountedLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
 			mountedLabel.ForeColor = Color.ForestGreen;
-			mountedLabel.Location = new Point(12, 164);
+			mountedLabel.Location = new Point(12, 198);
 			mountedLabel.Name = "mountedLabel";
 			mountedLabel.Size = new Size(165, 20);
 			mountedLabel.TabIndex = 12;
 			mountedLabel.Text = "Virtual Drive Mounted";
 			mountedLabel.Visible = false;
 			// 
+			// configFileBox
+			// 
+			configFileBox.Location = new Point(12, 14);
+			configFileBox.Name = "configFileBox";
+			configFileBox.ReadOnly = true;
+			configFileBox.Size = new Size(390, 27);
+			configFileBox.TabIndex = 13;
+			// 
+			// selectConfigButton
+			// 
+			selectConfigButton.Location = new Point(408, 12);
+			selectConfigButton.Name = "selectConfigButton";
+			selectConfigButton.Size = new Size(94, 29);
+			selectConfigButton.TabIndex = 14;
+			selectConfigButton.Text = "Select";
+			selectConfigButton.UseVisualStyleBackColor = true;
+			selectConfigButton.Click += SelectConfigButton_Click;
+			// 
+			// saveConfigButton
+			// 
+			saveConfigButton.Location = new Point(508, 12);
+			saveConfigButton.Name = "saveConfigButton";
+			saveConfigButton.Size = new Size(94, 29);
+			saveConfigButton.TabIndex = 15;
+			saveConfigButton.Text = "Save As";
+			saveConfigButton.UseVisualStyleBackColor = true;
+			saveConfigButton.Click += SaveConfigButton_Click;
+			// 
+			// label3
+			// 
+			label3.AutoSize = true;
+			label3.Location = new Point(8, 32);
+			label3.Name = "label3";
+			label3.Size = new Size(106, 20);
+			label3.TabIndex = 15;
+			label3.Text = "Root Directory";
+			// 
 			// MainWindow
 			// 
 			AutoScaleDimensions = new SizeF(8F, 20F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(614, 199);
+			ClientSize = new Size(614, 233);
+			Controls.Add(saveConfigButton);
+			Controls.Add(selectConfigButton);
+			Controls.Add(configFileBox);
 			Controls.Add(mountedLabel);
 			Controls.Add(optionsGroup);
 			Controls.Add(unmountButton);
@@ -237,5 +284,8 @@
 		private CheckBox generatedCheck;
 		private CheckBox sourceCheck;
 		private Label mountedLabel;
+		private TextBox configFileBox;
+		private Button selectConfigButton;
+		private Button saveConfigButton;
 	}
 }

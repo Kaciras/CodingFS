@@ -5,7 +5,7 @@ namespace CodingFS.Cli;
 
 public sealed class Config
 {
-	const string DEFAULT_CONFIG_FILE = "config.toml";
+	public const string DEFAULT_CONFIG_FILE = "config.toml";
 
 	public string Root { get; set; } = Environment.CurrentDirectory;
 
@@ -52,5 +52,14 @@ public sealed class Config
 		file ??= DEFAULT_CONFIG_FILE;
 		var text = File.ReadAllText(file);
 		return Toml.ToModel<Config>(text, file, options);
+	}
+
+	public void SaveToml(string file)
+	{
+		var options = new TomlModelOptions()
+		{
+			ConvertPropertyName = x => x,
+		};
+		File.WriteAllText(file, Toml.FromModel(this, options));
 	}
 }
