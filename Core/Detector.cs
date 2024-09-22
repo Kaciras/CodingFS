@@ -5,7 +5,7 @@ namespace CodingFS;
 
 public delegate void Detector(DetectContxt context);
 
-public struct BuiltinDetectorOptions
+public class BuiltinDetectorOptions
 {
 	public RecognizeType Gitignore { get; set; }
 }
@@ -31,11 +31,9 @@ public readonly struct DetectContxt(string path, List<Workspace> parent)
 	public readonly IReadOnlyList<Workspace> Parent = parent;
 	public readonly string Path = path;
 
-	internal readonly List<Workspace> Matches = new();
+	internal readonly List<Workspace> Matches = [];
 
-	public void Deconstruct(
-		out string path,
-		out IReadOnlyList<Workspace> parent)
+	public void Deconstruct(out string path, out IReadOnlyList<Workspace> parent)
 	{
 		path = Path;
 		parent = Parent;
