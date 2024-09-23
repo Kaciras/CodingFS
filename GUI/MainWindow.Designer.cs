@@ -46,6 +46,7 @@
 			configFileBox = new TextBox();
 			selectConfigButton = new Button();
 			saveConfigButton = new Button();
+			listView = new TypeListView();
 			label1 = new Label();
 			label2 = new Label();
 			label3 = new Label();
@@ -113,7 +114,7 @@
 			// mountButton
 			// 
 			mountButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-			mountButton.Location = new Point(576, 194);
+			mountButton.Location = new Point(576, 414);
 			mountButton.Margin = new Padding(5);
 			mountButton.Name = "mountButton";
 			mountButton.Size = new Size(94, 29);
@@ -126,7 +127,7 @@
 			// 
 			unmountButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
 			unmountButton.Enabled = false;
-			unmountButton.Location = new Point(472, 194);
+			unmountButton.Location = new Point(472, 414);
 			unmountButton.Margin = new Padding(5);
 			unmountButton.Name = "unmountButton";
 			unmountButton.Size = new Size(94, 29);
@@ -211,7 +212,7 @@
 			mountedLabel.AutoSize = true;
 			mountedLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
 			mountedLabel.ForeColor = Color.ForestGreen;
-			mountedLabel.Location = new Point(12, 198);
+			mountedLabel.Location = new Point(12, 418);
 			mountedLabel.Name = "mountedLabel";
 			mountedLabel.Size = new Size(165, 20);
 			mountedLabel.TabIndex = 12;
@@ -246,11 +247,19 @@
 			saveConfigButton.UseVisualStyleBackColor = true;
 			saveConfigButton.Click += SaveConfigButton_Click;
 			// 
+			// listView
+			// 
+			listView.Location = new Point(12, 191);
+			listView.Name = "listView";
+			listView.Size = new Size(658, 215);
+			listView.TabIndex = 16;
+			// 
 			// MainWindow
 			// 
 			AutoScaleDimensions = new SizeF(8F, 20F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(682, 233);
+			ClientSize = new Size(682, 453);
+			Controls.Add(listView);
 			Controls.Add(saveConfigButton);
 			Controls.Add(selectConfigButton);
 			Controls.Add(configFileBox);
@@ -289,5 +298,6 @@
 		private TextBox configFileBox;
 		private Button selectConfigButton;
 		private Button saveConfigButton;
+		private TypeListView listView;
 	}
 }

@@ -31,6 +31,15 @@ public sealed partial class MainWindow : Form
 		rootBox.Text = configuration.Root;
 		depthInput.Value = configuration.MaxDepth;
 
+		foreach (var item in configuration.Deps)
+		{
+			listView.AddPath(item, FileType.Dependency);
+		}
+		foreach (var item in configuration.Ingores)
+		{
+			listView.AddPath(item, FileType.Generated);
+		}
+
 		var type = configuration.Mount.Type;
 		sourceCheck.Checked = (type & FileType.Source) != 0;
 		dependencyCheck.Checked = (type & FileType.Dependency) != 0;
@@ -42,6 +51,13 @@ public sealed partial class MainWindow : Form
 		configuration.Mount.Readonly = readonlyCheck.Checked;
 		configuration.Root = rootBox.Text;
 		configuration.MaxDepth = (int)depthInput.Value;
+		configuration.Deps.Clear();
+		configuration.Ingores.Clear();
+
+		foreach (var (path, type) in listView.Items)
+		{
+			(type == FileType.Generated ? configuration.Ingores : configuration.Deps).Add(path);
+		}
 
 		if (driveSelect.SelectedItem != null)
 		{
@@ -116,19 +132,25 @@ public sealed partial class MainWindow : Form
 		SetConfigurationFromControls();
 		virtualFS = MountCommand.CreateVirtualFS(configuration);
 
+		listView.Enabled = false;
 		optionsGroup.Enabled = false;
 		mountButton.Enabled = false;
 		unmountButton.Enabled = true;
+		unmountButton.Focus();
 		mountedLabel.Visible = true;
+		selectConfigButton.Enabled = false;
 	}
 
 	void UnmountButton_Click(object sender, EventArgs e)
 	{
 		virtualFS!.Dispose();
 
+		listView.Enabled = true;
 		optionsGroup.Enabled = true;
 		mountButton.Enabled = true;
 		unmountButton.Enabled = false;
+		mountButton.Focus();
 		mountedLabel.Visible = false;
+		selectConfigButton.Enabled = true;
 	}
 }
