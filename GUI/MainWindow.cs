@@ -35,7 +35,7 @@ public sealed partial class MainWindow : Form
 		{
 			listView.AddPath(item, FileType.Dependency);
 		}
-		foreach (var item in configuration.Ingores)
+		foreach (var item in configuration.Generated)
 		{
 			listView.AddPath(item, FileType.Generated);
 		}
@@ -52,11 +52,11 @@ public sealed partial class MainWindow : Form
 		configuration.Root = rootBox.Text;
 		configuration.MaxDepth = (int)depthInput.Value;
 		configuration.Deps.Clear();
-		configuration.Ingores.Clear();
+		configuration.Generated.Clear();
 
 		foreach (var (path, type) in listView.Items)
 		{
-			(type == FileType.Generated ? configuration.Ingores : configuration.Deps).Add(path);
+			(type == FileType.Generated ? configuration.Generated : configuration.Deps).Add(path);
 		}
 
 		if (driveSelect.SelectedItem != null)

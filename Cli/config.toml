@@ -7,16 +7,21 @@ MaxDepth = 6
 # Additional paths are considered to be dependency.
 Deps = []
 
-# Additional paths are considered to be ignored.
-Ingores = [
+# Additional paths are considered to be generated.
+Generated = [
 	"C:\\foo\\bar",
 	"C:\\some\\file",
 ]
 
-# Addional options used in mount vritual drive.
+# Options used in mounting vritual drive.
 [Mount]
+
+# Mount point, in Windows is the drive letter, Omitted to let CodingFS choose.
 #Point = "x"
-#Type = "Source"
+
+# Which type of files should be included in the file system.
+# Avaliable values: Source, Dependency, Generated, use comma to separate flags.
+Type = "Source"
 
 [Detector]
 

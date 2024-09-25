@@ -13,7 +13,7 @@ public sealed class Config
 
 	public List<string> Deps { get; set; } = [];
 
-	public List<string> Ingores { get; set; } = [];
+	public List<string> Generated { get; set; } = [];
 
 	public MountOptions Mount { get; set; } = new();
 
@@ -28,7 +28,7 @@ public sealed class Config
 		{
 			custom[module] = RecognizeType.Dependency;
 		}
-		foreach (var module in Ingores)
+		foreach (var module in Generated)
 		{
 			custom[module] = RecognizeType.Ignored;
 		}
