@@ -6,32 +6,17 @@ Requirement: .NET >= 8
 
 ![Three type of files](https://github.com/Kaciras/CodingFS/raw/master/MountViews.png)
 
-# Cli
+# GUI
 
-When running CodingFS from the command line, CodingFS will load config file from `config.toml`. You can also explicitly specify a config file to use with the --config CLI option.
+`CodingFS.GUI.exe` is a GUI for mounting CodingFS virtual drive.
 
-Config file example:
+# CLI
 
-```toml
-# The starting directory to traverse, used in Mount and List command.
-Root = "D:\\Coding"
+CodingFS cli need a config file to run, by default is `config.toml`, it's also the default file used in GUI.
 
-# Maximum search depth (include the root).
-MaxDepth = 6
+You can also explicitly specify a config file to use with the `--config` CLI option.
 
-# Additional paths are considered to be dependency.
-Deps = []
-
-# Additional paths are considered to be ignored.
-Ingores = [
-	"D:\\Coding\\ThirdParty",
-	"D:\\Coding\\temp",
-]
-
-[Detector]
-# Set the type of files matched by .gitignore, NotCare, Dependency, or Ignored.
-Gitignore = "NotCare"
-```
+[Default config file](https://github.com/Kaciras/CodingFS/blob/master/Cli/config.toml)
 
 ## Mount
 
@@ -39,7 +24,7 @@ Gitignore = "NotCare"
 CodingFS mount <MountPoint> [--config=<config.toml>] [--type=<Source>] [--label=<SourceView>] [--readonly=<bool>]
 ```
 
-Map a directory to a virtual drive, containing only files of the specified type. You must install [Dokan](https://github.com/dokan-dev/dokany) driver to run this command.
+Map the directory to a virtual drive, containing only files of the specified type. You must install [Dokan](https://github.com/dokan-dev/dokany) driver to run this command.
 
 * `MountPoint`: drive letter of the mouted filesystem. Required.
 * `--config`: Path of the config file to use.
