@@ -17,7 +17,7 @@ Generated = [
 [Mount]
 
 # Mount point, in Windows is the drive letter, Omitted to let CodingFS choose.
-#Point = "x"
+#Point = "X:"
 
 # Which type of files should be included in the file system.
 # Avaliable values: Source, Dependency, Generated, use comma to separate flags.

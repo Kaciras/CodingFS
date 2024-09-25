@@ -59,12 +59,9 @@ public sealed partial class MainWindow : Form
 			(type == FileType.Generated ? configuration.Generated : configuration.Deps).Add(path);
 		}
 
-		if (driveSelect.SelectedItem != null)
-		{
-			configuration.Mount.Point = (string)driveSelect.SelectedItem;
-		}
-
+		configuration.Mount.Point = (string)(driveSelect.SelectedItem ?? "");
 		configuration.Mount.Type = FileType.None;
+
 		if (sourceCheck.Checked)
 		{
 			configuration.Mount.Type |= FileType.Source;

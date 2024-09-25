@@ -67,9 +67,9 @@
 			listView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 			listView.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader2 });
 			listView.FullRowSelect = true;
-			listView.Location = new Point(0, 42);
+			listView.Location = new Point(0, 37);
 			listView.Name = "listView";
-			listView.Size = new Size(658, 173);
+			listView.Size = new Size(658, 178);
 			listView.TabIndex = 1;
 			listView.UseCompatibleStateImageBehavior = false;
 			listView.View = View.Details;
@@ -78,7 +78,7 @@
 			// 
 			// addFolderButton
 			// 
-			addFolderButton.Location = new Point(558, 5);
+			addFolderButton.Location = new Point(557, 0);
 			addFolderButton.Name = "addFolderButton";
 			addFolderButton.Size = new Size(100, 29);
 			addFolderButton.TabIndex = 22;
@@ -89,7 +89,7 @@
 			// label4
 			// 
 			label4.AutoSize = true;
-			label4.Location = new Point(0, 9);
+			label4.Location = new Point(-1, 4);
 			label4.Name = "label4";
 			label4.Size = new Size(303, 20);
 			label4.TabIndex = 21;
@@ -97,7 +97,7 @@
 			// 
 			// addFilesButton
 			// 
-			addFilesButton.Location = new Point(450, 5);
+			addFilesButton.Location = new Point(449, 0);
 			addFilesButton.Margin = new Padding(5);
 			addFilesButton.Name = "addFilesButton";
 			addFilesButton.Size = new Size(100, 29);
@@ -124,9 +124,9 @@
 		#endregion
 
 		private ComboBox combo;
-		private ListView listView;
 		private Button addFolderButton;
 		private Label label4;
 		private Button addFilesButton;
+		private ScrollFocusListView listView;
 	}
 }
