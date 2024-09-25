@@ -31,7 +31,7 @@
 			ColumnHeader columnHeader1;
 			ColumnHeader columnHeader2;
 			combo = new ComboBox();
-			listView = new ListView();
+			listView = new ScrollFocusListView();
 			addFolderButton = new Button();
 			label4 = new Label();
 			addFilesButton = new Button();
