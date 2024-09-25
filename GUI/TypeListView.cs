@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace CodingFS.GUI;
 
@@ -15,9 +16,19 @@ public sealed partial class TypeListView : UserControl
 
 	public void AddPath(string path, FileType type)
 	{
-		var li = new ListViewItem(path);
-		listView.Items.Add(li);
-		li.SubItems.Add(type.ToString());
+		var index = listView.Items.IndexOfKey(path);
+		if (index != -1)
+		{
+			listView.SelectedIndices.Clear();
+			listView.SelectedIndices.Add(index);
+		}
+		else
+		{
+			var li = new ListViewItem(path);
+			listView.Items.Add(li);
+			li.Name = path;
+			li.SubItems.Add(type.ToString());
+		}
 	}
 
 	public IEnumerable<(string, FileType)> Items
@@ -38,15 +49,15 @@ public sealed partial class TypeListView : UserControl
 
 	void ListView_MouseUp(object sender, MouseEventArgs e)
 	{
-		// Get the item on the row that is clicked.
+		// Get the li on the row that is clicked.
 		lvItem = listView.GetItemAt(e.X, e.Y);
 
 		if (lvItem == null)
 		{
-			return; // Make sure that an item is clicked.
+			return; // Make sure that an li is clicked.
 		}
 
-		// Get the bounds of the item that is clicked.
+		// Get the bounds of the li that is clicked.
 		var bounds = lvItem.Bounds;
 		var cellWidth = listView.Columns[1].Width;
 
@@ -87,7 +98,7 @@ public sealed partial class TypeListView : UserControl
 		// Assign calculated bounds to the ComboBox.
 		combo.Bounds = bounds;
 
-		// Set default text for ComboBox to match the item that is clicked.
+		// Set default text for ComboBox to match the li that is clicked.
 		combo.Text = lvItem.SubItems[1].Text;
 
 		// Display the ComboBox, and make sure that it is on top with focus.
