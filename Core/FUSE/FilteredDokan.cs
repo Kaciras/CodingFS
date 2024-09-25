@@ -6,9 +6,9 @@ using DokanNet;
 namespace CodingFS.FUSE;
 
 /// <summary>
-/// Create a new CodingFS with name, the name will displayed as volume label.
+/// Create a new Dokan with name, the name will displayed as volume label.
 /// </summary>
-/// <param name="name"></param>
+/// <param name="name">Volume label</param>
 sealed class FilteredDokan(string name, PathFilter filter) : UnsafeRedirectDokan
 {
 	readonly string name = name;

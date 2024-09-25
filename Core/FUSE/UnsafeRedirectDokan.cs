@@ -8,6 +8,9 @@ using AccessType = System.IO.FileAccess;
 
 namespace CodingFS.FUSE;
 
+/// <summary>
+/// https://github.com/dokan-dev/dokan-dotnet/blob/master/sample/DokanNetMirror/UnsafeMirror.cs
+/// </summary>
 abstract partial class UnsafeRedirectDokan : RedirectDokan, IDokanOperationsUnsafe
 {
 	public virtual NtStatus ReadFile(string fileName, IntPtr buffer, uint bufferLength,

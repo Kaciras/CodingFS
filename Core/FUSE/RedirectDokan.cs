@@ -27,16 +27,17 @@ using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using CodingFS.Helper;
 using DokanNet;
-using LibGit2Sharp;
 using Microsoft.Win32.SafeHandles;
 using AccessType = System.IO.FileAccess;
 using FileAccess = DokanNet.FileAccess;
 
+#pragma warning disable CA1416 // Dokan is only work on Windows.
+
 namespace CodingFS.FUSE;
 
-#pragma warning disable CA1416 // Unsupported operations will not be called.
-
 /// <summary>
+/// Just forward operations to the real path.
+/// <br/>
 /// Derived from https://github.com/dokan-dev/dokan-dotnet/blob/master/sample/DokanNetMirror/Mirror.cs
 /// </summary>
 abstract partial class RedirectDokan : IDokanOperations
@@ -170,7 +171,7 @@ abstract partial class RedirectDokan : IDokanOperations
 		}
 	}
 
-	NtStatus CreateDirectory(string fileName, FileMode mode)
+	static NtStatus CreateDirectory(string fileName, FileMode mode)
 	{
 		var attrs = AttrsOrDefault(fileName);
 		switch (mode, attrs != FileAttributes.None)

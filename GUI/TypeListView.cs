@@ -1,30 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using CodingFS.Cli;
+﻿using System.Data;
 
 namespace CodingFS.GUI;
 
+// Add ComboBox inside ListView never visible, we have to wrap them with UserControl.
 // https://learn.microsoft.com/en-us/troubleshoot/developer/visualstudio/csharp/language-compilers/use-combobox-edit-listview
-public partial class TypeListView : UserControl
+public sealed partial class TypeListView : UserControl
 {
 	ListViewItem? lvItem;
 
 	public TypeListView()
 	{
 		InitializeComponent();
-	}
-
-	void Combo_SelectedValueChanged(object? sender, EventArgs e)
-	{
-		lvItem!.SubItems[1].Text = combo.Text;
-		combo.Visible = false;
 	}
 
 	public void AddPath(string path, FileType type)
@@ -44,60 +30,62 @@ public partial class TypeListView : UserControl
 		return (i.Text, Enum.Parse<FileType>(i.SubItems[1].Text));
 	}
 
+	void Combo_SelectedValueChanged(object? sender, EventArgs e)
+	{
+		combo.Visible = false;
+		lvItem!.SubItems[1].Text = combo.Text;
+	}
+
 	void ListView_MouseUp(object sender, MouseEventArgs e)
 	{
 		// Get the item on the row that is clicked.
 		lvItem = listView.GetItemAt(e.X, e.Y);
 
-		// Make sure that an item is clicked.
 		if (lvItem == null)
 		{
-			return;
+			return; // Make sure that an item is clicked.
 		}
 
 		// Get the bounds of the item that is clicked.
-		Rectangle ClickedItem = lvItem.Bounds;
+		var bounds = lvItem.Bounds;
+		var cellWidth = listView.Columns[1].Width;
 
-		// Verify that the column is completely scrolled off to the left.
-		if ((ClickedItem.Left + listView.Columns[1].Width) < 0)
+		if ((bounds.Left + cellWidth) < 0)
 		{
-			// If the cell is out of view to the left, do nothing.
-			return;
+			return; // The cell is out of view to the left, do nothing.
 		}
-
-		// Verify that the column is partially scrolled off to the left.
-		else if (ClickedItem.Left < 0)
+		else if (bounds.Left < 0)
 		{
 			// Determine if column extends beyond right side of ListView.
-			if ((ClickedItem.Left + listView.Columns[1].Width) > Width)
+			if ((bounds.Left + cellWidth) > Width)
 			{
 				// Set width of column to match width of ListView.
-				ClickedItem.Width = Width;
-				ClickedItem.X = 0;
+				bounds.X = 0;
+				bounds.Width = Width;
 			}
 			else
 			{
 				// Right side of cell is in view.
-				ClickedItem.Width = listView.Columns[1].Width + ClickedItem.Left;
-				ClickedItem.X = 2;
+				bounds.X = 2;
+				bounds.Width = cellWidth + bounds.Left;
 			}
 		}
-		else if (listView.Columns[1].Width > Width)
+		else if (cellWidth > Width)
 		{
-			ClickedItem.Width = Width;
+			bounds.Width = Width;
 		}
 		else
 		{
-			ClickedItem.Width = listView.Columns[1].Width;
-			ClickedItem.X = 2;
+			bounds.X = 2;
+			bounds.Width = cellWidth;
 		}
 
 		// Adjust the top to account for the location of the ListView.
-		ClickedItem.Y += listView.Top;
-		ClickedItem.X += listView.Left + listView.Columns[0].Width;
+		bounds.Y += listView.Top;
+		bounds.X += listView.Left + listView.Columns[0].Width;
 
 		// Assign calculated bounds to the ComboBox.
-		combo.Bounds = ClickedItem;
+		combo.Bounds = bounds;
 
 		// Set default text for ComboBox to match the item that is clicked.
 		combo.Text = lvItem.SubItems[1].Text;
