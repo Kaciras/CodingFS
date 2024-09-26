@@ -472,8 +472,8 @@ abstract partial class RedirectDokan : IDokanOperations
 		oldName = GetPath(oldName);
 		newName = GetPath(newName);
 
-		var exist = info.IsDirectory 
-			? Directory.Exists(newName) 
+		var exist = info.IsDirectory
+			? Directory.Exists(newName)
 			: File.Exists(newName);
 
 		if (!exist)

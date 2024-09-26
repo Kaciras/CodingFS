@@ -54,6 +54,6 @@ public class GitDetectorPerf
 	[Benchmark]
 	public void CheckBefore() => currentImpl.Match(context);
 
-	[Benchmark] 
-	public void CatchException() => NotMatchWithException(context); 
+	[Benchmark]
+	public void CatchException() => NotMatchWithException(context);
 }

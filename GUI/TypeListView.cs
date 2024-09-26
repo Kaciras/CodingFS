@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace CodingFS.GUI;
 

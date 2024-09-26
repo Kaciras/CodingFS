@@ -28,7 +28,7 @@ public class PrebuiltPathFilter : PathFilter
 	/// <summary>
 	/// Path of files matching the includes parameter.
 	/// </summary>
-	readonly HashSet<ReadOnlyMemory<char>> matches = new (Utils.memComparator);
+	readonly HashSet<ReadOnlyMemory<char>> matches = new(Utils.memComparator);
 
 	readonly CodingScanner scanner;
 	readonly FileType includes;

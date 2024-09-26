@@ -117,7 +117,7 @@ public sealed class IDEAWorkspace : Workspace
 		}
 	}
 
-	IEnumerable<string> GetIMLFiles(string modulesXml)
+	static IEnumerable<string> GetIMLFiles(string modulesXml)
 	{
 		using var matcher = XmlReaderEx.ForFile(modulesXml);
 		while (matcher.GoToElement("module"))
@@ -130,7 +130,7 @@ public sealed class IDEAWorkspace : Workspace
 	 * $MODULE_DIR$ is point to the directry of the IML file,
 	 * or project root if the IML file is in .idea folder.
 	 */
-	ReadOnlySpan<char> GetModuleDir(string imlFile)
+	static ReadOnlySpan<char> GetModuleDir(string imlFile)
 	{
 		var parent = Path.GetDirectoryName(imlFile.AsSpan());
 		return parent.SequenceEqual(".idea") ? default : parent;
@@ -154,7 +154,7 @@ public sealed class IDEAWorkspace : Workspace
 					excludeFolders.Add(matcher.GetAttribute("url")!);
 				}
 			}
-			
+
 			foreach (var url in excludeFolders)
 			{
 				dict[ResolveModulePath(url, module)] = RecognizeType.Ignored;
@@ -180,7 +180,7 @@ public sealed class IDEAWorkspace : Workspace
 		}
 	}
 
-	ReadOnlyMemory<char> ResolveModulePath(string value, ReadOnlySpan<char> moduleDir)
+	static ReadOnlyMemory<char> ResolveModulePath(string value, ReadOnlySpan<char> moduleDir)
 	{
 		if (!value.StartsWith("file://$MODULE_DIR$/"))
 		{

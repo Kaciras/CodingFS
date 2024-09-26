@@ -14,11 +14,11 @@ file sealed class DokanImpl : RedirectDokan
 	public readonly DirectoryInfo directory;
 
 	public DokanImpl()
-    {
+	{
 		directory = Directory.CreateTempSubdirectory(PREFIX);
 	}
 
-    protected override string GetPath(string fileName)
+	protected override string GetPath(string fileName)
 	{
 		return Path.Join(directory.FullName, fileName);
 	}
