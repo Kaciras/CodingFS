@@ -49,18 +49,20 @@ public sealed partial class TypeListView : UserControl
 
 	void ListView_MouseUp(object sender, MouseEventArgs e)
 	{
-		// Get the li on the row that is clicked.
-		lvItem = listView.GetItemAt(e.X, e.Y);
-
-		if (lvItem == null)
-		{
-			return; // Make sure that an li is clicked.
-		}
-
-		// Get the bounds of the li that is clicked.
-		var bounds = lvItem.Bounds;
+		var cellX = listView.Columns[0].Width;
 		var cellWidth = listView.Columns[1].Width;
 
+		lvItem = listView.GetItemAt(e.X, e.Y);
+		if (lvItem == null)
+		{
+			return; // Does not check on any item.
+		}
+		if (e.X < cellX)
+		{
+			return; // Click the first column.
+		}
+
+		var bounds = lvItem.Bounds;
 		if ((bounds.Left + cellWidth) < 0)
 		{
 			return; // The cell is out of view to the left, do nothing.
@@ -93,12 +95,10 @@ public sealed partial class TypeListView : UserControl
 
 		// Adjust the top to account for the location of the ListView.
 		bounds.Y += listView.Top;
-		bounds.X += listView.Left + listView.Columns[0].Width;
+		bounds.X += listView.Left + cellX;
 
 		// Assign calculated bounds to the ComboBox.
 		combo.Bounds = bounds;
-
-		// Set default text for ComboBox to match the li that is clicked.
 		combo.Text = lvItem.SubItems[1].Text;
 
 		// Display the ComboBox, and make sure that it is on top with focus.
