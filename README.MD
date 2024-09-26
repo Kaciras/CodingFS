@@ -22,6 +22,8 @@ Requirement: .NET >= 8
 
 `CodingFS.GUI.exe` is a GUI for mounting CodingFS virtual drive.
 
+![Three type of files](https://github.com/Kaciras/CodingFS/raw/master/Screenshot.png)
+
 ## CLI
 
 CodingFS cli need a config file to run, by default is `config.toml`, it's also the default file used in GUI.
