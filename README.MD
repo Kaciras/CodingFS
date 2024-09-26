@@ -1,16 +1,28 @@
 # CodingFS
 
-Filter files by its type (source, dependency, generated). The type is detected by coding workspaces.
+Mount a directory to virtual volum, contains only specific type of files (source, dependency, generated). 
+
+The type is detected by coding workspaces, supports:
+
+- Intellij IDEA
+- VSCode
+- VisualStudio
+- Git
+- Npm
+- Cargo
+- NuGet
+
+Not all configuration items, and plugins are supported, this is an endless task. If CodingFS doesn't recognize files in your workspace, feel free to submit issues and PRs.
 
 Requirement: .NET >= 8
 
 ![Three type of files](https://github.com/Kaciras/CodingFS/raw/master/MountViews.png)
 
-# GUI
+## GUI
 
 `CodingFS.GUI.exe` is a GUI for mounting CodingFS virtual drive.
 
-# CLI
+## CLI
 
 CodingFS cli need a config file to run, by default is `config.toml`, it's also the default file used in GUI.
 
@@ -18,7 +30,7 @@ You can also explicitly specify a config file to use with the `--config` CLI opt
 
 [Default config file](https://github.com/Kaciras/CodingFS/blob/master/Cli/config.toml)
 
-## Mount
+### Mount
 
 ```
 CodingFS mount <MountPoint> [--config=<config.toml>] [--type=<Source>] [--label=<SourceView>] [--readonly=<bool>]
@@ -37,7 +49,7 @@ CodingFS does not watch files, changes made after mounting may not be reflected 
 > [!WARNING]
 > If you set `--type` without `Source`, CodingFS need to scan the directory recursively before mounting, This may take a while, you can limit the depth by set `MaxDepth` property in the config file.
 
-## List
+### List
 
 ```
 CodingFS list [--config=<config.toml>] [--type=<Source>] [--name-only]
@@ -49,7 +61,7 @@ List files in root directory of the specific type.
 * `--type`: Which type of files should be listed. Avaliable values: Source, Dependency, Generated. Use comma to separate flags.
 * `--name-only`: Only show file names.
 
-## Inspect
+### Inspect
 
 ```
 CodingFS inspect [D:\path\to\inspect]
