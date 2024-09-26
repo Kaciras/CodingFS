@@ -16,13 +16,13 @@ Not all configuration items, and plugins are supported, this is an endless task.
 
 Requirement: .NET >= 8
 
-![Three type of files](https://github.com/Kaciras/CodingFS/raw/master/MountViews.png)
+![Three type of files](https://github.com/Kaciras/CodingFS/raw/master/MountViews.webp)
 
 ## GUI
 
 `CodingFS.GUI.exe` is a GUI for mounting CodingFS virtual drive.
 
-![Three type of files](https://github.com/Kaciras/CodingFS/raw/master/Screenshot.png)
+![Three type of files](https://github.com/Kaciras/CodingFS/raw/master/Screenshot.webp)
 
 ## CLI
 
