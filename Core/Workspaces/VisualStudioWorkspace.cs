@@ -67,7 +67,7 @@ public sealed class VisualStudioWorkspace : Workspace
 
 		if (hasCsharpProject)
 		{
-			ctx.AddWorkspace(new NuGetWorkspace());
+			ctx.AddWorkspace(new NuGetWorkspace(ctx.Path));
 		}
 
 		ctx.AddWorkspace(sln = new VisualStudioWorkspace(ctx.Path, projects));
@@ -96,7 +96,6 @@ public sealed class VisualStudioWorkspace : Workspace
 			{
 				var nugetRoot = parent.OfType<NuGetWorkspace>().First();
 				var legacy = Utils.IsFile(path, "packages.config");
-				nugetRoot.legacy |= legacy;
 				ctx.AddWorkspace(new NuGetWorkspace(file, nugetRoot, legacy));
 			}
 		}

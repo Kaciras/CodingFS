@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using CodingFS.Helper;
 
 namespace CodingFS.Workspaces;
@@ -7,44 +6,43 @@ namespace CodingFS.Workspaces;
 public sealed class NuGetWorkspace : PackageManager
 {
 	static readonly string[] PACKAGES_CONFIG = ["packages.config"];
-	static readonly string[] CACHE_STORE = ["packages"];
 
-	readonly string? csproj;
+	// For virtial root, it's the solution folder, else is .csproj file.
+	readonly string path;
 
-	internal bool legacy;
+	readonly bool legacy;
 
-	public string[] ConfigFiles => (legacy, Root == this) switch
+	public string[] ConfigFiles => (Root == this, legacy) switch
 	{
-		(true, false) => PACKAGES_CONFIG,
-		(true, true) => CACHE_STORE,
-		(false, false) => [],
-		(false, true) => csproj == null ? [] : [csproj],
+		(true, _) => [],
+		(false, false) => [path],
+		(false, true) => PACKAGES_CONFIG,
 	};
 
+	// If Root == this, it is the vritual workspace root.
 	public PackageManager Root { get; }
 
-	public NuGetWorkspace()
+	public NuGetWorkspace(string path)
 	{
 		Root = this;
+		this.path = path;
 	}
 
 	public NuGetWorkspace(string csproj, NuGetWorkspace parent, bool legacy)
 	{
 		Root = parent;
-		this.csproj = csproj;
+		path = csproj;
 		this.legacy = legacy;
 	}
 
 	public RecognizeType Recognize(string path)
 	{
-		if (Root != this || !legacy)
+		if (Root != this)
 		{
 			return RecognizeType.NotCare;
 		}
 
-		var folder = Path.GetDirectoryName(csproj.AsSpan());
-		var relative = PathSpliter.GetRelative(folder, path);
-
+		var relative = PathSpliter.GetRelative(this.path, path);
 		return relative.SequenceEqual("packages")
 			? RecognizeType.Dependency : RecognizeType.NotCare;
 	}

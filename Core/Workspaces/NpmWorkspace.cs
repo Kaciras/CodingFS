@@ -45,6 +45,13 @@ public sealed class NpmWorkspace : PackageManager
 		var app = "npm";
 		var files = NPM_CONFIGS;
 
+		/*
+		 * The standard practice is to check the Workspace's schema,
+		 * but this project doesn't need to be that precise yet.
+		 *
+		 * There we assumed that if an ancestor directory has a NpmWorkspace,
+		 * then that directory is a sub workspace.
+		 */
 		if (parent != null)
 		{
 			app = parent.App;
