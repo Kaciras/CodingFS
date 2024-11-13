@@ -4,11 +4,14 @@ using DokanNet;
 
 namespace CodingFS.Benchmark.Legacy;
 
+// Parameters of DispatchProxy.Invoke cannot be null.
+#nullable disable
+
 public class AopDokanWrapper : DispatchProxy
 {
-	public IDokanOperations? Native { get; set; }
+	public IDokanOperations Native { get; set; }
 
-	protected override object? Invoke(MethodInfo method, object?[]? args)
+	protected override object Invoke(MethodInfo method, object[] args)
 	{
 		try
 		{
