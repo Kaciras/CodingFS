@@ -23,7 +23,7 @@ public class PrebuiltPathFilter : PathFilter
 	/// <summary>
 	/// Directory path with its files to show (it or it has subfiles matching the includes).
 	/// </summary>
-	readonly Dictionary<string, List<FileSystemInfo>> map = new();
+	readonly Dictionary<string, List<FileSystemInfo>> map = [];
 
 	/// <summary>
 	/// Path of files matching the includes parameter.

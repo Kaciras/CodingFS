@@ -4,18 +4,11 @@ using LibGit2Sharp;
 
 namespace CodingFS.Workspaces;
 
-public sealed class GitDetector
+/// <param name="ignored">
+/// RecognizeType of files matched by .gitignore, default is NotCare
+/// .</param>
+public sealed class GitDetector(RecognizeType ignored)
 {
-	/// <summary>
-	/// RecognizeType of files matched by .gitignore, default is NotCare.
-	/// </summary>
-	readonly RecognizeType ignored;
-
-	public GitDetector(RecognizeType ignored)
-	{
-		this.ignored = ignored;
-	}
-
 	public void Match(DetectContxt ctx)
 	{
 		if (Utils.IsDir(ctx.Path, ".git"))

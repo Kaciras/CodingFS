@@ -51,7 +51,7 @@ static class Utils
 		return File.Exists(Path.Join(p0, p1));
 	}
 
-	public static bool IsFile(params string[] paths)
+	public static bool IsFile(params ReadOnlySpan<string?> paths)
 	{
 		if (paths.Length == 1)
 		{

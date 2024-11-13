@@ -10,7 +10,7 @@ namespace CodingFS.Workspaces;
 public partial class JetBrainsDetector
 {
 	[GeneratedRegex("^.+IntelliJIdea(20[0-9.]+)$")]
-	private static partial Regex JBConfigRE();
+	private static partial Regex JBConfigRE { get; }
 
 	// Config directory of the latest version of IntelliJIdea.
 	readonly string? localConfig;
@@ -21,7 +21,7 @@ public partial class JetBrainsDetector
 
 		localConfig = Directory
 			.EnumerateDirectories(Path.Join(home, "JetBrains"))
-			.Select(path => JBConfigRE().Match(path))
+			.Select(path => JBConfigRE.Match(path))
 			.Where(match => match.Success)
 			.MaxBy(match => Version.Parse(match.Groups[1].ValueSpan))?.Value;
 	}
