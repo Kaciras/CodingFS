@@ -106,12 +106,18 @@ static class Utils
 	};
 }
 
-sealed class CharMemComparator : IEqualityComparer<ReadOnlyMemory<char>>
+sealed class CharMemComparator : IEqualityComparer<ReadOnlyMemory<char>>,
+	IAlternateEqualityComparer<string, ReadOnlyMemory<char>>,
+	IAlternateEqualityComparer<ReadOnlySpan<char>, ReadOnlyMemory<char>>
 {
-	public bool Equals(ReadOnlyMemory<char> x, ReadOnlyMemory<char> y)
-	{
-		return x.Span.SequenceEqual(y.Span);
-	}
-
 	public int GetHashCode(ReadOnlyMemory<char> x) => string.GetHashCode(x.Span);
+	public bool Equals(ReadOnlyMemory<char> x, ReadOnlyMemory<char> y) => x.Span.SequenceEqual(y.Span);
+
+	public ReadOnlyMemory<char> Create(string x) => x.AsMemory();
+	public int GetHashCode(string x) => x.GetHashCode();
+	public bool Equals(string x, ReadOnlyMemory<char> y) => x.AsSpan().SequenceEqual(y.Span);
+
+	public ReadOnlyMemory<char> Create(ReadOnlySpan<char> x) => x.ToString().AsMemory();
+	public int GetHashCode(ReadOnlySpan<char> x) => string.GetHashCode(x);
+	public bool Equals(ReadOnlySpan<char> x, ReadOnlyMemory<char> y) => x.SequenceEqual(y.Span);
 }

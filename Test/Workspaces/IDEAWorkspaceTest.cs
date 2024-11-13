@@ -14,10 +14,11 @@ public sealed class IDEAWorkspaceTest
 		var instance = new IDEAWorkspace(dict, "Resources", null!);
 		instance.LoadWorkspace();
 
+		var stringLookup = dict.GetAlternateLookup<string>();
 		Assert.Equal(87, dict.Count);
-		Assert.Equal(RecognizeType.Ignored, dict[@"__tests__\share.js.map"]);
-		Assert.Equal(RecognizeType.Ignored, dict[@"__tests__\proxy.spec.d.ts"]);
-		Assert.Equal(RecognizeType.Ignored, dict[@"__tests__\verify.spec.d.ts"]);
+		Assert.Equal(RecognizeType.Ignored, stringLookup[@"__tests__\share.js.map"]);
+		Assert.Equal(RecognizeType.Ignored, stringLookup[@"__tests__\proxy.spec.d.ts"]);
+		Assert.Equal(RecognizeType.Ignored, stringLookup[@"__tests__\verify.spec.d.ts"]);
 	}
 
 	[Fact]
@@ -28,7 +29,8 @@ public sealed class IDEAWorkspaceTest
 		var instance = new IDEAWorkspace(dict, "Resources", mockDetector.Object);
 		instance.LoadModules();
 
+		var stringLookup = dict.GetAlternateLookup<string>();
 		Assert.Single(dict);
-		Assert.Equal(RecognizeType.Ignored, dict["target"]);
+		Assert.Equal(RecognizeType.Ignored, stringLookup["target"]);
 	}
 }
