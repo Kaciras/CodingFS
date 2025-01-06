@@ -40,6 +40,9 @@ public sealed class VirtualFS : IDisposable
 	/// <summary>
 	/// Create new instance of VirtualFS will mount the virtual volume.
 	/// </summary>
+	/// <exception cref="DllNotFoundException">
+	/// If any required component not installed in the system.
+	/// </exception>
 	public VirtualFS(PathFilter filter, in VirtualFSOptions options)
 	{
 		if (OperatingSystem.IsWindows())

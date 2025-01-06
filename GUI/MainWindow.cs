@@ -127,15 +127,25 @@ public sealed partial class MainWindow : Form
 	void MountButton_Click(object sender, EventArgs e)
 	{
 		SetConfigurationFromControls();
-		virtualFS = MountCommand.CreateVirtualFS(configuration);
 
-		listView.Enabled = false;
-		optionsGroup.Enabled = false;
-		mountButton.Enabled = false;
-		unmountButton.Enabled = true;
-		unmountButton.Focus();
-		mountedLabel.Visible = true;
-		selectConfigButton.Enabled = false;
+		try
+		{
+			virtualFS = MountCommand.CreateVirtualFS(configuration);
+
+			listView.Enabled = false;
+			optionsGroup.Enabled = false;
+			mountButton.Enabled = false;
+			unmountButton.Enabled = true;
+			unmountButton.Focus();
+			mountedLabel.Visible = true;
+			selectConfigButton.Enabled = false;
+		}
+		catch (DllNotFoundException)
+		{
+			MessageBox.Show(
+				"Unable to load virtual file system driver, please see README.md for system requirements",
+				"Mount Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+		}
 	}
 
 	void UnmountButton_Click(object sender, EventArgs e)

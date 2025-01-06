@@ -14,7 +14,7 @@ The type is detected by coding workspaces, supports:
 
 Not all configuration items, and plugins are supported, this is an endless task. If CodingFS doesn't recognize files in your workspace, feel free to submit issues and PRs.
 
-Requirement: .NET >= 8
+Requirements: .NET >= 9, and [Dokany](https://github.com/dokan-dev/dokany) installed.
 
 ![Three type of files](https://github.com/Kaciras/CodingFS/raw/master/MountViews.webp)
 
@@ -38,7 +38,7 @@ You can also explicitly specify a config file to use with the `--config` CLI opt
 CodingFS mount <MountPoint> [--config=<config.toml>] [--type=<Source>] [--label=<SourceView>] [--readonly=<bool>]
 ```
 
-Map the directory to a virtual drive, containing only files of the specified type. You must install [Dokan](https://github.com/dokan-dev/dokany) driver to run this command.
+Map the directory to a virtual drive, containing only files of the specified type.
 
 * `MountPoint`: drive letter of the mouted filesystem. Required.
 * `--config`: Path of the config file to use.
