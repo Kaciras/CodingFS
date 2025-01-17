@@ -20,8 +20,8 @@
 
   <ItemGroup>
     <PackageReference Include="DokanNet" Version="2.1.0" />
-    <PackageReference Include="LibGit2Sharp" Version="0.30.0" />
-    <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="9.0.0" />
+    <PackageReference Include="LibGit2Sharp" Version="0.31.0" />
+    <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="9.0.1" />
   </ItemGroup>
 
 </Project>
