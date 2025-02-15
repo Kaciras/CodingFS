@@ -17,14 +17,21 @@ public partial class JetBrainsDetector
 
 	public JetBrainsDetector()
 	{
-		var home = Environment.GetFolderPath(SpecialFolder.LocalApplicationData);
+		var appdataLocal = Environment.GetFolderPath(SpecialFolder.LocalApplicationData);
 
-		localConfig = Directory
-			.EnumerateDirectories(Path.Join(home, "JetBrains"))
-			.Select(path => JBConfigRE.Match(path))
-			.Where(match => match.Success)
-			.MaxBy(match => Version.Parse(match.Groups[1].ValueSpan))?.Value;
-	}
+		try
+		{
+			localConfig = Directory
+				.EnumerateDirectories(Path.Join(appdataLocal, "JetBrains"))
+				.Select(path => JBConfigRE.Match(path))
+				.Where(match => match.Success)
+				.MaxBy(match => Version.Parse(match.Groups[1].ValueSpan))?.Value;
+		}
+		catch (DirectoryNotFoundException)
+		{
+            // Should we throw the error or add mechanism to report it?
+        }
+    }
 
 	public void Detect(DetectContxt ctx)
 	{
