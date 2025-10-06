@@ -205,7 +205,7 @@ abstract partial class RedirectDokan : IDokanOperations
 	{
 		CloseFile(fileName, info);
 
-		if (info.DeleteOnClose)
+		if (info.DeletePending)
 		{
 			if (info.IsDirectory)
 			{
